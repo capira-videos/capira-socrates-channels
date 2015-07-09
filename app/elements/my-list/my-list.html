@@ -15,13 +15,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
   </style>
   <template>
-    <ul>
       <template is="dom-repeat" items="{{items}}">
         <paper-material elevation="1" class="paper-font-body2">
           <span class="paper-font-body1">{{item.title}}</span>
         </paper-material>
       </template>
-    </ul>
   </template>
 </dom-module>
 <script>
@@ -33,9 +31,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           type: Array,
           notify: true,
         }
-      },
-      ready: function() {
-        this.items = channels.folders;
       }
     });
   })();
