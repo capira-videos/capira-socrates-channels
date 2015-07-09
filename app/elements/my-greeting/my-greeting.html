@@ -25,13 +25,52 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <span class="paper-font-body2">Update text to change the greeting.</span>
     <!-- Listens for "input" event and sets greeting to <input>.value -->
     <input class="paper-font-body2" value="{{greeting::input}}">
+    <my-awesome greeting={{greeting}}></my-awesome>
+    <paper-button raised on-click="buttonClick">  <iron-icon icon="favorite"></iron-icon>Don't click me!</paper-button>
   </template>
 </dom-module>
 <script>
-  (function() {
-    Polymer({
-      is: 'my-greeting',
+  A = {
+    a : function (arg){
+      console.log(arg);
+    },
+    created : function(){
+      this.a("from inside A");
+    },
+    properties: {
+      bProperty: {
+        type: Boolean,
+        value: false,
+        notify: true,
+      }
+    },
+  };
 
+  B = {
+    b : function (){
+      console.log("b was called");
+    },
+    created : function(){
+      this.b();
+    },
+    properties: {
+      aProperty: {
+        type: Boolean,
+        value: false,
+        notify: true,
+      }
+    },
+  };
+
+  (function() {
+    Polymer(
+    {
+      buttonClick: function(event) { alert("Why did you click me?"); },
+      is: 'my-greeting',
+      behaviors:[A,B],
+      created : function(){
+        console.log("from inside element"); 
+      },
       properties: {
         greeting: {
           type: String,
@@ -39,6 +78,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           notify: true
         }
       }
-    });
+    }
+
+  );
   })();
 </script>
