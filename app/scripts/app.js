@@ -42,7 +42,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 
 
-var channels={
+window.channels={
 	"id": 1,
 	"title": "Mathe-Crashkurs",
 	"parent": 140,
