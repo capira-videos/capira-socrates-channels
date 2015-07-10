@@ -23,13 +23,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   // have resolved and content has been stamped to the page
   app.addEventListener('dom-change', function() {
     console.log('Our app is ready to rock!');
+    app.openPermissions=function(){
+      document.querySelector("#permissions").open();
+    }
   });
 
   // See https://github.com/Polymer/polymer/issues/1381
   window.addEventListener('WebComponentsReady', function() {
     // imports are loaded and elements have been registered
   });
-
 
   // Close drawer after menu item is selected if drawerPanel is narrow
   app.onMenuSelect = function() {

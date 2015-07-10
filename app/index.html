@@ -60,26 +60,21 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <template is="dom-bind" id="app">
 
-    <paper-header-panel main >
+    <paper-header-panel main>
 
       <!-- Main Toolbar -->
       <paper-toolbar id="mainToolbar">
-        <a href={{resp.parent}}>
+        <a href={{folder.parent}}>
           <paper-icon-button id="paperToggle" icon="arrow-back" id="backbutton"></paper-icon-button>
         </a>
         <span class="flex"></span>
 
         <!-- Toolbar icons -->
-        <paper-icon-button icon="refresh"></paper-icon-button>
+        <paper-icon-button icon="star" onclick="{{openPermissions}}"></paper-icon-button>
         <paper-icon-button icon="search"></paper-icon-button>
 
-        <!-- Application name -->
-        <div class="middle paper-font-display2 app-name">{{resp.title}}</div>
-
-
-        <!-- Application sub title -->
-        <div class="bottom title">
-        </div>
+        <!-- Application title -->
+        <div class="middle paper-font-display2 app-name">{{folder.title}}</div>
 
       </paper-toolbar>
 
@@ -88,37 +83,19 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
           <section data-route="home">
-            <capira-folder folder={{resp}}></capira-folder>
+            <capira-folder folder={{folder}}></capira-folder>
           </section>
-
-          <section data-route="user-info">
-            <paper-material elevation="1">
-              <h2 class="paper-font-display2">
-                User:
-                <span>{{params.name}}</span>
-              </h2>
-              <div>This is
-                <span>{{params.name}}</span>'s section</div>
-            </paper-material>
-          </section>
-
 
         </iron-pages>
       </div>
     </paper-header-panel>
 
+    <!-- The Capira-Channels Service -->
+    <iron-ajax id="ajax" auto url="{{serviceURL}}" handle-as="json" last-response="{{folder}}"></iron-ajax>
 
-    <iron-ajax id="ajax" auto url="{{serviceURL}}" handle-as="json" headers='{"X-Requested-With": "XMLHttpRequest"}' last-response="{{resp}}" debounce-duration="300"></iron-ajax>
 
-    <!--
-    <paper-toast id="caching-complete" duration="6000" text="Caching complete! This app will work offline.">
-    </paper-toast>
+    <permissions-dialog id="permissions" folder={{folder}}></permissions-dialog>
 
-    <platinum-sw-register auto-register clients-claim skip-waiting on-service-worker-installed="displayInstalledToast">
-      <platinum-sw-cache default-cache-strategy="networkFirst" precache-file="precache.json">
-      </platinum-sw-cache>
-    </platinum-sw-register>
--->
   </template>
 
   <script src="scripts/folder.js"></script>
