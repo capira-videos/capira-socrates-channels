@@ -60,11 +60,13 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <template is="dom-bind" id="app">
 
-    <paper-header-panel main mode="waterfall-tall">
+    <paper-header-panel main >
 
       <!-- Main Toolbar -->
       <paper-toolbar id="mainToolbar">
-        <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+        <a href={{resp.parent}}>
+          <paper-icon-button id="paperToggle" icon="arrow-back" id="backbutton"></paper-icon-button>
+        </a>
         <span class="flex"></span>
 
         <!-- Toolbar icons -->
@@ -86,8 +88,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
           <section data-route="home">
-            <capira-folder items={{resp.folders}}></capira-folder>
-            <capira-folder items={{resp.units}}></capira-folder>
+            <capira-folder folder={{resp}}></capira-folder>
           </section>
 
           <section data-route="user-info">
@@ -107,13 +108,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     </paper-header-panel>
 
 
-    <iron-ajax id="ajax"
-        auto
-        url="{{serviceURL}}"
-        handle-as="json"
-        headers='{"X-Requested-With": "XMLHttpRequest"}'
-        last-response="{{resp}}"
-        debounce-duration="300"></iron-ajax>
+    <iron-ajax id="ajax" auto url="{{serviceURL}}" handle-as="json" headers='{"X-Requested-With": "XMLHttpRequest"}' last-response="{{resp}}" debounce-duration="300"></iron-ajax>
 
     <!--
     <paper-toast id="caching-complete" duration="6000" text="Caching complete! This app will work offline.">

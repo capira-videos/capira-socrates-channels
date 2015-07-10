@@ -3,17 +3,23 @@
     :host {
       display: block;
     }
-    a{
+
+    a {
       text-decoration: none;
       color: black;
     }
   </style>
   <template>
-      <template is="dom-repeat" items="{{items}}">
-        <a href="{{item.id}}">
-        <capira-card item={{item}}></capira-card>
-        </a>
-      </template>
+    <template is="dom-repeat" items="{{folder.folders}}">
+      <a href="{{item.id}}">
+        <capira-card title={{item.title}} image={{item.thumbnail}}></capira-card>
+      </a>
+    </template>
+    <template is="dom-repeat" items="{{folder.units}}">
+      <a href="{{unitRef(item)}}">
+        <capira-card title={{item.title}} image={{item.videoId}}></capira-card>
+      </a>
+    </template>
   </template>
 </dom-module>
 <script>
@@ -25,6 +31,9 @@
           type: Array,
           notify: true,
         }
+      },
+      unitRef :function(unit){
+        return "https://capira.de/player/#/"+unit.id;
       }
     });
   })();

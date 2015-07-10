@@ -117,10 +117,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     <div class="card">
       <paper-ripple recenters></paper-ripple>
       <div class="image">
-        <img src="{{youtubeUrl(item)}}">
+        <img src="{{youtubeUrl(image)}}">
       </div>
       <div class="content">
-        <span class="title">{{item.title}}</span>
+        <span class="title">{{title}}</span>
         <p></p>
       </div>
     <!--  <div class="action">
@@ -132,8 +132,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   (function() {
     Polymer({
       is: 'capira-card',
-      youtubeUrl: function(item) {
-        return "http://img.youtube.com/vi/" + item.thumbnail + "/mqdefault.jpg";
+      youtubeUrl: function(image) {
+        return "http://img.youtube.com/vi/" + image + "/mqdefault.jpg";
       }
     });
   })();
