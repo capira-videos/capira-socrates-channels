@@ -17,11 +17,12 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     // More info: https://visionmedia.github.io/page.js/
     page('/', function () {
       app.route = 'home';
+      app.setServiceUrl(1);
     });
 
     page('/:id', function (data) {
       app.route = 'home';
-      app.serviceURL="https://capira.de/build/server/channelServer.php?id="+data.params.id;
+      app.setServiceUrl(data.params.id);
     });
 
     page('/users', function () {

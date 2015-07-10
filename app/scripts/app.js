@@ -38,4 +38,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       drawerPanel.closeDrawer();
     }
   };
+
+  app.setServiceUrl=function(folderId){
+      app.serviceURL="https://capira.de/build/server/channelServer.php?id="+folderId;
+  }
 })(document);
