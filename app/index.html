@@ -16,7 +16,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   <meta name="description" content="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="generator" content="Polymer Starter Kit" />
-  <title>Polymer Starter Kit</title>
+  <title>Capira Channel Editor</title>
   <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
   <!-- Chrome for Android theme color -->
@@ -86,10 +86,8 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
             <section data-route="home">
-              <h2>Folders</h2>
-              <my-list items={{channel.folders}}></my-list>
-              <h2>Units</h2>
-              <my-list items={{channel.units}}></my-list>
+              <capira-folder items={{channel.folders}}></capira-folder>
+              <capira-folder items={{channel.units}}></capira-folder>
             </section>
 
             <section data-route="user-info">
@@ -107,7 +105,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           </iron-pages>
         </div>
       </paper-header-panel>
-
+<!--
     <paper-toast id="caching-complete" duration="6000" text="Caching complete! This app will work offline.">
     </paper-toast>
 
@@ -115,7 +113,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       <platinum-sw-cache default-cache-strategy="networkFirst" precache-file="precache.json">
       </platinum-sw-cache>
     </platinum-sw-register>
-
+-->
   </template>
 
   <script src="scripts/folder.js"></script>

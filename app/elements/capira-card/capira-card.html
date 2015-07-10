@@ -131,12 +131,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   (function() {
     Polymer({
       is: 'capira-card',
-      properties: {
-        item: {
-          type: Object,
-          notify: true,
-        }
-      },
       youtubeUrl: function(item) {
         return "http://img.youtube.com/vi/" + item.thumbnail + "/mqdefault.jpg";
       }
