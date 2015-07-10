@@ -19,6 +19,11 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.route = 'home';
     });
 
+    page('/:id', function (data) {
+      app.route = 'home';
+      app.serviceURL="https://capira.de/build/server/channelServer.php?id="+data.params.id;
+    });
+
     page('/users', function () {
       app.route = 'users';
     });

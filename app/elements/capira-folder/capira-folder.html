@@ -3,10 +3,16 @@
     :host {
       display: block;
     }
+    a{
+      text-decoration: none;
+      color: black;
+    }
   </style>
   <template>
       <template is="dom-repeat" items="{{items}}">
+        <a href="{{item.id}}">
         <capira-card item={{item}}></capira-card>
+        </a>
       </template>
   </template>
 </dom-module>

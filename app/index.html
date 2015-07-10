@@ -60,52 +60,62 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
   <template is="dom-bind" id="app">
 
-    <capira-webservice></capira-webservice>
-      <paper-header-panel main mode="waterfall-tall">
+    <paper-header-panel main mode="waterfall-tall">
 
-        <!-- Main Toolbar -->
-        <paper-toolbar id="mainToolbar">
-          <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
-          <span class="flex"></span>
+      <!-- Main Toolbar -->
+      <paper-toolbar id="mainToolbar">
+        <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+        <span class="flex"></span>
 
-          <!-- Toolbar icons -->
-          <paper-icon-button icon="refresh"></paper-icon-button>
-          <paper-icon-button icon="search"></paper-icon-button>
+        <!-- Toolbar icons -->
+        <paper-icon-button icon="refresh"></paper-icon-button>
+        <paper-icon-button icon="search"></paper-icon-button>
 
-          <!-- Application name -->
-          <div class="middle paper-font-display2 app-name">{{channel.title}}</div>
-
-          <!-- Application sub title -->
-          <div class="bottom title">
-          </div>
-
-        </paper-toolbar>
-
-        <!-- Main Content -->
-        <div class="content">
-          <iron-pages attr-for-selected="data-route" selected="{{route}}">
-
-            <section data-route="home">
-              <capira-folder items={{channel.folders}}></capira-folder>
-              <capira-folder items={{channel.units}}></capira-folder>
-            </section>
-
-            <section data-route="user-info">
-              <paper-material elevation="1">
-                <h2 class="paper-font-display2">
-                  User:
-                  <span>{{params.name}}</span>
-                </h2>
-                <div>This is
-                  <span>{{params.name}}</span>'s section</div>
-              </paper-material>
-            </section>
+        <!-- Application name -->
+        <div class="middle paper-font-display2 app-name">{{resp.title}}</div>
 
 
-          </iron-pages>
+        <!-- Application sub title -->
+        <div class="bottom title">
         </div>
-      </paper-header-panel>
-<!--
+
+      </paper-toolbar>
+
+      <!-- Main Content -->
+      <div class="content">
+        <iron-pages attr-for-selected="data-route" selected="{{route}}">
+
+          <section data-route="home">
+            <capira-folder items={{resp.folders}}></capira-folder>
+            <capira-folder items={{resp.units}}></capira-folder>
+          </section>
+
+          <section data-route="user-info">
+            <paper-material elevation="1">
+              <h2 class="paper-font-display2">
+                User:
+                <span>{{params.name}}</span>
+              </h2>
+              <div>This is
+                <span>{{params.name}}</span>'s section</div>
+            </paper-material>
+          </section>
+
+
+        </iron-pages>
+      </div>
+    </paper-header-panel>
+
+
+    <iron-ajax id="ajax"
+        auto
+        url="{{serviceURL}}"
+        handle-as="json"
+        headers='{"X-Requested-With": "XMLHttpRequest"}'
+        last-response="{{resp}}"
+        debounce-duration="300"></iron-ajax>
+
+    <!--
     <paper-toast id="caching-complete" duration="6000" text="Caching complete! This app will work offline.">
     </paper-toast>
 
