@@ -66,18 +66,17 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         <!-- Main Toolbar -->
         <paper-toolbar id="mainToolbar">
           <paper-icon-button id="paperToggle" icon="menu" paper-drawer-toggle></paper-icon-button>
+          <span class="flex"></span>
 
+          <!-- Toolbar icons -->
+          <paper-icon-button icon="refresh"></paper-icon-button>
+          <paper-icon-button icon="search"></paper-icon-button>
 
           <!-- Application name -->
           <div class="middle paper-font-display2 app-name">{{channel.title}}</div>
 
           <!-- Application sub title -->
           <div class="bottom title">
-            <span class="flex"></span>
-
-            <!-- Toolbar icons -->
-            <paper-icon-button icon="refresh"></paper-icon-button>
-            <paper-icon-button icon="search"></paper-icon-button>
           </div>
 
         </paper-toolbar>
@@ -87,18 +86,10 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
           <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
             <section data-route="home">
-              <h2>Units</h2>
-              <my-list items={{channel.folders}}></my-list>
               <h2>Folders</h2>
+              <my-list items={{channel.folders}}></my-list>
+              <h2>Units</h2>
               <my-list items={{channel.units}}></my-list>
-            </section>
-
-            <section data-route="users">
-              <paper-material elevation="1">
-                <h2 class="paper-font-display2">Users</h2>
-                <p>This is the users section</p>
-                <a href="/users/Rob">Rob</a>
-              </paper-material>
             </section>
 
             <section data-route="user-info">
@@ -112,12 +103,6 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
               </paper-material>
             </section>
 
-            <section data-route="contact">
-              <paper-material elevation="1">
-                <h2 class="paper-font-display2">Contact</h2>
-                <p>This is the contact section</p>
-              </paper-material>
-            </section>
 
           </iron-pages>
         </div>

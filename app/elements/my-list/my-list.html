@@ -16,8 +16,9 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   </style>
   <template>
       <template is="dom-repeat" items="{{items}}">
-        <paper-material elevation="1" class="paper-font-body2">
-          <span class="paper-font-body1">{{item.title}}</span>
+        <paper-material elevation="2" class="paper-font-body2">
+          <paper-ripple recenters></paper-ripple>
+          <div class="paper-font-body1">{{item.title}}</div>
         </paper-material>
       </template>
   </template>
