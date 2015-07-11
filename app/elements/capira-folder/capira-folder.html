@@ -1,7 +1,19 @@
 <dom-module id="capira-folder">
   <style>
     :host {
-      display: block;
+      @apply(--layout-horizontal);
+      @apply(--paper-font-body2);
+    }
+
+    [content] {
+      @apply(--layout-flex);
+
+      overflow: auto;
+      padding: 0 10px;
+    }
+    [card] {
+      @apply(--layout-flex);
+      @apply(--layout-center-center);
     }
 
     a {
@@ -10,30 +22,26 @@
     }
   </style>
   <template>
+    <div content>
     <template is="dom-repeat" items="{{folder.folders}}">
       <a href="{{item.id}}">
-        <capira-card title={{item.title}} image={{item.thumbnail}}></capira-card>
+        <capira-card title={{item.title}} image={{item.thumbnail}} card></capira-card>
       </a>
     </template>
     <template is="dom-repeat" items="{{folder.units}}">
       <a href="{{unitRef(item)}}">
-        <capira-card title={{item.title}} image={{item.videoId}}></capira-card>
+        <capira-card title={{item.title}} image={{item.videoId}} card></capira-card>
       </a>
     </template>
+      </div>
   </template>
 </dom-module>
 <script>
   (function() {
     Polymer({
       is: 'capira-folder',
-      properties: {
-        items: {
-          type: Array,
-          notify: true,
-        }
-      },
-      unitRef :function(unit){
-        return "https://capira.de/player/#/"+unit.id;
+      unitRef: function(unit) {
+        return "https://capira.de/player/#/" + unit.id;
       }
     });
   })();

@@ -1,14 +1,28 @@
-
 <dom-module id="permissions-dialog">
   <style>
-    :host{
+    :host {
       display: block;
     }
+
+    [content] {
+      @apply(--layout-flex);
+      overflow: auto;
+      padding: 0 10px;
+    }
+
     paper-dialog {
       background: white !important;
-
       /* to fix the height-bug in paper-dialog */
       max-height: 1000px !important;
+    }
+
+    paper-dialog .users {
+      height: 250px;
+      overflow: scroll;
+    }
+
+    paper-dialog .horizontal-section {
+      min-width: 380px;
     }
 
     paper-dialog .buttons {
@@ -17,27 +31,68 @@
       margin: 0;
     }
 
+    paper-dialog .line {
+      margin-top: 20px;
+      margin-bottom: 40px;
+    }
+
+    paper-dialog .line span {
+      margin-left: 24px;
+    }
+
+    paper-dialog .user-name {
+      min-width: 215px;
+      width: 63%;
+      display: inline-block;
+    }
   </style>
   <template>
-        <paper-dialog id="dialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
-          <h2>Permissions for <span style="font-style:italic">{{folder.title}}</span></h2>
-          <p>Here will be the Forms to edit the permissions!
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
-          <div class="buttons">
-            <paper-button >More Info...</paper-button>
-            <paper-button dialog-dismiss>Decline</paper-button>
-            <paper-button dialog-confirm autofocus>Accept</paper-button>
+    <paper-dialog id="dialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+      <div content>
+        <h3>
+          Permissions:
+          <span style="font-style:italic">{{folder.title}}</span>
+        </h3>
+        <div class="users horizontal-section">
+          <template is="dom-repeat" items="{{users.list}}">
+            <div class="line">
+              <span class="user-name">{{item.name}}</span>
+              <paper-toggle-button checked="{{item.admin}}"></paper-toggle-button>
+              <span>
+                <template is="dom-if" if="{{item.admin}}">
+                  Admin
+                </template>
+                <template is="dom-if" if="{{!item.admin}}">
+                  Editor
+                </template>
+              </span>
+            </div>
+          </template>
+        </div>
+        <div class="horizontal-section">
+          <div class="line">
+            <paper-input label="To add an Author enter a Username"></paper-input>
           </div>
-        </paper-dialog>
+        </div>
+        <div class="buttons">
+          <paper-button>More Info...</paper-button>
+          <paper-button dialog-dismiss>Decline</paper-button>
+          <paper-button dialog-confirm autofocus>Accept</paper-button>
+        </div>
+    </paper-dialog>
+    </div>
+
   </template>
 </dom-module>
+
 <script>
-(function() {
-  Polymer({
-    is: 'permissions-dialog',
-    open : function(){
-      document.querySelector('#dialog').open();
-    }
-  });
-})();
+  (function() {
+    Polymer({
+      is: 'permissions-dialog',
+      open: function() {
+        document.querySelector('#dialog').open();
+        this.users = window.users;
+      }
+    });
+  })();
 </script>
