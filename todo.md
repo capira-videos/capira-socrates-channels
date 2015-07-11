@@ -4,7 +4,6 @@ permissions service anbinden
   -user hinzufügen
   -user löschen
 
-user löschem ui
 
 titel ändern
 
@@ -15,7 +14,12 @@ units und folder löschen (dnd?)
 
 units und folder in listenform
 
-units und folder sortieren
+units und folder per dnd sortieren
 
 
 permissions-icon nur anzeigen, wenn user admin ist
+
+
+breadcrumbs
+
+sobald die anzahl der user nicht mehr die authoren-liste füllt, werden die lines größer

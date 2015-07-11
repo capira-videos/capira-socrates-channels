@@ -61,7 +61,7 @@
 
         <!-- Toolbar icons -->
         <paper-icon-button icon="search"></paper-icon-button>
-        <paper-icon-button icon="social:group" onclick="{{openPermissions}}"></paper-icon-button>
+  
 
         <!-- Application title -->
         <div class="middle paper-font-display2 app-name">{{folder.title}}</div>
@@ -73,7 +73,8 @@
         <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
           <section data-route="home">
-            <capira-folder folder={{folder}}></capira-folder>
+            <!--<capira-folder folder={{folder}}></capira-folder> -->
+            <folder-content folder={{folder}}></folder-content>
           </section>
 
         </iron-pages>

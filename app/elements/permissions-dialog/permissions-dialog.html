@@ -10,9 +10,14 @@
       max-height: 1000px !important;
     }
 
+    paper-dialog > * {
+      padding: 0;
+    }
+
     [header] {
       @apply(--layout-horizontal);
       @apply(--layout-center);
+      @apply(--shadow-elevation-1dp);
       height: 60px;
       background-color: var(--default-primary-color);
       padding: 0 36px;
@@ -23,83 +28,108 @@
     [content] {
       @apply(--layout-vertical);
       overflow: auto;
-      padding: 0 36px;
+    }
+
+    [content] > *,
+    [header] {
+      padding: 0 24px !important;
+    }
+
+    [list-header] {
+      font-size: 12px;
+      padding-top: 12px;
     }
 
     [users] {
       @apply(--layout-vertical);
-
-      @apply(--shadow-elevation-1dp);
-
-      height: 230px;
+      height: 200px;
       min-width: 400px;
       overflow: scroll;
+      overflow-x: hidden;
     }
 
-    [user]{
+    [user] {
       @apply(--layout-horizontal);
-      margin-top: 20px;
-      margin-bottom: 40px;
+      @apply(--layout-center);
+      padding-top: 20px;
+      padding-bottom: 40px;
     }
 
-    [username]{
+    [username] {
       @apply(--layout-start);
+      @apply(--paper-font-subhead);
     }
 
-    [isadmin]{
+    [isadmin] {
       @apply(--layout-end);
+      padding-right: 16px;
+      padding-right: 32px;
     }
 
-    [adminlabel]{
-      width:40px;
-      margin-left: 24px;
+    [adminlabel] {
+      width: 40px;
     }
 
-    [add-user]{
-      margin-bottom: 62px;
+    [add-user] {
+      margin-bottom: 24px;
+      margin-top: 32px;
     }
+
+    [add-user] > span {
+      font-size: 12px;
+    }
+
+    [add-user] paper-input {
+      margin-top: -12px;
+    }
+
+    [info] {
+      font-size: 11px;
+    }
+
+    [remove] {
+      height: 24px;
+      margin-right: -15px;
+    }
+
 
     paper-dialog .buttons {
       position: relative;
-      padding: 8px 35px 8px 24px;
+      padding: 8px 20px 8px 24px;
       margin: 0;
     }
-
   </style>
   <template>
     <paper-dialog id="dialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
       <div header>
         <h3>
-          Authors of 
+          Authors of
           <span style="font-style:italic">{{folder.title}}</span>
         </h3>
       </div>
       <div content>
+        <div list-header>
+          Admin
+        </div>
         <div users>
-          <template is="dom-repeat" items="{{users.list}}">
+          <template is="dom-repeat" items="{{users}}">
             <div user>
+              <paper-toggle-button isadmin checked="{{item.admin}}"></paper-toggle-button>
               <span username>{{item.name}}</span>
               <div class="flex"></div>
-              <paper-toggle-button isadmin checked="{{item.admin}}" ></paper-toggle-button>
-              <span adminlabel>
-                <template is="dom-if" if="{{item.admin}}">
-                  Admin
-                </template>
-                <template is="dom-if" if="{{!item.admin}}">
-                  Editor
-                </template>
-              </span>
+              <paper-icon-button remove icon="close" on-click="removeUser"></paper-icon-button>
             </div>
           </template>
         </div>
         <div add-user>
-          <paper-input label="To add an Author enter a Username"></paper-input>
+          <span>Invite people:</span>
+          <paper-input label="Enter name or email address."></paper-input>
         </div>
-        </div>
-        <div class="buttons">
-          <paper-button dialog-dismiss>Cancel</paper-button>
-          <paper-button dialog-confirm autofocus>Save</paper-button>
-        </div>
+      </div>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button dialog-confirm autofocus>Save</paper-button>
+      </div>
     </paper-dialog>
     </div>
 
@@ -111,8 +141,13 @@
     Polymer({
       is: 'permissions-dialog',
       open: function() {
-        document.querySelector('#dialog').open();
-        this.users = window.users;
+        this.$.dialog.open();
+        this.users = window.users.list;
+      },
+      removeUser: function(event) {
+        var user = event.model.item;
+        var index = this.users.indexOf(user);
+        this.splice('users', index, 1);
       }
     });
   })();

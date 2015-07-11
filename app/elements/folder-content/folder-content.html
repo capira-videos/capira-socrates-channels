@@ -1,0 +1,141 @@
+<dom-module id="folder-content">
+  <style>
+    :host {
+      @apply(--layout-horizontal);
+      @apply(--layout-center-center);
+      @apply(--paper-font-body2);
+    }
+
+    [content] {
+      @apply(--layout-vertical);
+      width: 740px;
+      overflow: auto;
+      margin-top: -80px;
+      padding: 5px;
+    }
+
+    [header],
+    [list] > * {
+      padding: 0 24px 0 24px
+    }
+
+    paper-material {
+      background: white;
+      margin-bottom: 12px;
+    }
+
+    [header] {
+      @apply(--layout);
+      @apply(--layout-vertical-reverse);
+      height: 180px;
+    }
+
+    [header] > div {
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+    }
+
+    [header] h1 {
+      @apply(--paper-font-display1);
+    }
+
+    [list] {
+      @apply(--layout-vertical);
+    }
+
+    [list-header] {
+      @apply(--layout-horizontal);
+      background-color: var(--light-primary-color);
+      margin-bottom: 14px;
+    }
+
+    [list] h2 {
+      @apply(--paper-font-headline);
+    }
+
+    [item] {
+      @apply(--layout-horizontal);
+    }
+
+    [item] h3 {
+      @apply(--paper-font-subhead);
+      margin-top: 5px;
+    }
+
+    paper-fab {
+      position: absolute;
+      right: 48px;
+      top: 44px;
+    }
+
+    a {
+      text-decoration: none;
+      color: black;
+    }
+
+    img {
+      border: none;
+    }
+
+    .crop {
+      float: left;
+      margin: .5em 10px .5em 0;
+      overflow: hidden;
+      /* this is important */
+      border: 0px solid #ccc;
+    }
+    /* input values to crop the image */
+
+    .crop img {
+      margin: -11px -0px -18px 0px
+    }
+  </style>
+  <template>
+
+    <div content>
+      <paper-material header>
+        <div>
+          <h1>{{folder.title}}</h1>
+          <div class="flex"></div>
+          <template is="dom-if" if="{{!folder.channelAdmin}}">
+            <paper-icon-button icon="social:group" on-tap="openPermissions"></paper-icon-button>
+          </template>
+        </div>
+      </paper-material>
+      <paper-material list>
+        <div list-header>
+          <h2>Folders</h2>
+          <paper-fab icon="add"></paper-fab>
+        </div>
+        <div>
+          <template is="dom-repeat" items="{{folder.folders}}">
+            <div item>
+              <a href="{{item.id}}">
+                <span class=crop>
+                  <img src="{{youtubeThumbnail(item)}}" />
+                </span>
+              </a>
+              <h3>{{item.title}}</h3>
+            </div>
+        </div>
+        </template>
+      </paper-material>
+    </div>
+  </template>
+</dom-module>
+<script>
+  (function() {
+    Polymer({
+      is: 'folder-content',
+      unitRef: function(unit) {
+        return "https://capira.de/player/#/" + unit.id;
+      },
+      youtubeThumbnail: function(folder) {
+        return "http://img.youtube.com/vi/" + folder.thumbnail + "/default.jpg";
+      },
+      openPermissions: function(){
+        document.querySelector("#permissions").open();
+      }
+    });
+  })();
+</script>
