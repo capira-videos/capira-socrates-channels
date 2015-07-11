@@ -4,61 +4,84 @@
       display: block;
     }
 
-    [content] {
-      @apply(--layout-flex);
-      overflow: auto;
-      padding: 0 10px;
-    }
-
     paper-dialog {
       background: white !important;
       /* to fix the height-bug in paper-dialog */
       max-height: 1000px !important;
     }
 
-    paper-dialog .users {
-      height: 250px;
+    [header] {
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+      height: 60px;
+      background-color: var(--default-primary-color);
+      padding: 0 36px;
+      color: white;
+      margin-top: 0;
+    }
+
+    [content] {
+      @apply(--layout-vertical);
+      overflow: auto;
+      padding: 0 36px;
+    }
+
+    [users] {
+      @apply(--layout-vertical);
+
+      @apply(--shadow-elevation-1dp);
+
+      height: 230px;
+      min-width: 400px;
       overflow: scroll;
     }
 
-    paper-dialog .horizontal-section {
-      min-width: 380px;
-    }
-
-    paper-dialog .buttons {
-      position: relative;
-      padding: 8px 8px 8px 24px;
-      margin: 0;
-    }
-
-    paper-dialog .line {
+    [user]{
+      @apply(--layout-horizontal);
       margin-top: 20px;
       margin-bottom: 40px;
     }
 
-    paper-dialog .line span {
+    [username]{
+      @apply(--layout-start);
+    }
+
+    [isadmin]{
+      @apply(--layout-end);
+    }
+
+    [adminlabel]{
+      width:40px;
       margin-left: 24px;
     }
 
-    paper-dialog .user-name {
-      min-width: 215px;
-      width: 63%;
-      display: inline-block;
+    [add-user]{
+      margin-bottom: 62px;
     }
+
+    paper-dialog .buttons {
+      position: relative;
+      padding: 8px 35px 8px 24px;
+      margin: 0;
+    }
+
   </style>
   <template>
     <paper-dialog id="dialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
-      <div content>
+      <div header>
         <h3>
           Permissions:
           <span style="font-style:italic">{{folder.title}}</span>
         </h3>
-        <div class="users horizontal-section">
+      </div>
+      <div content>
+        <div users>
           <template is="dom-repeat" items="{{users.list}}">
-            <div class="line">
-              <span class="user-name">{{item.name}}</span>
-              <paper-toggle-button checked="{{item.admin}}"></paper-toggle-button>
-              <span>
+            <div user>
+              <span username>{{item.name}}</span>
+              <div class="flex"></div>
+              <paper-toggle-button isadmin checked="{{item.admin}}" ></paper-toggle-button>
+              <span adminlabel>
                 <template is="dom-if" if="{{item.admin}}">
                   Admin
                 </template>
@@ -69,15 +92,13 @@
             </div>
           </template>
         </div>
-        <div class="horizontal-section">
-          <div class="line">
-            <paper-input label="To add an Author enter a Username"></paper-input>
-          </div>
+        <div add-user>
+          <paper-input label="To add an Author enter a Username"></paper-input>
+        </div>
         </div>
         <div class="buttons">
-          <paper-button>More Info...</paper-button>
-          <paper-button dialog-dismiss>Decline</paper-button>
-          <paper-button dialog-confirm autofocus>Accept</paper-button>
+          <paper-button dialog-dismiss>Cancel</paper-button>
+          <paper-button dialog-confirm autofocus>Save</paper-button>
         </div>
     </paper-dialog>
     </div>
