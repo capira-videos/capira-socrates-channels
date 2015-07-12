@@ -16,3 +16,22 @@ body {
 #mainToolbar iron-icon {
   color: white !important;
 }
+paper-dialog {
+  background: white !important;
+}
+paper-header-panel {
+  /* BUGFIX - otherwise dialogs are behind their backdrops */
+  z-index: auto;
+}
+
+iron-pages{
+  /* BUGFIX - otherwise the content is not properly aligned at the top */
+  padding-top: 64px !important;
+}
+
+#topBar {
+  position: absolute;
+  z-index: 100;
+  left: 0;
+  right: 0;
+}
