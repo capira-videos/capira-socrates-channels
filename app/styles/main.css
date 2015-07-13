@@ -13,9 +13,11 @@ body {
   color: #333;
 }
 
+
 #mainToolbar iron-icon {
-  color: white !important;
+  color: white;
 }
+
 paper-dialog {
   background: white !important;
 }

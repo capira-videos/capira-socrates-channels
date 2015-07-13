@@ -59,17 +59,18 @@
         </a>
         <span class="flex"></span>
         <!-- Toolbar icons -->
-        <paper-icon-button icon="search"></paper-icon-button>
-
+        <capira-tooltip tooltip="Search">
+          <paper-icon-button icon="search"></paper-icon-button>
+        </capira-tooltip>
       </paper-toolbar>
 
       <!-- Main Content -->
       <div class="content">
         <iron-pages attr-for-selected="data-route" selected="{{route}}">
 
-            <section data-route="home">
-              <folder-content folder={{folder}}></folder-content>
-            </section>
+          <section data-route="home">
+            <folder-content folder="{{folder}}"></folder-content>
+          </section>
 
         </iron-pages>
       </div>

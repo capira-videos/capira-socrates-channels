@@ -1,0 +1,134 @@
+<dom-module id="folder-list">
+  <style>
+    :host {
+      display: block;
+      padding-top: 18px !important;
+    }
+
+    [list] {
+      @apply(--layout-vertical);
+    }
+
+    [list-header] {
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+      height: 64px;
+    }
+
+    [list-title] {
+      @apply(--paper-font-headline);
+    }
+
+    [item] {
+      @apply(--layout-horizontal);
+    }
+
+    [item-title] {
+      @apply(--paper-font-subhead);
+      margin-top: 5px;
+      max-width: 500px;
+    }
+
+    a {
+      text-decoration: none;
+      color: black;
+    }
+
+    img {
+      border: none;
+    }
+
+    .crop {
+      float: left;
+      margin: .5em 10px .5em 0;
+      overflow: hidden;
+      /* this is important */
+      border: 0px solid #ccc;
+    }
+    /* input values to crop the image */
+
+    .crop img {
+      margin: -11px -0px -18px 0px
+    }
+  </style>
+  <template>
+    <div list>
+      <div list-header>
+        <span list-title><span>{{listTitle}}</span>s</span>
+        <div class="flex"></div>
+        <paper-icon-button icon="add" on-click="removeFolder"></paper-icon-button>
+      </div>
+      <div>
+        <div hidden$="{{list.0}}" class="paper-font-caption">
+          Empty. There are no
+          <span><span>{{listTitle}}</span>s</span>
+          in this Folder yet. Press + to create one.
+        </div>
+
+        <template is="dom-repeat" items="{{list}}">
+          <div item>
+            <a href="{{item.id}}">
+              <span class=crop>
+                <img src="{{thumbnail(item)}}" />
+              </span>
+            </a>
+            <span item-title>{{item.title}}</span>
+            <div class="flex"></div>
+            <div hidden$="{{isAuthor}}">
+              <paper-icon-button icon="delete" on-click="promptDelete"></paper-icon-button>
+              <paper-icon-button icon="social:public" on-click="promptDelete"></paper-icon-button>
+              <paper-icon-button icon="editor:mode-edit" on-click="promptDelete"></paper-icon-button>
+            </div>
+          </div>
+        </template>
+
+
+        <paper-dialog id="confirm-delete" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+          <h2>Delete <span>{{listTitle}}</span></h2>
+          <paper-dialog-scrollable>
+            Delete this <span>{{listTitle}}</span> entirely. This can not be undone.
+          </paper-dialog-scrollable>
+          <div class="buttons">
+            <paper-button dialog-dismiss>Cancel</paper-button>
+            <paper-button dialog-confirm on-click="removeItem" autofocus>Delete</paper-button>
+          </div>
+        </paper-dialog>
+
+        <paper-dialog id="confirm" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+          <h2>Rename</h2>
+          <paper-dialog-scrollable>
+            Delete this Folder entirely. This can not be undone.
+          </paper-dialog-scrollable>
+          <div class="buttons">
+            <paper-button dialog-dismiss>Cancel</paper-button>
+            <paper-button dialog-confirm on-click="removeItem" autofocus>Delete</paper-button>
+          </div>
+        </paper-dialog>
+
+  </template>
+</dom-module>
+
+
+<script>
+  (function() {
+    Polymer({
+      is: 'folder-list',
+
+      promptDelete: function(event) {
+        var item = event.model.item;
+        this.deleteIndex = this.list.indexOf(item);
+        this.$.confirm.open();
+      },
+      removeItem: function(event) {
+        this.splice('list', this.deleteIndex, 1);
+      },
+      thumbnail: function(item) {
+        return "http://img.youtube.com/vi/" + (item.thumbnail ? item.thumbnail : item.videoId) + "/default.jpg";
+      },
+      unitRef: function(unit) {
+        return "https://capira.de/player/#/" + unit.id;
+      },
+
+    });
+  })();
+</script>

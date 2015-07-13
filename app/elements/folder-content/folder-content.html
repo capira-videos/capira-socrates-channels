@@ -7,138 +7,59 @@
 
     [content] {
       @apply(--layout-vertical);
-      @apply(--shadow-elevation-2dp);
+      @apply(--shadow-elevation-4dp);
       width: 768px;
       overflow: auto;
       background: white;
+      padding-bottom: 22px;
     }
 
     [header],
-    [list] > * {
+    folder-list {
       padding: 0 16px 0 24px
     }
 
     [header] {
-      @apply(--layout);
-      @apply(--layout-vertical-reverse);
-      height: 128px;
-    }
-
-    [header] > [header-toolbar] {
       @apply(--layout-horizontal);
       @apply(--layout-center);
-      padding-bottom: 12px;
+      height: 128px;
+      background-color: var(--default-primary-color);
     }
 
-    [header] [page-title] {
+    [header] * {
+      color: white !important;
+    }
+
+    [header-toolbar] {
+      @apply(--layout-center);
+      margin-bottom: 64px;
+    }
+
+    [page-title] {
       @apply(--paper-font-display1);
-      color: var(--default-primary-color);
       max-width: 680px;
     }
 
-    [header-toolbar] paper-icon-button {
-      @apply(--layout-self-end);
+    #confirm-delete {
+      width: 256px;
     }
 
-    [list] {
-      @apply(--layout-vertical);
-    }
 
-    [list-header] {
-      @apply(--layout-horizontal);
-      @apply(--layout-center);
-      height: 64px;
-    }
-
-    [list] [list-title] {
-      @apply(--paper-font-headline);
-    }
-
-    [item] {
-      @apply(--layout-horizontal);
-    }
-
-    [item] h3 {
-      @apply(--paper-font-subhead);
-      margin-top: 5px;
-    }
-
-    a {
-      text-decoration: none;
-      color: black;
-    }
-
-    img {
-      border: none;
-    }
-
-    .crop {
-      float: left;
-      margin: .5em 10px .5em 0;
-      overflow: hidden;
-      /* this is important */
-      border: 0px solid #ccc;
-    }
-    /* input values to crop the image */
-
-    .crop img {
-      margin: -11px -0px -18px 0px
-    }
   </style>
   <template>
     <div content>
       <div header>
-        <div header-toolbar>
-          <span page-title>{{folder.title}}</span>
-          <div class="flex"></div>
-          <template is="dom-if" if="{{!folder.channelAdmin}}">
+        <span page-title>{{folder.title}}</span>
+        <div class="flex"></div>
+        <div header-toolbar hidden$="{{folder.isAdmin}}">
             <paper-icon-button icon="social:group" on-tap="openPermissions"></paper-icon-button>
-          </template>
         </div>
       </div>
-      <div list>
-        <div list-header>
-          <span list-title>Folders</span>
-          <div class="flex"></div>
-          <paper-icon-button icon="add" on-click="removeUser"></paper-icon-button>
-        </div>
-        <div>
-          <template is="dom-repeat" items="{{folder.folders}}">
-            <div item>
-              <a href="{{item.id}}">
-                <span class=crop>
-                  <img src="{{youtubeThumbnail(item)}}" />
-                </span>
-              </a>
-              <h3>{{item.title}}</h3>
-              <div class="flex"></div>
-              <template is="dom-if" if="{{!folder.channelAdmin}}">
-                <div>
-                  <paper-icon-button icon="social:public" on-click="removeUser"></paper-icon-button>
-                  <paper-icon-button icon="delete" on-click="promptDelete"></paper-icon-button>
-                </div>
-              </template>
-            </div>
-        </div>
-        </template>
-      </div>
-    </div>
+      <folder-list list="{{folder.units}}" list-title="Unit" is-author="{{folder.isAuthor}}"></folder-list>
+      <folder-list list="{{folder.folders}}" list-title="Folder" is-author="{{folder.isAuthor}}"></folder-list>
 
-
-
-    <paper-dialog id="confirm-delete" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
-      <h2>Delete Unit</h2>
-      <paper-dialog-scrollable>
-        Delete this Folder entirely.
-      </paper-dialog-scrollable>
-      <div class="buttons">
-        <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button dialog-confirm on-click="removeFolder" autofocus>Delete</paper-button>
-      </div>
-    </paper-dialog>
-
-    <!-- The Channel Permissions Editor -->
-    <permissions-dialog id="permissions" folder={{folder}}></permissions-dialog>
+      <!-- The Channel Permissions Editor -->
+      <permissions-dialog id="permissions" folder={{folder}}></permissions-dialog>
 
   </template>
 </dom-module>
@@ -146,22 +67,8 @@
   (function() {
     Polymer({
       is: 'folder-content',
-      unitRef: function(unit) {
-        return "https://capira.de/player/#/" + unit.id;
-      },
-      youtubeThumbnail: function(folder) {
-        return "http://img.youtube.com/vi/" + folder.thumbnail + "/default.jpg";
-      },
       openPermissions: function() {
         document.querySelector("#permissions").open();
-      },
-      promptDelete: function(event) {
-        var folder = event.model.item;
-        this.deleteIndex = this.folder.folders.indexOf(folder);
-        document.querySelector("#confirm-delete").open();
-      },
-      removeFolder: function(event) {
-        this.splice('folder.folders', this.deleteIndex, 1);
       }
     });
   })();
