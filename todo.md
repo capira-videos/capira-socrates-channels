@@ -1,29 +1,29 @@
-permissions service anbinden
-  -alle user des channels laden
-  -rechte ändern
-  -user hinzufügen
-  -user löschen
+/* Minimum an Features für Deploy */
+
+Neue Unit erstellen
+Neuen Folder erstellen
+
+Unit löschen
+Folder löschen
+
+Unit-Liste sortieren
+Folder-Liste sortieren
+
+Unit in Folder verschieben    (sub und parent)
+Folder in Folder verschieben  (sub und parent)
+
+Unit umbenennen
+Folder umbennenen
 
 
-titel ändern
+Weiteren Autor hinzufügen
+Autor zu Editor machen
+Editor zu Autor machen
+Autor löschen
 
-neue unit erstellen
-neuen folder erstellen
-
-units und folder löschen (dnd?)
-
-units und folder in listenform
-
-units und folder per dnd sortieren
-
-
-permissions-icon nur anzeigen, wenn user admin ist
 
 
 breadcrumbs
-
-header icons dürfen nicht position absolute haben
-
 
 
 user interface von hier übernehmen:

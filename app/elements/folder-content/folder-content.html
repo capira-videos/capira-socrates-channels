@@ -46,7 +46,7 @@
       <div header>
         <span page-title>{{folder.title}}</span>
         <div class="flex"></div>
-        <div header-toolbar hidden$="{{folder.admin}}">
+        <div header-toolbar hidden$="{{!folder.admin}}">
           <paper-icon-button icon="social:group" on-click="openPermissions"></paper-icon-button>
         </div>
       </div>
@@ -83,16 +83,20 @@
                 node: this
               }],
               'exit': [{
-                name: 'slide-up-animation',
-                node: this
+                name: 'transform-animation',
+                node: this,
+                transformFrom: 'translateY(100%)',
               }]
             }
           }
         }
       },
-      _folderChanged: function(newValue,oldValue) {
-        console.log('folder changed!',newValue,oldValue);
-        if(oldValue && newValue.id==oldValue.parent){
+
+
+      _folderChanged: function(newValue, oldValue) {
+        console.log('folder changed!', newValue, oldValue);
+        document.querySelector("#mainContainer").scrollTop=0;
+        if (oldValue && newValue.id == oldValue.parent) {
           this.playAnimation('exit');
         } else {
           this.playAnimation('entry');

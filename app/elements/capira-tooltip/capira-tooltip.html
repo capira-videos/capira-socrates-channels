@@ -99,7 +99,7 @@
     }
   </style>
   <template>
-    <p class="tooltip--bottom" data-tooltip="[[tooltip]]">
+    <p class="tooltip--bottom" id="tooltipElement">
       <content>
       </content>
     </p>
@@ -108,7 +108,14 @@
 <script>
   (function() {
     Polymer({
-      is: 'capira-tooltip'
+      is: 'capira-tooltip',
+      properties : {
+        tooltip:String
+      },
+      ready: function(){
+        console.log(this.tooltip);
+        this.$.tooltipElement.setAttribute('data-tooltip',this.tooltip);
+      }
     });
   })();
 </script>

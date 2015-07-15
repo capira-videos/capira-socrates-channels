@@ -1,4 +1,3 @@
-
 <dom-module id="folder-list">
   <style>
     :host {
@@ -52,23 +51,28 @@
       margin: -11px -0px -18px 0px
     }
 
+    [selected]{
+      background-color: red;
+    }
   </style>
   <template>
     <div list>
       <div list-header>
-        <span list-title><span>{{listTitle}}</span>s</span>
+        <span list-title>
+          <span>{{listTitle}}</span>s</span>
         <div class="flex"></div>
-        <paper-icon-button icon="add" on-click="removeFolder"></paper-icon-button>
+        <paper-icon-button icon="add" on-click="removeFolder" hidden$="{{!isAuthor}}"></paper-icon-button>
       </div>
       <div>
         <div hidden$="{{list.0}}" class="paper-font-caption">
           Empty. There are no
-          <span><span>{{listTitle}}</span>s</span>
+          <span>
+            <span>{{listTitle}}</span>s</span>
           in this Folder yet. Press + to create one.
         </div>
 
-        <template is="dom-repeat" items="{{list}}">
-          <div item>
+        <template is="dom-repeat" items="{{list}}" id="listElement">
+          <div item on-click="toggleSelection" selected$="[[item.selected]]" >
             <a href="{{folderUrl(item)}}">
               <span class=crop>
                 <img src="{{thumbnail(item)}}" />
@@ -76,35 +80,22 @@
             </a>
             <span item-title>{{item.title}}</span>
             <div class="flex"></div>
-            <div hidden$="{{isAuthor}}">
+            <div hidden$="{{!isAuthor}}">
               <paper-icon-button icon="delete" on-click="removeItem"></paper-icon-button>
               <paper-icon-button icon="social:public" on-click="promptDelete"></paper-icon-button>
             </div>
           </div>
         </template>
 
+        <array-selector id="selector" items="{{list}}" selected="{{selected}}" multi toggle></array-selector>
 
-        <paper-dialog id="confirm-delete" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
-          <h2>Delete <span>{{listTitle}}</span></h2>
-          <paper-dialog-scrollable>
-            Delete this <span>{{listTitle}}</span> entirely. This can not be undone.
-          </paper-dialog-scrollable>
-          <div class="buttons">
-            <paper-button dialog-dismiss>Cancel</paper-button>
-            <paper-button dialog-confirm on-click="removeItem" autofocus>Delete</paper-button>
+        <div> Selected Items: </div>
+        <template is="dom-repeat" items="{{selected}}">
+          <div>Title:
+            <span>{{item.title}}</span>
           </div>
-        </paper-dialog>
+        </template>
 
-        <paper-dialog id="confirm" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
-          <h2>Rename</h2>
-          <paper-dialog-scrollable>
-            Delete this Folder entirely. This can not be undone.
-          </paper-dialog-scrollable>
-          <div class="buttons">
-            <paper-button dialog-dismiss>Cancel</paper-button>
-            <paper-button dialog-confirm on-click="removeItem" autofocus>Delete</paper-button>
-          </div>
-        </paper-dialog>
 
         <paper-toast id="removed" duration="7000">
           <a role="button" tabindex="0" style="color: #eeff41;margin: 10px" onclick="console.log('UNDO')">Undo</a>
@@ -123,7 +114,7 @@
         this.deleteIndex = this.list.indexOf(item);
         this.splice('list', this.deleteIndex, 1);
         var toast = this.$.removed;
-        toast.text='Removed one '+this.listTitle+'.';
+        toast.text = 'Removed one ' + this.listTitle + '.';
         toast.show();
       },
       thumbnail: function(item) {
@@ -132,12 +123,41 @@
       unitRef: function(unit) {
         return 'https://capira.de/player/#/' + unit.id;
       },
-      folderUrl : function(item){
+      folderUrl: function(item) {
         return item.id;
+      },
+
+      toggleSelection: function(e) {
+        console.log(e);
+        var item = this.$.listElement.itemForElement(e.target);
+        item.selected=!item.selected;
+        this.$.selector.select(item);
+      },
+
+/*
+      ready: function() {
+        this.list = [{
+          title: "Title 1",
+          thumbnail: "---",
+          id : 10,
+        }, {
+          title: "Title 2",
+          thumbnail: "---",
+          id : 10,
+        }, {
+          title: "Title 3",
+          thumbnail: "---",
+          id : 10,
+        }, {
+          title: "Title 4",
+          thumbnail: "---",
+          id : 10,
+        }, ];
+        this.listTitle="Dummy List";
+
+
       }
-
-
-
+*/
 
     });
   })();
