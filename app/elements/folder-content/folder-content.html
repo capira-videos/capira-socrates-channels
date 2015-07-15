@@ -9,9 +9,9 @@
       @apply(--layout-vertical);
       @apply(--shadow-elevation-4dp);
       width: 768px;
-      overflow: auto;
-      background: white;
+      overflow: visible;
       padding-bottom: 22px;
+      background-color: white;
     }
 
     [header],
@@ -40,27 +40,22 @@
       max-width: 680px;
     }
 
-    #confirm-delete {
-      width: 256px;
-    }
-
-
   </style>
   <template>
+
     <div content>
       <div header>
         <span page-title>{{folder.title}}</span>
         <div class="flex"></div>
-        <div header-toolbar hidden$="{{folder.isAdmin}}">
-            <paper-icon-button icon="social:group" on-tap="openPermissions"></paper-icon-button>
+        <div header-toolbar hidden$="{{folder.admin}}">
+            <paper-icon-button icon="social:group" on-click="openPermissions"></paper-icon-button>
         </div>
       </div>
-      <folder-list list="{{folder.units}}" list-title="Unit" is-author="{{folder.isAuthor}}"></folder-list>
-      <folder-list list="{{folder.folders}}" list-title="Folder" is-author="{{folder.isAuthor}}"></folder-list>
+      <folder-list list="{{folder.units}}" list-title="Unit" is-author="{{folder.admin}}"></folder-list>
+      <folder-list list="{{folder.folders}}" list-title="Folder" is-author="{{folder.admin}}"></folder-list>
 
       <!-- The Channel Permissions Editor -->
-      <permissions-dialog id="permissions" folder={{folder}}></permissions-dialog>
-
+      <permissions-dialog id="permissions" folder="{{folder}}"></permissions-dialog>
   </template>
 </dom-module>
 <script>
@@ -68,7 +63,8 @@
     Polymer({
       is: 'folder-content',
       openPermissions: function() {
-        document.querySelector("#permissions").open();
+        this.$.permissions.open();
+        console.log(this.folder);
       }
     });
   })();

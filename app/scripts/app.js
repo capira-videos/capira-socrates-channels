@@ -16,7 +16,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   var app = document.querySelector('#app');
 
   app.displayInstalledToast = function() {
-    document.querySelector('#caching-complete').show();
+    //document.querySelector('#caching-complete').show();
   };
 
   // Listen for template bound event to know when bindings
@@ -42,7 +42,4 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       app.serviceURL="https://capira.de/build/server/channelServer.php?id="+folderId;
   }
 
-  app.folderReceived=function(folder){
-    console.log('folder',folder);
-  }
 })(document);

@@ -22,8 +22,7 @@ permissions-icon nur anzeigen, wenn user admin ist
 
 breadcrumbs
 
-sobald die anzahl der user nicht mehr die authoren-liste füllt, werden die lines größer
-
+header icons dürfen nicht position absolute haben
 
 
 

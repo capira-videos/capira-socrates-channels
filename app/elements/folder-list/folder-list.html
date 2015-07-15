@@ -50,6 +50,7 @@
     .crop img {
       margin: -11px -0px -18px 0px
     }
+
   </style>
   <template>
     <div list>
@@ -67,7 +68,7 @@
 
         <template is="dom-repeat" items="{{list}}">
           <div item>
-            <a href="{{item.id}}">
+            <a href="{{folderUrl(item)}}">
               <span class=crop>
                 <img src="{{thumbnail(item)}}" />
               </span>
@@ -75,9 +76,8 @@
             <span item-title>{{item.title}}</span>
             <div class="flex"></div>
             <div hidden$="{{isAuthor}}">
-              <paper-icon-button icon="delete" on-click="promptDelete"></paper-icon-button>
+              <paper-icon-button icon="delete" on-click="removeItem"></paper-icon-button>
               <paper-icon-button icon="social:public" on-click="promptDelete"></paper-icon-button>
-              <paper-icon-button icon="editor:mode-edit" on-click="promptDelete"></paper-icon-button>
             </div>
           </div>
         </template>
@@ -105,6 +105,10 @@
           </div>
         </paper-dialog>
 
+        <paper-toast id="removed" duration="7000">
+          <a role="button" tabindex="0" style="color: #eeff41;margin: 10px" onclick="console.log('UNDO')">Undo</a>
+        </paper-toast>
+
   </template>
 </dom-module>
 
@@ -113,21 +117,23 @@
   (function() {
     Polymer({
       is: 'folder-list',
-
-      promptDelete: function(event) {
+      removeItem: function(event) {
         var item = event.model.item;
         this.deleteIndex = this.list.indexOf(item);
-        this.$.confirm.open();
-      },
-      removeItem: function(event) {
         this.splice('list', this.deleteIndex, 1);
+        var toast = this.$.removed;
+        toast.text='Removed one '+this.listTitle+'.';
+        toast.show();
       },
       thumbnail: function(item) {
-        return "http://img.youtube.com/vi/" + (item.thumbnail ? item.thumbnail : item.videoId) + "/default.jpg";
+        return 'http://img.youtube.com/vi/' + (item.thumbnail ? item.thumbnail : item.videoId) + '/default.jpg';
       },
       unitRef: function(unit) {
-        return "https://capira.de/player/#/" + unit.id;
+        return 'https://capira.de/player/#/' + unit.id;
       },
+      folderUrl : function(item){
+        return item.id;
+      }
 
     });
   })();
