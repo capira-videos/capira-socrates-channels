@@ -39,7 +39,6 @@
       @apply(--paper-font-display1);
       max-width: 680px;
     }
-
   </style>
   <template>
 
@@ -48,7 +47,7 @@
         <span page-title>{{folder.title}}</span>
         <div class="flex"></div>
         <div header-toolbar hidden$="{{folder.admin}}">
-            <paper-icon-button icon="social:group" on-click="openPermissions"></paper-icon-button>
+          <paper-icon-button icon="social:group" on-click="openPermissions"></paper-icon-button>
         </div>
       </div>
       <folder-list list="{{folder.units}}" list-title="Unit" is-author="{{folder.admin}}"></folder-list>
@@ -64,8 +63,42 @@
       is: 'folder-content',
       openPermissions: function() {
         this.$.permissions.open();
-        console.log(this.folder);
+      },
+
+
+      behaviors: [
+        Polymer.NeonAnimationRunnerBehavior
+      ],
+
+      properties: {
+        folder: {
+          observer: '_folderChanged',
+        },
+        animationConfig: {
+          type: Object,
+          value: function() {
+            return {
+              'entry': [{
+                name: 'slide-down-animation',
+                node: this
+              }],
+              'exit': [{
+                name: 'slide-up-animation',
+                node: this
+              }]
+            }
+          }
+        }
+      },
+      _folderChanged: function(newValue,oldValue) {
+        console.log('folder changed!',newValue,oldValue);
+        if(oldValue && newValue.id==oldValue.parent){
+          this.playAnimation('exit');
+        } else {
+          this.playAnimation('entry');
+        }
       }
+
     });
   })();
 </script>

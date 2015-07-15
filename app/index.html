@@ -50,8 +50,7 @@
 
   <template is="dom-bind" id="app">
 
-    <paper-header-panel main mode="cover">
-
+    <paper-header-panel main mode="cover" >
       <!-- Main Toolbar -->
       <paper-toolbar id="mainToolbar" class="tall">
         <a href={{folder.parent}}>
@@ -66,7 +65,7 @@
 
       <!-- Main Content -->
       <div class="content">
-        <iron-pages attr-for-selected="data-route" selected="{{route}}">
+        <iron-pages attr-for-selected="data-route" selected="{{route}}" >
 
           <section data-route="home">
             <folder-content folder="{{folder}}"></folder-content>
