@@ -46,12 +46,12 @@
       <div header>
         <span page-title>{{folder.title}}</span>
         <div class="flex"></div>
-        <div header-toolbar hidden$="{{!folder.admin}}">
+        <div header-toolbar hidden$="{{folder.admin}}">
           <paper-icon-button icon="social:group" on-click="openPermissions"></paper-icon-button>
         </div>
       </div>
-      <folder-list list="{{folder.units}}" list-title="Unit" is-author="{{folder.admin}}"></folder-list>
-      <folder-list list="{{folder.folders}}" list-title="Folder" is-author="{{folder.admin}}"></folder-list>
+      <folder-list list="{{folder.units}}" list-title="Unit" is-author="{{!folder.admin}}"></folder-list>
+      <folder-list list="{{folder.folders}}" list-title="Folder" is-author="{{!folder.admin}}"></folder-list>
 
       <!-- The Channel Permissions Editor -->
       <permissions-dialog id="permissions" folder="{{folder}}"></permissions-dialog>

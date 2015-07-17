@@ -1,29 +1,33 @@
-/* Minimum an Features für Deploy */
+Projekt: Deploy Channels Editor alpha bis Sonntag Abend.
 
-Neue Unit erstellen
-Neuen Folder erstellen
+==Sprint 1: Sonntag Abend
+
+Neue Unit erstellen                                 1h
+Neuen Folder erstellen                              1h
 
 Unit löschen
 Folder löschen
 
-Unit-Liste sortieren
-Folder-Liste sortieren
+Unit-Liste sortieren                                4h
+Folder-Liste sortieren                              4h
 
-Unit in Folder verschieben    (sub und parent)
-Folder in Folder verschieben  (sub und parent)
+Unit in Folder verschieben    (sub und parent)      4h
+Folder in Folder verschieben  (sub und parent)      4h
 
-Unit umbenennen
-Folder umbennenen
-
-
-Weiteren Autor hinzufügen
-Autor zu Editor machen
-Editor zu Autor machen
-Autor löschen
+Unit umbenennen                                     1h
+Folder umbennenen                                   0h
 
 
+Weiteren Autor hinzufügen per Eingabe des Usernames 1h
+Autor zu Editor machen                              1h
+Editor zu Autor machen                              1h
+Autor löschen                                       1h
 
+
+==Sprint 2
 breadcrumbs
+high performance
+responsability
 
 
 user interface von hier übernehmen:

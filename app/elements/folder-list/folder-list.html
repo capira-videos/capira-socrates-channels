@@ -51,7 +51,7 @@
       margin: -11px -0px -18px 0px
     }
 
-    [selected]{
+    [selected] {
       background-color: red;
     }
   </style>
@@ -72,9 +72,9 @@
         </div>
 
         <template is="dom-repeat" items="{{list}}" id="listElement">
-          <div item on-click="toggleSelection" selected$="[[item.selected]]" >
+          <div item on-click="toggleSelection" selected$="[[item.selected]]">
             <a href="{{folderUrl(item)}}">
-              <span class=crop>
+              <span class="crop">
                 <img src="{{thumbnail(item)}}" />
               </span>
             </a>
@@ -82,6 +82,7 @@
             <div class="flex"></div>
             <div hidden$="{{!isAuthor}}">
               <paper-icon-button icon="delete" on-click="removeItem"></paper-icon-button>
+              <paper-icon-button icon="editor:mode-edit" on-click="_rename"></paper-icon-button>
               <paper-icon-button icon="social:public" on-click="promptDelete"></paper-icon-button>
             </div>
           </div>
@@ -89,13 +90,16 @@
 
         <array-selector id="selector" items="{{list}}" selected="{{selected}}" multi toggle></array-selector>
 
+
+        <!--
         <div> Selected Items: </div>
         <template is="dom-repeat" items="{{selected}}">
           <div>Title:
             <span>{{item.title}}</span>
           </div>
-        </template>
+        </template> -->
 
+        <rename-dialog id="rename" on-renamed="_onRenamed"></rename-dialog>
 
         <paper-toast id="removed" duration="7000">
           <a role="button" tabindex="0" style="color: #eeff41;margin: 10px" onclick="console.log('UNDO')">Undo</a>
@@ -109,6 +113,13 @@
   (function() {
     Polymer({
       is: 'folder-list',
+      properties: {
+        list: Array,
+        value: function() {
+          return [];
+        }
+      },
+
       removeItem: function(event) {
         var item = event.model.item;
         this.deleteIndex = this.list.indexOf(item);
@@ -117,47 +128,63 @@
         toast.text = 'Removed one ' + this.listTitle + '.';
         toast.show();
       },
+
       thumbnail: function(item) {
         return 'http://img.youtube.com/vi/' + (item.thumbnail ? item.thumbnail : item.videoId) + '/default.jpg';
       },
+
       unitRef: function(unit) {
         return 'https://capira.de/player/#/' + unit.id;
       },
+
       folderUrl: function(item) {
         return item.id;
       },
 
-      toggleSelection: function(e) {
-        console.log(e);
+
+      _rename: function(e) {
         var item = this.$.listElement.itemForElement(e.target);
-        item.selected=!item.selected;
+        var dialog = this.$.rename;
+        dialog.open(item);
+      },
+
+      _onRenamed: function(e){
+          var item=e.detail;
+          var i=this.list.indexOf(item);
+          this.set('list.'+i+'.title', item.title);
+      },
+
+
+      toggleSelection: function(e) {
+        var item = this.$.listElement.itemForElement(e.target);
+        item.selected = !item.selected;
         this.$.selector.select(item);
       },
 
-/*
-      ready: function() {
-        this.list = [{
-          title: "Title 1",
-          thumbnail: "---",
-          id : 10,
-        }, {
-          title: "Title 2",
-          thumbnail: "---",
-          id : 10,
-        }, {
-          title: "Title 3",
-          thumbnail: "---",
-          id : 10,
-        }, {
-          title: "Title 4",
-          thumbnail: "---",
-          id : 10,
-        }, ];
-        this.listTitle="Dummy List";
+      /*
+            ready: function() {
+              this.list = [{
+                title: "Title 1",
+                thumbnail: "---",
+                id : 10,
+              }, {
+                title: "Title 2",
+                thumbnail: "---",
+                id : 10,
+              }, {
+                title: "Title 3",
+                thumbnail: "---",
+                id : 10,
+              }, {
+                title: "Title 4",
+                thumbnail: "---",
+                id : 10,
+              }, ];
+              this.listTitle="Dummy List";
 
 
-      }
-*/
+            }
+      */
 
     });
   })();
