@@ -14,8 +14,7 @@
       background-color: white;
     }
 
-    [header],
-    folder-list {
+    [content] > * {
       padding: 0 16px 0 24px
     }
 
@@ -41,20 +40,37 @@
     }
   </style>
   <template>
-
     <div content>
       <div header>
         <span page-title>{{folder.title}}</span>
         <div class="flex"></div>
         <div header-toolbar hidden$="{{folder.admin}}">
-          <paper-icon-button icon="social:group" on-click="openPermissions"></paper-icon-button>
+          <capira-tooltip tooltip="Permissions">
+            <paper-icon-button icon="social:group-add" on-click="openPermissions"></paper-icon-button>
+          </capira-tooltip>
         </div>
       </div>
-      <folder-list list="{{folder.units}}" list-title="Unit" is-author="{{!folder.admin}}"></folder-list>
-      <folder-list list="{{folder.folders}}" list-title="Folder" is-author="{{!folder.admin}}"></folder-list>
+
+      <folder-list list="{{folder.units}}" list-title="Unit" is-author="{{!folder.admin}}" on-create="createUnit"></folder-list>
+      <folder-list list="{{folder.folders}}" list-title="Folder" is-author="{{!folder.admin}}" on-create="createFolder"></folder-list>
+
+      <create-unit id="createUnit" on-created="_onUnitCreated"></create-unit>
+      <create-folder id="createFolder" on-created="_onFolderCreated"></create-folder>
 
       <!-- The Channel Permissions Editor -->
       <permissions-dialog id="permissions" folder="{{folder}}"></permissions-dialog>
+      <iron-ajax
+        id="editorService"
+        url="http://localhost:8888/server/channelEditorServer.php"
+        handle-as="json"
+        on-response="handleResponse"
+        debounce-duration="300"
+        verbose="true"
+        withCredentials="true"
+        ></iron-ajax>
+    </div>
+
+
   </template>
 </dom-module>
 <script>
@@ -95,12 +111,48 @@
 
       _folderChanged: function(newValue, oldValue) {
         console.log('folder changed!', newValue, oldValue);
-        document.querySelector("#mainContainer").scrollTop=0;
+        document.querySelector("#mainContainer").scrollTop = 0;
         if (oldValue && newValue.id == oldValue.parent) {
           this.playAnimation('exit');
         } else {
           this.playAnimation('entry');
         }
+      },
+
+      createUnit: function() {
+        this.$.createUnit.open();
+      },
+
+      createFolder: function() {
+        this.$.createFolder.open();
+      },
+
+      _onUnitCreated: function(e) {
+        var unit = e.detail;
+        console.log(unit);
+        this.unshift('folder.units', unit);
+
+        //tell the server
+        unit.parent = this.folder.id;
+        var service=this.$.editorService;
+        service.method='PUT';
+        service.params={a:'unit'};
+        service.body=JSON.stringify(unit);
+        service.generateRequest();
+
+      },
+
+      _onFolderCreated: function(e) {
+        var folder = e.detail;
+        console.log(folder);
+        this.unshift('folder.folders', folder);
+
+        //this should be done by the service...
+        folder.parent = this.folder.id;
+      },
+
+      handleResponse:function(resp){
+        console.log(resp);
       }
 
     });

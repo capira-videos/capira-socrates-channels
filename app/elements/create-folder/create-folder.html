@@ -10,20 +10,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 
-<dom-module id="rename-dialog">
+<dom-module id="create-folder">
   <style>
     :host {
       display: block;
     }
-    paper-dialog{
+    #createFolderDialog{
       width:400px;
     }
   </style>
   <template>
-    <paper-dialog id="rename" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
-      <h2>Rename</h2>
+    <paper-dialog id="createFolderDialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+      <h2>Create Folder</h2>
       <p>
-        <paper-input label="Enter a new title" value="{{item.title}}" autofocus></paper-input>
+        <paper-input label="Enter the title" value="{{item.title}}" autofocus></paper-input>
       </p>
       <div class="buttons">
         <paper-button dialog-dismiss>Decline</paper-button>
@@ -35,14 +35,14 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 <script>
 (function() {
   Polymer({
-    is: 'rename-dialog',
+    is: 'create-folder',
 
-    open : function(item){
-      this.$.rename.open();
-      this.item=item;
+    open : function(){
+      this.$.createFolderDialog.open();
+      this.item={title:''};
     },
     _confirm: function(){
-      this.fire('renamed',this.item);
+      this.fire('created',this.item);
     }
   });
 })();

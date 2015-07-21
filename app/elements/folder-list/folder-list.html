@@ -26,7 +26,7 @@
     [item-title] {
       @apply(--paper-font-subhead);
       margin-top: 5px;
-      max-width: 500px;
+      max-width: 460px;
     }
 
     a {
@@ -61,7 +61,7 @@
         <span list-title>
           <span>{{listTitle}}</span>s</span>
         <div class="flex"></div>
-        <paper-icon-button icon="add" on-click="removeFolder" hidden$="{{!isAuthor}}"></paper-icon-button>
+        <paper-icon-button icon="add" on-click="_createItem" hidden$="{{!isAuthor}}"></paper-icon-button>
       </div>
       <div>
         <div hidden$="{{list.0}}" class="paper-font-caption">
@@ -100,6 +100,8 @@
         </template> -->
 
         <rename-dialog id="rename" on-renamed="_onRenamed"></rename-dialog>
+        <content>
+        </content>
 
         <paper-toast id="removed" duration="7000">
           <a role="button" tabindex="0" style="color: #eeff41;margin: 10px" onclick="console.log('UNDO')">Undo</a>
@@ -160,6 +162,12 @@
         item.selected = !item.selected;
         this.$.selector.select(item);
       },
+
+
+      _createItem:function(){
+        this.fire('create');
+      }
+
 
       /*
             ready: function() {

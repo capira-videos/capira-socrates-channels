@@ -1,0 +1,25 @@
+
+<dom-module id="pascal-element">
+  <style>
+    :host {
+      display: block;
+    }
+  </style>
+  <template>
+    <div>Hello from <span>{{foo}}</span></div>
+  </template>
+</dom-module>
+<script>
+(function() {
+  Polymer({
+    is: 'pascal-element',
+
+    properties: {
+      foo: {
+        value: 43,
+        notify: true
+      }
+    }
+  });
+})();
+</script>
