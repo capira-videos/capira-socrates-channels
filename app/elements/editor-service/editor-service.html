@@ -1,0 +1,49 @@
+<!--
+@license
+Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
+This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
+The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
+The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
+Code distributed by Google as part of the polymer project is also
+subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
+-->
+
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+
+<dom-module id="editor-service">
+  <template>
+    <iron-ajax
+      id="service"
+      url="/server/channelEditorServer.php"
+      handle-as="json"
+      method="POST"
+      verbose="true"
+      on-response="_handleResponse"
+      ></iron-ajax>
+  </template>
+</dom-module>
+<script>
+  (function() {
+    Polymer({
+      is: 'editor-service',
+
+      generateRequest : function(type,item,method){
+        var service=this.$.service;
+        service.params={a:type};
+        service.body=JSON.stringify(item);
+        if(method){
+          service.method=method;
+        } else {
+          service.method='POST';
+        }
+        service.generateRequest();
+      },
+
+      _handleResponse:function(){
+        var resp=this.$.service.lastResponse;
+        this.fire('responded',resp);
+      }
+
+    });
+  })();
+</script>

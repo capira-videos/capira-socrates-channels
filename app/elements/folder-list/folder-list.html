@@ -83,7 +83,7 @@
             <div hidden$="{{!isAuthor}}">
               <paper-icon-button icon="delete" on-click="removeItem"></paper-icon-button>
               <paper-icon-button icon="editor:mode-edit" on-click="_rename"></paper-icon-button>
-              <paper-icon-button icon="social:public" on-click="promptDelete"></paper-icon-button>
+            <!--  <paper-icon-button icon="social:public" on-click="promptDelete"></paper-icon-button> -->
             </div>
           </div>
         </template>
@@ -106,7 +106,10 @@
         <paper-toast id="removed" duration="7000">
           <a role="button" tabindex="0" style="color: #eeff41;margin: 10px" onclick="console.log('UNDO')">Undo</a>
         </paper-toast>
-
+        <editor-service
+          id="service"
+          on-responded="_handleResponse"
+          ></editor-service>
   </template>
 </dom-module>
 
@@ -124,8 +127,13 @@
 
       removeItem: function(event) {
         var item = event.model.item;
+        item.deleted=true;
+        item.folderId=this.folderId;
+        this.$.service.generateRequest(this.listTitle.toLowerCase(),item);
+
         this.deleteIndex = this.list.indexOf(item);
         this.splice('list', this.deleteIndex, 1);
+
         var toast = this.$.removed;
         toast.text = 'Removed one ' + this.listTitle + '.';
         toast.show();
@@ -154,6 +162,9 @@
           var item=e.detail;
           var i=this.list.indexOf(item);
           this.set('list.'+i+'.title', item.title);
+
+
+          this.$.service.generateRequest(this.listTitle.toLowerCase(),item);
       },
 
 

@@ -1,14 +1,3 @@
-<!--
-@license
-Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
-This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
-The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
-The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
-Code distributed by Google as part of the polymer project is also
-subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
--->
-
-<link rel="import" href="../../bower_components/polymer/polymer.html">
 
 <dom-module id="create-unit">
   <style>
@@ -21,18 +10,20 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
   </style>
   <template>
-    <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_confirm"></iron-a11y-keys>
     <paper-dialog id="createUnitDialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+      <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_confirm"></iron-a11y-keys>
       <h2>Create Unit</h2>
       <p>
-        <paper-input label="Enter a youtube video id or link" value="[[item.videoId]]" id="videoId" autofocus></paper-input>
-        <paper-input label="Enter the title" value="{{item.title}}"></paper-input>
+        <paper-input label="Enter a youtube video id or link" value="[[unit.videoId]]" id="videoId" autofocus></paper-input>
+        <paper-input label="Enter the title" value="{{unit.title}}"></paper-input>
       </p>
       <div class="buttons">
         <paper-button dialog-dismiss>Decline</paper-button>
         <paper-button on-click="_confirm">Accept</paper-button>
       </div>
     </paper-dialog>
+    <editor-service id="createUnitService" on-responded="_handleResponse"></editor-service>
+    <iron-ajax id="youtubeApi" handle-as="json" verbose="true" on-response="_handleYoutubeTitle"></iron-ajax>
   </template>
 </dom-module>
 <script>
@@ -42,26 +33,25 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       open: function() {
         this.$.createUnitDialog.open();
-        //        this.$.videoId.focus();
 
         this.$.createUnitDialog.modal = true;
 
-        this.item = {
+        this.unit = {
           title: '',
-          videoId: ''
+          videoId: '',
+          parent: this.parent
         };
       },
 
       ready: function() {
         var that = this;
         this.$.videoId.onkeyup = function() {
-          console.log(this);
           that._handleYoutubeUrls(this.value || '');
         }
       },
 
 
-      _parse_yturl:function(url) {
+      _parse_yturl: function(url) {
 
         var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
         var match = url.match(regExp);
@@ -74,20 +64,41 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
       _handleYoutubeUrls: function(youtubeUrl) {
         var split = this._parse_yturl(youtubeUrl);
-        console.log('in: _handleYoutubeUrls:',split);
 
         if (split) {
-          this.set('item.videoId', split);
+          this.set('unit.videoId', split);
         } else {
-          this.set('item.videoId', youtubeUrl);
-
+          this.set('unit.videoId', youtubeUrl);
         }
+        var that = this;
+        setTimeout(function(){
+          that._fetchYoutubeTitle();
+        },500);
       },
 
 
-      _confirm: function() {
-        console.log('confirmed!');
-        this.fire('created', this.item);
+      _fetchYoutubeTitle: function(id) {
+        var service = this.$.youtubeApi;
+        service.url= 'https://www.googleapis.com/youtube/v3/videos?id=' + this.unit.videoId + '&key=AIzaSyBtulzLnwRn3FfkfL-Lg-AhuO8eR8jfXSQ&fields=items(snippet(title))&part=snippet'
+        service.generateRequest();
+      },
+
+      _handleYoutubeTitle: function() {
+        var resp = this.$.youtubeApi.lastResponse;
+        console.log(resp);
+        this.set('unit.title',resp.items[0].snippet.title);
+      },
+
+        _confirm: function() {
+        //tell the server
+        var service = this.$.createUnitService;
+        service.generateRequest('unit', this.unit, 'PUT');
+      },
+
+      _handleResponse: function(resp) {
+        var unit = resp.detail;
+        console.log("Response:", unit);
+        this.fire('created', unit);
         this.$.createUnitDialog.close();
       }
 

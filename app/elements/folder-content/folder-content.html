@@ -44,31 +44,21 @@
       <div header>
         <span page-title>{{folder.title}}</span>
         <div class="flex"></div>
-        <div header-toolbar hidden$="{{folder.admin}}">
+        <div header-toolbar hidden$="{{!folder.channelAdmin}}">
           <capira-tooltip tooltip="Permissions">
             <paper-icon-button icon="social:group-add" on-click="openPermissions"></paper-icon-button>
           </capira-tooltip>
         </div>
       </div>
 
-      <folder-list list="{{folder.units}}" list-title="Unit" is-author="{{!folder.admin}}" on-create="createUnit"></folder-list>
-      <folder-list list="{{folder.folders}}" list-title="Folder" is-author="{{!folder.admin}}" on-create="createFolder"></folder-list>
-
-      <create-unit id="createUnit" on-created="_onUnitCreated"></create-unit>
-      <create-folder id="createFolder" on-created="_onFolderCreated"></create-folder>
-
-      <!-- The Channel Permissions Editor -->
-      <permissions-dialog id="permissions" folder="{{folder}}"></permissions-dialog>
-      <iron-ajax
-        id="editorService"
-        url="http://localhost:8888/server/channelEditorServer.php"
-        handle-as="json"
-        on-response="handleResponse"
-        debounce-duration="300"
-        verbose="true"
-        withCredentials="true"
-        ></iron-ajax>
+      <folder-list list="{{folder.units}}" list-title="Unit" is-author="{{folder.admin}}" on-create="createUnit" folder-id={{folder.id}}></folder-list>
+      <folder-list list="{{folder.folders}}" list-title="Folder" is-author="{{folder.admin}}" on-create="createFolder"></folder-list>
     </div>
+    <create-unit id="createUnit" on-created="_onUnitCreated" parent="{{folder.id}}"></create-unit>
+    <create-folder id="createFolder" on-created="_onFolderCreated" parent="{{folder.id}}"></create-folder>
+
+    <!-- The Channel Permissions Editor -->
+    <permissions-dialog id="permissions" folder="{{folder}}"></permissions-dialog>
 
 
   </template>
@@ -129,17 +119,7 @@
 
       _onUnitCreated: function(e) {
         var unit = e.detail;
-        console.log(unit);
         this.unshift('folder.units', unit);
-
-        //tell the server
-        unit.parent = this.folder.id;
-        var service=this.$.editorService;
-        service.method='PUT';
-        service.params={a:'unit'};
-        service.body=JSON.stringify(unit);
-        service.generateRequest();
-
       },
 
       _onFolderCreated: function(e) {
@@ -149,10 +129,6 @@
 
         //this should be done by the service...
         folder.parent = this.folder.id;
-      },
-
-      handleResponse:function(resp){
-        console.log(resp);
       }
 
     });

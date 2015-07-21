@@ -141,6 +141,12 @@
     </paper-dialog>
     </div>
 
+    <iron-ajax
+      id="service"
+      handle-as="json"
+      verbose="true"
+      on-response="_handleResponse"
+      ></iron-ajax>
   </template>
 </dom-module>
 
@@ -150,12 +156,19 @@
       is: 'permissions-dialog',
       open: function() {
         this.$.dialog.open();
-        this.users = window.users.list;
+        var service=this.$.service;
+        service.method='GET';
+        service.url="/server/permissionServer.php?channelId="+this.folder.id;
+        service.generateRequest();
       },
       removeUser: function(event) {
         var user = event.model.item;
         var index = this.users.indexOf(user);
         this.splice('users', index, 1);
+      },
+      _handleResponse : function(){
+        this.users=this.$.service.lastResponse;
+        console.log(this.users);
       }
     });
   })();

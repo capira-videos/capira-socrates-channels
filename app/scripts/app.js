@@ -39,7 +39,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
   };
 
   app.setServiceUrl=function(folderId){
-      app.serviceURL="https://capira.de/build/server/channelServer.php?id="+folderId;
+      app.serviceURL="/server/channelServer.php?id="+folderId;
   }
 
 })(document);
