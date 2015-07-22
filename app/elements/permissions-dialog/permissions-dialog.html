@@ -1,16 +1,17 @@
 <dom-module id="permissions-dialog">
   <style>
-    :host {
-      display: block;
-    }
-
     paper-dialog {
-      /* to fix the height-bug in paper-dialog */
+      /* to fix the height-bug in paper-dialog*/
       max-height: 1000px !important;
     }
 
-    paper-dialog > * {
+
+    #dialog > * {
       padding: 0;
+    }
+
+    #addDialog {
+      width: 400px;
     }
 
     [header] {
@@ -22,7 +23,6 @@
       padding: 0 36px;
       color: white;
       margin-top: 0;
-
     }
 
     [content] {
@@ -36,7 +36,7 @@
       box-sizing: border-box;
     }
 
-    h3{
+    h3 {
       max-width: 300px;
     }
 
@@ -53,7 +53,7 @@
     }
 
     [user] {
-      height:48px;
+      height: 48px;
       @apply(--layout-horizontal);
       @apply(--layout-center);
     }
@@ -105,6 +105,14 @@
     }
   </style>
   <template>
+
+    <paper-dialog id="addDialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+      <div>
+        <span>Invite people:</span>
+        <paper-input label="Enter name or email address."></paper-input>
+      </div>
+    </paper-dialog>
+
     <paper-dialog id="dialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
       <div header>
         <h3>
@@ -117,7 +125,7 @@
           Admin
         </div>
         <div users>
-          <paper-fab icon="add" mini on-tab=""></paper-fab>
+          <paper-fab icon="add" mini on-click="addUser"></paper-fab>
           <template is="dom-repeat" items="{{users}}">
             <div user>
               <paper-toggle-button isadmin checked="{{item.admin}}"></paper-toggle-button>
@@ -127,26 +135,18 @@
             </div>
           </template>
         </div>
-        <!--
-        <div add-user>
-          <span>Invite people:</span>
-          <paper-input label="Enter name or email address."></paper-input>
+        <div class="buttons">
+          <paper-button dialog-dismiss>Cancel</paper-button>
+          <paper-button dialog-confirm>Save</paper-button>
         </div>
-      -->
-      </div>
-      <div class="buttons">
-        <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button dialog-confirm>Save</paper-button>
       </div>
     </paper-dialog>
-    </div>
 
-    <iron-ajax
-      id="service"
-      handle-as="json"
-      verbose="true"
-      on-response="_handleResponse"
-      ></iron-ajax>
+
+
+
+    <iron-ajax id="service" handle-as="json" verbose="true" on-response="_handleResponse"></iron-ajax>
+
   </template>
 </dom-module>
 
@@ -154,21 +154,31 @@
   (function() {
     Polymer({
       is: 'permissions-dialog',
+
       open: function() {
         this.$.dialog.open();
-        var service=this.$.service;
-        service.method='GET';
-        service.url="/server/permissionServer.php?channelId="+this.folder.id;
+        var service = this.$.service;
+        service.method = 'GET';
+        service.url = "/server/permissionServer.php?channelId=" + this.folder.id;
         service.generateRequest();
+      },
+
+      ready: function() {
+        this.$.addDialog.onclose = function() {console.log('huhuhu');}
       },
       removeUser: function(event) {
         var user = event.model.item;
         var index = this.users.indexOf(user);
         this.splice('users', index, 1);
       },
-      _handleResponse : function(){
-        this.users=this.$.service.lastResponse;
+      _handleResponse: function() {
+        this.users = this.$.service.lastResponse.list;
         console.log(this.users);
+      },
+      addUser: function() {
+        this.$.dialog.close();
+        this.$.addDialog.open();
+        console.log(this.$.addDialog);
       }
     });
   })();

@@ -1,9 +1,5 @@
 <dom-module id="create-folder">
   <style>
-    :host {
-      display: block;
-    }
-
     #createFolderDialog {
       width: 400px;
     }
@@ -15,11 +11,11 @@
         <paper-input label="Enter the title" value="{{item.title}}" autofocus></paper-input>
       </p>
       <div class="buttons">
-        <paper-button dialog-dismiss>Decline</paper-button>
-        <paper-button on-click="_confirm">Accept</paper-button>
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button on-click="_confirm">Create</paper-button>
       </div>
     </paper-dialog>
-    <editor-service id="createFolderService" on-responded="_handleResponse"></editor-service>
+    <editor-service id="createFolderService" on-responded="_confirmed"></editor-service>
   </template>
 </dom-module>
 <script>
@@ -31,17 +27,17 @@
         this.$.createFolderDialog.open();
         this.item = {
           title: '',
-          parent: this.parent
+          parent: this.parentId
         };
       },
+
       _confirm: function() {
         var service = this.$.createFolderService;
         service.generateRequest('folder', this.item, 'PUT');
       },
 
-      _handleResponse: function(resp) {
-        var folder = resp.detail;
-        console.log("Response:", folder);
+      _confirmed: function(e) {
+        var folder = e.detail;
         this.fire('created', folder);
         this.$.createFolderDialog.close();
       }

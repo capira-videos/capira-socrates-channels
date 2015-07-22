@@ -40,25 +40,30 @@
     }
   </style>
   <template>
+    <!-- Place dialogs on top to avoid interferiences with content size and scrolling -->
+    <create-unit id="createUnit" on-created="_onUnitCreated" parent-id="{{folder.id}}"></create-unit>
+    <create-folder id="createFolder" on-created="_onFolderCreated" parent-id="{{folder.id}}"></create-folder>
+    <permissions-dialog id="permissions" folder="{{folder}}"></permissions-dialog>
+
+
     <div content>
+
       <div header>
         <span page-title>{{folder.title}}</span>
         <div class="flex"></div>
         <div header-toolbar hidden$="{{!folder.channelAdmin}}">
           <capira-tooltip tooltip="Permissions">
-            <paper-icon-button icon="social:group-add" on-click="openPermissions"></paper-icon-button>
+            <paper-icon-button icon="social:group-add" on-click="_openPermissions"></paper-icon-button>
           </capira-tooltip>
         </div>
       </div>
 
       <folder-list list="{{folder.units}}" list-title="Unit" is-author="{{folder.admin}}" on-create="createUnit" folder-id={{folder.id}}></folder-list>
       <folder-list list="{{folder.folders}}" list-title="Folder" is-author="{{folder.admin}}" on-create="createFolder"></folder-list>
-    </div>
-    <create-unit id="createUnit" on-created="_onUnitCreated" parent="{{folder.id}}"></create-unit>
-    <create-folder id="createFolder" on-created="_onFolderCreated" parent="{{folder.id}}"></create-folder>
 
-    <!-- The Channel Permissions Editor -->
-    <permissions-dialog id="permissions" folder="{{folder}}"></permissions-dialog>
+    </div>
+
+
 
 
   </template>
@@ -67,19 +72,17 @@
   (function() {
     Polymer({
       is: 'folder-content',
-      openPermissions: function() {
-        this.$.permissions.open();
-      },
-
 
       behaviors: [
         Polymer.NeonAnimationRunnerBehavior
       ],
 
       properties: {
+
         folder: {
           observer: '_folderChanged',
         },
+
         animationConfig: {
           type: Object,
           value: function() {
@@ -100,11 +103,15 @@
 
 
       _folderChanged: function(newValue, oldValue) {
-        console.log('folder changed!', newValue, oldValue);
+        //scroll to top of page
         document.querySelector("#mainContainer").scrollTop = 0;
+
+        //was the folder changed to it's parent?
         if (oldValue && newValue.id == oldValue.parent) {
+          //go back
           this.playAnimation('exit');
         } else {
+          //go deeper
           this.playAnimation('entry');
         }
       },
@@ -124,12 +131,12 @@
 
       _onFolderCreated: function(e) {
         var folder = e.detail;
-        console.log(folder);
         this.unshift('folder.folders', folder);
+      },
 
-        //this should be done by the service...
-        folder.parent = this.folder.id;
-      }
+      _openPermissions: function() {
+        this.$.permissions.open();
+      },
 
     });
   })();

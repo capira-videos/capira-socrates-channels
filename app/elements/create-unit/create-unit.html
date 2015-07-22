@@ -1,46 +1,43 @@
-
 <dom-module id="create-unit">
   <style>
-    :host {
-      display: block;
-    }
-
-    paper-dialog {
-      width: 400px;
+    #createUnitDialog {
+      width: 450px !important;
+      max-height: 1000px !important;
     }
   </style>
   <template>
     <paper-dialog id="createUnitDialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
       <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_confirm"></iron-a11y-keys>
       <h2>Create Unit</h2>
-      <p>
-        <paper-input label="Enter a youtube video id or link" value="[[unit.videoId]]" id="videoId" autofocus></paper-input>
-        <paper-input label="Enter the title" value="{{unit.title}}"></paper-input>
-      </p>
+      <div>
+        <paper-input label="Enter a Youtube Video-Id" value="[[unit.videoId]]" id="videoId" autofocus></paper-input>
+        <paper-input label="Enter your title" value="{{unit.title}}" hidden$="{{!valid}}"></paper-input>
+      </div>
       <div class="buttons">
-        <paper-button dialog-dismiss>Decline</paper-button>
-        <paper-button on-click="_confirm">Accept</paper-button>
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button on-click="_confirm" disabled$="{{!valid}}">Create</paper-button>
       </div>
     </paper-dialog>
-    <editor-service id="createUnitService" on-responded="_handleResponse"></editor-service>
+    <editor-service id="createUnitService" on-responded="_confirmed"></editor-service>
     <iron-ajax id="youtubeApi" handle-as="json" verbose="true" on-response="_handleYoutubeTitle"></iron-ajax>
   </template>
 </dom-module>
+
 <script>
   (function() {
     Polymer({
       is: 'create-unit',
 
       open: function() {
-        this.$.createUnitDialog.open();
-
-        this.$.createUnitDialog.modal = true;
+        this.set('valid', false);
 
         this.unit = {
           title: '',
           videoId: '',
-          parent: this.parent
+          parent: this.parentId
         };
+
+        this.$.createUnitDialog.open();
       },
 
       ready: function() {
@@ -50,9 +47,7 @@
         }
       },
 
-
       _parse_yturl: function(url) {
-
         var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
         var match = url.match(regExp);
         if (match && match[7].length == 11) {
@@ -70,32 +65,45 @@
         } else {
           this.set('unit.videoId', youtubeUrl);
         }
-        var that = this;
-        setTimeout(function(){
-          that._fetchYoutubeTitle();
-        },500);
-      },
 
+        this.set('valid', false);
+        this._fetchYoutubeTitle();
+      },
 
       _fetchYoutubeTitle: function(id) {
         var service = this.$.youtubeApi;
-        service.url= 'https://www.googleapis.com/youtube/v3/videos?id=' + this.unit.videoId + '&key=AIzaSyBtulzLnwRn3FfkfL-Lg-AhuO8eR8jfXSQ&fields=items(snippet(title))&part=snippet'
-        service.generateRequest();
+        service.url = 'https://www.googleapis.com/youtube/v3/videos?id=' + this.unit.videoId + '&key=AIzaSyBtulzLnwRn3FfkfL-Lg-AhuO8eR8jfXSQ&fields=items(snippet(title))&part=snippet'
+
+        //timeout for to frequent changes in the video-id input
+        if (this.timer && this.timer.cancel) {
+          this.timer.cancel();
+        }
+
+        this.timer = setTimeout(function() {
+          service.generateRequest();
+        }, 200);
+
       },
 
       _handleYoutubeTitle: function() {
         var resp = this.$.youtubeApi.lastResponse;
-        console.log(resp);
-        this.set('unit.title',resp.items[0].snippet.title);
+
+        if (resp.items && resp.items.length) {
+          this.set('unit.title', resp.items[0].snippet.title);
+          this.set('valid', true);
+        } else {
+          this.set('valid', false);
+        }
       },
 
-        _confirm: function() {
-        //tell the server
-        var service = this.$.createUnitService;
-        service.generateRequest('unit', this.unit, 'PUT');
+      _confirm: function() {
+        if (this.valid) {
+          var service = this.$.createUnitService;
+          service.generateRequest('unit', this.unit, 'PUT');
+        }
       },
 
-      _handleResponse: function(resp) {
+      _confirmed: function(resp) {
         var unit = resp.detail;
         console.log("Response:", unit);
         this.fire('created', unit);
