@@ -92,11 +92,7 @@
       height: 24px;
     }
 
-    paper-dialog .buttons {
-      position: relative;
-      padding: 8px 20px 8px 24px;
-      margin: 0;
-    }
+
 
     paper-fab {
       position: absolute;
@@ -105,13 +101,6 @@
     }
   </style>
   <template>
-
-    <paper-dialog id="addDialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
-      <div>
-        <span>Invite people:</span>
-        <paper-input label="Enter name or email address."></paper-input>
-      </div>
-    </paper-dialog>
 
     <paper-dialog id="dialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
       <div header>
@@ -131,7 +120,7 @@
               <paper-toggle-button isadmin checked="{{item.admin}}"></paper-toggle-button>
               <span username>{{item.name}}</span>
               <div class="flex"></div>
-              <paper-icon-button remove icon="close" on-click="removeUser"></paper-icon-button>
+              <paper-icon-button remove icon="close" on-click="_removeUser"></paper-icon-button>
             </div>
           </template>
         </div>
@@ -143,9 +132,19 @@
     </paper-dialog>
 
 
+    <paper-dialog id="addDialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop on-close="_addClosed">
+      <h2>Invite People</h2>
+      <div>
+        Invite people to become Author in this Channel.
+        <paper-input label="Enter username or email address."></paper-input>
+      </div>
+      <div class="buttons">
+        <paper-button on-click="_addClosed">Back</paper-button>
+        <paper-button dialog-confirm>Invite</paper-button>
+      </div>
+    </paper-dialog>
 
-
-    <iron-ajax id="service" handle-as="json" verbose="true" on-response="_handleResponse"></iron-ajax>
+    <iron-ajax id="service" handle-as="json" verbose="true" on-response="_usersReceived"></iron-ajax>
 
   </template>
 </dom-module>
@@ -163,22 +162,26 @@
         service.generateRequest();
       },
 
-      ready: function() {
-        this.$.addDialog.onclose = function() {console.log('huhuhu');}
+      _usersReceived: function() {
+        this.users = this.$.service.lastResponse.list;
+        this.users=window.users.list;
+        console.log('received users: ',this.users);
       },
-      removeUser: function(event) {
+
+      _removeUser: function(event) {
         var user = event.model.item;
         var index = this.users.indexOf(user);
         this.splice('users', index, 1);
       },
-      _handleResponse: function() {
-        this.users = this.$.service.lastResponse.list;
-        console.log(this.users);
-      },
+
       addUser: function() {
         this.$.dialog.close();
         this.$.addDialog.open();
-        console.log(this.$.addDialog);
+      },
+
+      _addClosed:function(){
+        this.$.addDialog.close();
+        this.open();
       }
     });
   })();

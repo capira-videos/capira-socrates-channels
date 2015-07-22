@@ -40,13 +40,13 @@
     }
   </style>
   <template>
-    <!-- Place dialogs on top to avoid interferiences with content size and scrolling -->
-    <create-unit id="createUnit" on-created="_onUnitCreated" parent-id="{{folder.id}}"></create-unit>
-    <create-folder id="createFolder" on-created="_onFolderCreated" parent-id="{{folder.id}}"></create-folder>
-    <permissions-dialog id="permissions" folder="{{folder}}"></permissions-dialog>
-
 
     <div content>
+      <!-- Place dialogs on top to avoid interferiences with content size and scrolling -->
+      <create-unit id="createUnit" on-created="_onUnitCreated" parent-id="{{folder.id}}"></create-unit>
+      <create-folder id="createFolder" on-created="_onFolderCreated" parent-id="{{folder.id}}"></create-folder>
+      <permissions-dialog id="permissions" folder="{{folder}}"></permissions-dialog>
+
 
       <div header>
         <span page-title>{{folder.title}}</span>
