@@ -114,7 +114,7 @@
           Admin
         </div>
         <div users>
-          <paper-fab icon="add" mini on-click="addUser"></paper-fab>
+          <paper-fab icon="add" mini on-click="openAddUser"></paper-fab>
           <template is="dom-repeat" items="{{users}}">
             <div user>
               <paper-toggle-button isadmin checked="{{item.admin}}"></paper-toggle-button>
@@ -164,7 +164,7 @@
 
       _usersReceived: function() {
         this.users = this.$.service.lastResponse.list;
-        this.users=window.users.list;
+        //this.users=window.users.list;
         console.log('received users: ',this.users);
       },
 
@@ -174,9 +174,13 @@
         this.splice('users', index, 1);
       },
 
-      addUser: function() {
+      openAddUser: function() {
         this.$.dialog.close();
         this.$.addDialog.open();
+      },
+
+      addUser:function(){
+
       },
 
       _addClosed:function(){
