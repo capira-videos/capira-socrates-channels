@@ -64,6 +64,7 @@
     </div>
 
 
+    <editor-service id="updateOrderService" on-responded="_orderUpdated"></editor-service>
 
 
   </template>
@@ -137,6 +138,10 @@
       _openPermissions: function() {
         this.$.permissions.open();
       },
+
+      updateOrder: function(){
+        this.$.updateOrderService.generateRequest('order',this.folder);
+      }
 
     });
   })();
