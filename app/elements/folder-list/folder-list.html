@@ -54,6 +54,11 @@
     [selected] {
       background-color: red;
     }
+
+    sortable-list {
+        display: block;
+        background-color: green;
+    }
   </style>
   <template>
     <rename-dialog id="rename" on-renamed="_onRenamed"></rename-dialog>
@@ -77,9 +82,10 @@
           in this Folder yet. Press + to create one.
         </div>
 
-        <sortable-list animation="150" on-sort-update="_onSorted">
+        <sortable-list sortable=".sortable" animation="150" on-sort-update="_onSorted">
             <template is="dom-repeat" items="{{list}}" id="listElement">
-              <div item on-click="toggleSelection" selected$="[[item.selected]]">
+              <div item on-click="toggleSelection" selected$="[[item.selected]]"
+              class="sortable">
                 <a href="{{reference(item)}}">
                   <span class="crop">
                     <img src="{{thumbnail(item)}}" />
@@ -163,9 +169,13 @@
       },
 
       _onSorted: function(event) {
-          var oldIndex = event.detail.oldIndex-1; // zero based index
-          var newIndex = event.detail.newIndex-1;
+          var oldIndex = event.detail.oldIndex-1; // -1 because in the dom is a
+          var newIndex = Math.max(event.detail.newIndex-1,0); // <style> node as
+          // first child. We are using Math.max, as it seems that in some cases
+          // Sortable.js cant compute the correct index when dropped somewhere
+          // outside the list, ignoring the first <style> child.
           var dataEntry = this.list[oldIndex];
+          console.log('update', oldIndex, newIndex);
           // update the position in the dataset
           // One might maybe expect that some special treatment would be needed
           // as the dom element is switched first and then the databound list
