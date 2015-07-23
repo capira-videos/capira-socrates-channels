@@ -54,11 +54,6 @@
     [selected] {
       background-color: red;
     }
-
-    sortable-list {
-        display: block;
-        background-color: green;
-    }
   </style>
   <template>
     <rename-dialog id="rename" on-renamed="_onRenamed"></rename-dialog>
@@ -82,7 +77,8 @@
           in this Folder yet. Press + to create one.
         </div>
 
-        <sortable-list sortable=".sortable" animation="150" on-sort-update="_onSorted">
+        <sortable-list sortable=".sortable" animation="150"
+        on-sort-update="_onSorted" on-sort-move="_onMoved">
             <template is="dom-repeat" items="{{list}}" id="listElement">
               <div item on-click="toggleSelection" selected$="[[item.selected]]"
               class="sortable">
@@ -170,12 +166,8 @@
 
       _onSorted: function(event) {
           var oldIndex = event.detail.oldIndex-1; // -1 because in the dom is a
-          var newIndex = Math.max(event.detail.newIndex-1,0); // <style> node as
-          // first child. We are using Math.max, as it seems that in some cases
-          // Sortable.js cant compute the correct index when dropped somewhere
-          // outside the list, ignoring the first <style> child.
+          var newIndex = event.detail.newIndex-1; // <style> node as first child
           var dataEntry = this.list[oldIndex];
-          console.log('update', oldIndex, newIndex);
           // update the position in the dataset
           // One might maybe expect that some special treatment would be needed
           // as the dom element is switched first and then the databound list
@@ -190,6 +182,11 @@
           this.splice('list', oldIndex, 1); // remove at old position
           this.splice('list', newIndex, 0, dataEntry); // put at new position
           this.fire('sorted');
+      },
+
+      _onMoved: function(event) {
+          console.log('on moved inner');
+    //      event.returnValue = false;
       },
 
       _createItem: function() {

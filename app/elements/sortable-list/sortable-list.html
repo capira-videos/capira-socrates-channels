@@ -226,9 +226,9 @@ Polymer({
             //     evt.stopPropagation();
             // }.bind(this),
             onMove: function(evt) {
-                this.fire('sort-move', evt);
-                console.log('move', evt);
+                var returnValue = this.fire('sort-move', evt).returnValue;
                 evt.stopPropagation();
+                return returnValue;
             }.bind(this)
         }
     }
