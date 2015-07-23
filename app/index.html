@@ -79,6 +79,8 @@
 
     <!-- The Capira-Channels Service -->
     <iron-ajax id="ajax" auto url="{{serviceURL}}" handle-as="json" last-response="{{folder}}"></iron-ajax>
+    <permissions-service id="permissions-service"></permissions-service>
+
   </template>
 
   <!-- build:js scripts/app.js -->

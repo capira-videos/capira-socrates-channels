@@ -111,7 +111,7 @@
                     Admin
                 </div>
                 <div users>
-                    <paper-fab icon="add" mini on-click="openAddUser"></paper-fab>
+                    <paper-fab icon="add" mini on-click="_openAddAuthor"></paper-fab>
                     <template is="dom-repeat" items="{{users}}">
                         <div user>
                             <paper-toggle-button isadmin checked="{{item.admin}}" on-click="_changePermissions"></paper-toggle-button>
@@ -128,28 +128,10 @@
             </div>
         </paper-dialog>
 
+        <add-author-dialog id="addAuthorDialog" on-closed="open" folder="{{folder}}"></add-author-dialog>
 
-        <paper-dialog id="addDialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop on-close="_addClosed">
-            <h2>Invite People</h2>
-            <div>
-                Invite people to become Author in this Channel.
-                <paper-input label="Enter username or email address." id="queryInput" value="{{userQuery}}"></paper-input>
-                <template is="dom-repeat" items="{{resultedUsers}}">
-                    <div user>
-                        <span username>{{item.name}}</span>
-                        <div class="flex"></div>
-                        <paper-icon-button remove icon="add" on-click="addUser"></paper-icon-button>
-                    </div>
-                </template>
-                <iron-ajax auto id="queryUserServer" handle-as="json" verbose="true" last-response="{{resultedUsers}}"></iron-ajax>
-            </div>
-            <div class="buttons">
-                <paper-button on-click="_addClosed">Back</paper-button>
-            </div>
-        </paper-dialog>
 
         <iron-ajax id="service" handle-as="json" verbose="true" on-response="_usersReceived"></iron-ajax>
-        <iron-ajax id="permissionServer" handle-as="json" verbose="true"></iron-ajax>
 
     </template>
 </dom-module>
@@ -159,15 +141,11 @@
         Polymer({
             is: 'permissions-dialog',
 
-            ready: function() {
-                var that = this;
-                this.$.queryInput.onkeyup = function() {
-                    that._queryForUsers(this.value);
-                }
-            },
-
             open: function() {
                 this.$.dialog.open();
+
+                this.service=document.querySelector('#permissions-service');
+
                 var service = this.$.service;
                 service.method = 'GET';
                 service.url = "/server/permissionServer.php?channelId=" + this.folder.id;
@@ -181,7 +159,7 @@
 
             _changePermissions: function(event) {
                 var user = event.model.item;
-                this._generateRequest({
+                this.service.generateRequest({
                     channelId: this.folder.id,
                     isAdmin: user.admin,
                     userId: user.id
@@ -193,53 +171,15 @@
                 var index = this.users.indexOf(user);
                 this.splice('users', index, 1);
 
-                this._generateRequest({
+                this.service.generateRequest({
                     channelId: this.folder.id,
                     userId: user.id
                 }, 'DELETE');
             },
 
-            openAddUser: function() {
+            _openAddAuthor:function(){
                 this.$.dialog.close();
-                this.$.addDialog.open();
-                this.set('userQuery','');
-                this.set('resultedUsers',[]);
-            },
-
-            addUser: function(e) {
-              var user = event.model.item;
-                this._generateRequest({
-                    channelId: this.folder.id,
-                    isAdmin: false,
-                    userId: user.id
-                });
-                this._addClosed();
-            },
-
-            _addClosed: function() {
-                this.$.addDialog.close();
-                this.open();
-            },
-
-            _queryForUsers: function(query) {
-                this.set('resultedUsers',[]);
-                if (this.timer && this.timer.cancel) {
-                    this.timer.cancel();
-                }
-                if (query.length > 2) {
-                    var service = this.$.queryUserServer;
-                    this.timer = setTimeout(function() {
-                        service.url = "/server/queryUserServer.php?query=" + query;
-                    }, 300);
-                }
-            },
-
-            _generateRequest: function(payload, method) {
-                var service = this.$.permissionServer;
-                service.method = method ? method : 'POST';
-                service.url = "/server/permissionServer.php";
-                service.body = JSON.stringify(payload);
-                service.generateRequest();
+                this.$.addAuthorDialog.open();
             }
         });
     })();
