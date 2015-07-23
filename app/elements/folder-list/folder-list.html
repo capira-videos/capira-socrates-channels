@@ -175,7 +175,7 @@
           // element affected. By changing its position using splices, polymer
           // reorders the dom elements and puts the dom element in the right
           // position, where it actually already happened to be. Thus, using
-          // splices, we are save. this.set() does nt have this behaviour
+          // splices, we are save. this.set() doesnt have this behaviour
           // and results in the expected buggy behaviour.
           this.splice('list', oldIndex, 1); // remove at old position
           this.splice('list', newIndex, 0, dataEntry); // put at new position
