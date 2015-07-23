@@ -196,10 +196,13 @@
                     isAdmin: false,
                     userId: 12
                 });
-                this.$.addDialog.close();
-                this.open();
+                this._addClosed();
             },
 
+            _addClosed : function (){
+              this.$.addDialog.close();
+              this.open();
+            },
 
 
             _generateRequest: function(payload, method) {
