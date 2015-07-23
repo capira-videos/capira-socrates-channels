@@ -19,7 +19,7 @@ body {
 }
 
 paper-dialog {
-  background: white !important;
+  background-color: white !important;
 }
 paper-header-panel {
   /* BUGFIX - otherwise dialogs are behind their backdrops */

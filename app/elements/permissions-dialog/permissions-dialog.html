@@ -133,11 +133,18 @@
             <h2>Invite People</h2>
             <div>
                 Invite people to become Author in this Channel.
-                <paper-input label="Enter username or email address."></paper-input>
+                <paper-input label="Enter username or email address." id="queryInput" value="{{userQuery}}"></paper-input>
+                <template is="dom-repeat" items="{{resultedUsers}}">
+                    <div user>
+                        <span username>{{item.name}}</span>
+                        <div class="flex"></div>
+                        <paper-icon-button remove icon="add" on-click="addUser"></paper-icon-button>
+                    </div>
+                </template>
+                <iron-ajax auto id="queryUserServer" handle-as="json" verbose="true" last-response="{{resultedUsers}}"></iron-ajax>
             </div>
             <div class="buttons">
                 <paper-button on-click="_addClosed">Back</paper-button>
-                <paper-button on-click="addUser">Invite</paper-button>
             </div>
         </paper-dialog>
 
@@ -152,6 +159,13 @@
         Polymer({
             is: 'permissions-dialog',
 
+            ready: function() {
+                var that = this;
+                this.$.queryInput.onkeyup = function() {
+                    that._queryForUsers(this.value);
+                }
+            },
+
             open: function() {
                 this.$.dialog.open();
                 var service = this.$.service;
@@ -165,13 +179,13 @@
                 console.log('received users: ', this.users);
             },
 
-            _changePermissions : function(event){
-              var user = event.model.item;
-              this._generateRequest({
-                  channelId: this.folder.id,
-                  isAdmin: user.admin,
-                  userId: user.id
-              });
+            _changePermissions: function(event) {
+                var user = event.model.item;
+                this._generateRequest({
+                    channelId: this.folder.id,
+                    isAdmin: user.admin,
+                    userId: user.id
+                });
             },
 
             _removeUser: function(event) {
@@ -188,22 +202,37 @@
             openAddUser: function() {
                 this.$.dialog.close();
                 this.$.addDialog.open();
+                this.set('userQuery','');
+                this.set('resultedUsers',[]);
             },
 
-            addUser: function() {
+            addUser: function(e) {
+              var user = event.model.item;
                 this._generateRequest({
                     channelId: this.folder.id,
                     isAdmin: false,
-                    userId: 12
+                    userId: user.id
                 });
                 this._addClosed();
             },
 
-            _addClosed : function (){
-              this.$.addDialog.close();
-              this.open();
+            _addClosed: function() {
+                this.$.addDialog.close();
+                this.open();
             },
 
+            _queryForUsers: function(query) {
+                this.set('resultedUsers',[]);
+                if (this.timer && this.timer.cancel) {
+                    this.timer.cancel();
+                }
+                if (query.length > 2) {
+                    var service = this.$.queryUserServer;
+                    this.timer = setTimeout(function() {
+                        service.url = "/server/queryUserServer.php?query=" + query;
+                    }, 300);
+                }
+            },
 
             _generateRequest: function(payload, method) {
                 var service = this.$.permissionServer;
