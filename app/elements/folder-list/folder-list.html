@@ -77,22 +77,24 @@
           in this Folder yet. Press + to create one.
         </div>
 
-        <template is="dom-repeat" items="{{list}}" id="listElement">
-          <div item on-click="toggleSelection" selected$="[[item.selected]]">
-            <a href="{{reference(item)}}">
-              <span class="crop">
-                <img src="{{thumbnail(item)}}" />
-              </span>
-            </a>
-            <span item-title>{{item.title}}</span>
-            <div class="flex"></div>
-            <div hidden$="{{!isAuthor}}">
-              <paper-icon-button icon="delete" on-click="removeItem"></paper-icon-button>
-              <paper-icon-button icon="editor:mode-edit" on-click="_rename"></paper-icon-button>
-              <!--TODO: visibility of item  <paper-icon-button icon="social:public" on-click="promptDelete"></paper-icon-button> -->
-            </div>
-          </div>
-        </template>
+        <sortable-list animation="150" on-sort-update="_onSorted">
+            <template is="dom-repeat" items="{{list}}" id="listElement">
+              <div item on-click="toggleSelection" selected$="[[item.selected]]">
+                <a href="{{reference(item)}}">
+                  <span class="crop">
+                    <img src="{{thumbnail(item)}}" />
+                  </span>
+                </a>
+                <span item-title>{{item.title}}</span>
+                <div class="flex"></div>
+                <div hidden$="{{!isAuthor}}">
+                  <paper-icon-button icon="delete" on-click="removeItem"></paper-icon-button>
+                  <paper-icon-button icon="editor:mode-edit" on-click="_rename"></paper-icon-button>
+                  <!--TODO: visibility of item  <paper-icon-button icon="social:public" on-click="promptDelete"></paper-icon-button> -->
+                </div>
+              </div>
+            </template>
+        </sortable-list>
 
         <array-selector id="selector" items="{{list}}" selected="{{selected}}" multi toggle></array-selector>
       </div>
@@ -158,6 +160,25 @@
         this.set('list.' + i + '.title', item.title);
 
         this.$.service.generateRequest(this.listTitle.toLowerCase(), item);
+      },
+
+      _onSorted: function(event) {
+          var oldIndex = event.detail.oldIndex-1; // zero based index
+          var newIndex = event.detail.newIndex-1;
+          var dataEntry = this.list[oldIndex];
+          // update the position in the dataset
+          // One might maybe expect that some special treatment would be needed
+          // as the dom element is switched first and then the databound list
+          // entries are also switched which would result in a double switching.
+          // Mind thereby that the binding of a data entry stays to the same
+          // dom element. However, there is only one items data entry and dom
+          // element affected. By changing its position using splices, polymer
+          // reorders the dom elements and puts the dom element in the right
+          // position, where it actually already happened to be. Thus, using
+          // splices, we are save. this.set() does nt have this behaviour
+          // and results in the expected buggy behaviour.
+          this.splice('list', oldIndex, 1); // remove at old position
+          this.splice('list', newIndex, 0, dataEntry); // put at new position
       },
 
       _createItem: function() {
