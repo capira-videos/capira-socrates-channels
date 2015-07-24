@@ -101,10 +101,10 @@ Polymer({
         * @default >*
         * @type String
         */
-        // sortable: {
-        //   type: String,
-        //   value: '>*'
-        // },
+        sortable: {
+          type: String,
+          value: '>*'
+        },
         /**
         * Name of the class to apply to the ghost during drag.
         * @attribute ghostClass
@@ -168,7 +168,7 @@ Polymer({
             animation: this.animation,
             handle: this.handle,
             filter: this.filter,
-            //   draggable: this.sortable,
+            draggable: this.sortable,
             //   ghostClass: this.ghostClass,
             //   scroll: this.scroll,
             //   scrollSensitivity: this.scrollSensitivity,
@@ -226,8 +226,9 @@ Polymer({
             //     evt.stopPropagation();
             // }.bind(this),
             onMove: function(evt) {
-                this.fire('sort-move', evt);
+                var returnValue = this.fire('sort-move', evt).returnValue;
                 evt.stopPropagation();
+                return returnValue;
             }.bind(this)
         }
     }

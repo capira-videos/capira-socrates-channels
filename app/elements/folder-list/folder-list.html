@@ -77,9 +77,11 @@
           in this Folder yet. Press + to create one.
         </div>
 
-        <sortable-list animation="150" on-sort-update="_onSorted">
+        <sortable-list sortable=".sortable" animation="150"
+        on-sort-update="_onSorted" on-sort-move="_onMoved">
             <template is="dom-repeat" items="{{list}}" id="listElement">
-              <div item on-click="toggleSelection" selected$="[[item.selected]]">
+              <div item on-click="toggleSelection" selected$="[[item.selected]]"
+              class="sortable">
                 <a href="{{reference(item)}}">
                   <span class="crop">
                     <img src="{{thumbnail(item)}}" />
@@ -163,8 +165,8 @@
       },
 
       _onSorted: function(event) {
-          var oldIndex = event.detail.oldIndex-1; // zero based index
-          var newIndex = event.detail.newIndex-1;
+          var oldIndex = event.detail.oldIndex-1; // -1 because in the dom is a
+          var newIndex = event.detail.newIndex-1; // <style> node as first child
           var dataEntry = this.list[oldIndex];
           // update the position in the dataset
           // One might maybe expect that some special treatment would be needed
@@ -180,6 +182,11 @@
           this.splice('list', oldIndex, 1); // remove at old position
           this.splice('list', newIndex, 0, dataEntry); // put at new position
           this.fire('sorted');
+      },
+
+      _onMoved: function(event) {
+          console.log('on moved inner');
+    //      event.returnValue = false;
       },
 
       _createItem: function() {
