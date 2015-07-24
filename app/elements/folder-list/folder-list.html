@@ -60,6 +60,29 @@ img {
     get called for every child of a draggable.
     See http://stackoverflow.com/questions/7110353/html5-dragleave-fired-when-hovering-a-child-element*/
 }
+/*
+.sortable {
+    transition: background-color 3s, height 3s;
+    background-color: white;
+}
+
+.sortable>* {
+    transition: opacity 2s;
+    opacity: 1;
+}
+
+.sortable.sortable-ghost {
+    background-color: blue;
+    height: 3px;
+}
+
+.sortable.sortable-ghost>* {
+    opacity: 0;
+}*/
+
+.sortable-ghost {
+    opacity: 0.3;
+}
 </style>
 <template>
     <rename-dialog id="rename" on-renamed="_onRenamed"></rename-dialog>
@@ -68,7 +91,7 @@ img {
         <a role="button" tabindex="0" style="color: #eeff41;margin: 10px" onclick="console.log('UNDO')">Undo</a>
     </paper-toast>
 
-    <div list hidden$="{{isHidden()}}">
+    <div list>
         <div list-header>
             <span list-title>
                 <span>{{listTitle}}</span>s</span>
@@ -84,8 +107,8 @@ img {
                     </div>
 
                     <sortable-list id="sortable-list" sortable=".sortable" animation="150"
-                    on-sort-update="_onSorted" on-sort-start="_onSortStart"
-                    on-sort-move="_onMoved" on-sort-end="_onSortEnd" group="all-sortables">
+                    on-sort-start="_onSortStart" on-sort-move="_onMoved"
+                    on-sort-end="_onSortEnd" group="all-sortables">
                     <template is="dom-repeat" items="{{list}}" id="listElement">
                         <div item on-click="toggleSelection" selected$="[[item.selected]]"
                         class="sortable" type="{{listTitle}}" on-dragleave="_dragLeave">
@@ -193,7 +216,7 @@ img {
                 }
             }
         },
-      
+
         _onDrag: function(event) {
             this._folderDragValues.mousePosition.x = event.clientX;
             this._folderDragValues.mousePosition.y = event.clientY;
