@@ -35,3 +35,40 @@
   }
 
 })(document);
+
+
+
+
+/*
+ * paper-inputs are auto-focused only once when contained in a paper-dialog.
+ * we use this fix: https://gist.github.com/kevashcraft/b07b2aa83563473c54c2
+ */
+
+window.addEventListener('iron-overlay-opened', fixDialog);
+
+function fixDialog (dore) {
+	var dialog = (typeof dore.tagName != 'undefined') ? dore : dore.target;
+	if(dialog.tagName == 'PAPER-DIALOG') {
+		dialog.fit();
+		var input = dialog.querySelector('[autofocus]');
+		if(input) {
+			if(typeof input.dataset.highlight != 'undefined') var highlight = true;
+			switch(input.tagName.toLowerCase()) {
+				case 'paper-textarea':
+				case 'paper-input':
+					input.$.input.focus();
+					if(highlight) input.$.input.select();
+					break;
+				case 'input':
+					input.focus();
+					if(highlight) input.select();
+					break;
+				case 'iron-autogrow-textarea':
+					console.log("Here!");
+					break;
+				default:
+					console.log("Tried to focus:",input.tagName.toLowerCase());
+			}
+		}
+	}
+}
