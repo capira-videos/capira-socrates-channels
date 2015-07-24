@@ -56,7 +56,8 @@ img {
 }
 
 .sorting .sortable * {
-    pointer-events: none; /* a nice hack to avoid that dragEnter and dragLeave
+      pointer-events: none;
+      /* a nice hack to avoid that dragEnter and dragLeave
     get called for every child of a draggable.
     See http://stackoverflow.com/questions/7110353/html5-dragleave-fired-when-hovering-a-child-element*/
 }
@@ -91,7 +92,7 @@ img {
         <a role="button" tabindex="0" style="color: #eeff41;margin: 10px" onclick="console.log('UNDO')">Undo</a>
     </paper-toast>
 
-    <div list>
+    <div list hidden$="{{computeIsHidden(list,isAuthor)}}">
         <div list-header>
             <span list-title>
                 <span>{{listTitle}}</span>s</span>
@@ -110,8 +111,7 @@ img {
                     on-sort-start="_onSortStart" on-sort-move="_onMoved"
                     on-sort-end="_onSortEnd" group="all-sortables">
                     <template is="dom-repeat" items="{{list}}" id="listElement">
-                        <div item on-click="toggleSelection" selected$="[[item.selected]]"
-                        class="sortable" type="{{listTitle}}" on-dragleave="_dragLeave">
+            <div item on-click="toggleSelection" selected$="[[item.selected]]" class="sortable" type="{{listTitle}}" on-dragleave="_dragLeave">
                         <a href="{{reference(item)}}">
                             <span class="crop">
                                 <img src="{{thumbnail(item)}}" />
@@ -143,13 +143,24 @@ img {
     Polymer({
         is: 'folder-list',
         properties: {
-            list: Array,
+        list: {
+          type: Array,
+          value: []
+        },
+        isAuthor: {
+          type: Boolean,
+          value: false
+        },
             highlightedFolder: {
                 type: HTMLElement,
                 notify: true,
                 value: null
             }
         },
+
+      computeIsHidden: function(list, isAuthor) {
+        return !(this.list.length > 0 || this.isAuthor);
+      },
 
         removeItem: function(event) {
             var item = event.model.item;
@@ -178,7 +189,7 @@ img {
         },
 
         unitRef: function(unit) {
-            return 'https://capira.de/editor/#/' + unit.id;
+        return 'https://capira.de/'+(this.isAuthor?'editor':'player')+'/#/' + unit.id;
         },
 
         folderRef: function(item) {
@@ -223,7 +234,10 @@ img {
         },
 
         _folderDragValues: {
-            mousePosition: { x:0, y:0 },
+        mousePosition: {
+          x: 0,
+          y: 0
+        },
             currentlyHoveredFolder: null,
             enteredFrom: '' // bottom or top
         },
@@ -284,13 +298,11 @@ img {
                     .$.listElement.indexForElement(this.highlightedFolder);
                 var itemIndex = this._getFolderListElement(item.type)
                     .$.listElement.indexForElement(item);
-                console.log('Dropped '+item.type+' '+itemIndex
-                    +' into Folder '+folderIndex);
+          console.log('Dropped ' + item.type + ' ' + itemIndex + ' into Folder ' + folderIndex);
             } else if (oldIndex!==newIndex) { // moved
                 changePosition(oldIndex, newIndex);
                 //      this.fire('sorted');
-                console.log('Moved '+event.detail.item.type+' from position '
-                    +oldIndex+' to '+newIndex);
+          console.log('Moved ' + event.detail.item.type + ' from position ' + oldIndex + ' to ' + newIndex);
             }
 
             // cleanup
@@ -333,10 +345,7 @@ img {
                     'top' : 'bottom';
                     this._highlightFolderForDropping(related);
                 } else {
-                    var overMid = (this._folderDragValues.enteredFrom === 'bottom'
-                    && mouseY<folderMidY)
-                    || (this._folderDragValues.enteredFrom === 'top'
-                    && mouseY>folderMidY);
+            var overMid = (this._folderDragValues.enteredFrom === 'bottom' && mouseY < folderMidY) || (this._folderDragValues.enteredFrom === 'top' && mouseY > folderMidY);
                     if (overMid) {
                         allowSorting = true;
                         this._unHighlightFolderForDropping(related);
@@ -399,10 +408,7 @@ img {
             var item = this.$.listElement.itemForElement(e.target);
             item.selected = !item.selected;
             this.$.selector.select(item);
-        },
-
-
-
+      }
     });
 })();
 </script>

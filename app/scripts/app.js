@@ -36,7 +36,7 @@
    });
 
   app.setServiceUrl=function(folderId){
-      app.serviceURL="/server/channelServer.php?id="+folderId;
-  }
+      app.serviceURL='/server/channelServer.php?id='+folderId; // +'&editor=true';
+  };
 
 })(document);

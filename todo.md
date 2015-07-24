@@ -25,6 +25,7 @@ Projekt: Deploy Channels Editor alpha bis Sonntag Abend.
 
 ==Sprint 2  (nicht mehr vor dem ersten deploy)
 -login-page
+--login mit google
 -breadcrumbs
 --getPath mit parent berechnen -> Pascal
 -high performance

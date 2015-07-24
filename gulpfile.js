@@ -21,6 +21,8 @@ var path = require('path');
 var fs = require('fs');
 var glob = require('glob');
 var httpProxy = require('http-proxy');
+var htmlmin = require('gulp-html-minifier');
+
 
 var AUTOPREFIXER_BROWSERS = [
 	'ie >= 10',
@@ -180,6 +182,26 @@ gulp.task('vulcanize', function() {
 		}));
 });
 
+
+gulp.task('minify', function() {
+	gulp.src('dist/elements/elements.vulcanized.html')
+		.pipe(htmlmin({
+			customAttrAssign: [/\$=/],
+			removeComments: true,
+			collapseWhitespace: true,
+			minifyJS: {
+				compress:{
+                    pure_funcs: [ 'console.log' ]
+                }
+			},
+			minifyCSS: true
+		}))
+		.pipe(gulp.dest('dist/elements/'))
+});
+
+
+
+
 // Generate a list of files that should be precached when serving from 'dist'.
 // The list will be consumed by the <platinum-sw-cache> element.
 gulp.task('precache', function(callback) {
@@ -284,8 +306,8 @@ gulp.task('serve:dist', ['default'], function() {
 gulp.task('default', ['clean'], function(cb) {
 	runSequence(
 		['copy', 'styles'],
-		'elements', ['images', 'fonts', 'html','jshint'],
-		'vulcanize', 'precache',
+		'elements', ['images', 'fonts', 'html', 'jshint'],
+		'vulcanize', 'minify', 'precache',
 		cb);
 });
 
