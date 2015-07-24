@@ -18,7 +18,7 @@
         <paper-button on-click="_confirm" disabled$="{{!valid}}">Create</paper-button>
       </div>
     </paper-dialog>
-    <editor-service id="createUnitService" on-responded="_confirmed"></editor-service>
+    <channel-editor-service id="createUnitService" on-responded="_confirmed"></channel-editor-service>
     <iron-ajax id="youtubeApi" handle-as="json" verbose="true" on-response="_handleYoutubeTitle" loading="{{loading}}"></iron-ajax>
   </template>
 </dom-module>

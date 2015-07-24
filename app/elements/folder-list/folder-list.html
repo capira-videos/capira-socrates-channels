@@ -87,7 +87,7 @@ img {
 </style>
 <template>
     <rename-dialog id="rename" on-renamed="_onRenamed"></rename-dialog>
-
+    <confirm-delete-dialog id="confirmDelete" on-delete-confirmed="removeItem"></confirm-delete-dialog>
     <paper-toast id="removed" duration="7000">
         <a role="button" tabindex="0" style="color: #eeff41;margin: 10px" onclick="console.log('UNDO')">Undo</a>
     </paper-toast>
@@ -133,7 +133,7 @@ img {
 
         <array-selector id="selector" items="{{list}}" selected="{{selected}}" multi toggle></array-selector>
 
-        <editor-service id="service" on-responded="_handleResponse"></editor-service>
+      <channel-editor-service id="service" on-responded="_handleResponse"></channel-editor-service>
     </template>
 </dom-module>
 
@@ -162,13 +162,22 @@ img {
         return !(this.list.length > 0 || this.isAuthor);
       },
 
+      _confirmDelete: function() {
+        var item = event.model.item;
+        this.$.confirmDelete.open(item);
+      },
+
+      _saveItem: function(item) {
+        this.$.service.generateRequest(this.listTitle.toLowerCase(), item);
+      },
+
         removeItem: function(event) {
             event.preventDefault();
 			event.stopPropagation();
-            var item = event.model.item;
+        var item = event.detail;
             item.deleted = true;
             item.folderId = this.folderId;
-            this.$.service.generateRequest(this.listTitle.toLowerCase(), item);
+        this._saveItem(item);
 
             this.deleteIndex = this.list.indexOf(item);
             this.splice('list', this.deleteIndex, 1);
@@ -177,6 +186,8 @@ img {
             toast.text = 'Removed one ' + this.listTitle + '.';
             toast.show();
         },
+
+
 
         thumbnail: function(item) {
             return 'http://img.youtube.com/vi/' + (item.thumbnail ? item.thumbnail : item.videoId) + '/default.jpg';
@@ -211,7 +222,7 @@ img {
             var i = this.list.indexOf(item);
             this.set('list.' + i + '.title', item.title);
 
-            this.$.service.generateRequest(this.listTitle.toLowerCase(), item);
+        this._saveItem(item);
         },
 
         _getFolderListElements: function() {
