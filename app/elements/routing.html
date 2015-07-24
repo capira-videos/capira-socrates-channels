@@ -12,6 +12,10 @@
       app.setServiceUrl(164);
     });
 
+    page('/login', function () {
+      app.route = 'login';
+    });
+
     page('/:id', function (data) {
       app.route = 'home';
       app.setServiceUrl(data.params.id);

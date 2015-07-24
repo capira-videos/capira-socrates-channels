@@ -9,13 +9,22 @@
         [username] {
             @apply(--paper-font-subhead);
         }
+
+        [query] {
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+            height: 96px;
+        }
     </style>
     <template>
         <paper-dialog id="addDialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop on-close="_closeDialog">
             <h2>Invite People</h2>
             <div>
                 Invite people to become Author in this Channel.
+
                 <paper-input label="Enter username or email address." id="queryInput" value="{{userQuery}}" autofocus></paper-input>
+                <paper-spinner alt="Loading users-list" active hidden$="{{!loading}}" ></paper-spinner>
+
                 <template is="dom-repeat" items="{{resultedUsers}}">
                     <div user>
                         <span username>{{item.name}}</span>
@@ -29,7 +38,7 @@
             </div>
         </paper-dialog>
 
-        <iron-ajax auto id="queryUserServer" handle-as="json" verbose="true" last-response="{{resultedUsers}}"></iron-ajax>
+        <iron-ajax auto id="queryUserServer" handle-as="json" verbose="true" last-response="{{resultedUsers}}" loading="{{loading}}"></iron-ajax>
     </template>
 </dom-module>
 <script>
@@ -45,8 +54,7 @@
 
             addUser: function(e) {
                 var user = event.model.item;
-                document.querySelector('#permissions-service').generateRequest(
-                  {
+                document.querySelector('#permissions-service').generateRequest({
                     channelId: this.folder.id,
                     isAdmin: false,
                     userId: user.id
@@ -76,7 +84,7 @@
                         service.url = "/server/queryUserServer.php?query=" + query;
                     }, 300);
                 } else {
-                  this.set('resultedUsers', []);
+                    this.set('resultedUsers', []);
                 }
             }
 

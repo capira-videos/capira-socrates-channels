@@ -19,7 +19,7 @@
       </div>
     </paper-dialog>
     <editor-service id="createUnitService" on-responded="_confirmed"></editor-service>
-    <iron-ajax id="youtubeApi" handle-as="json" verbose="true" on-response="_handleYoutubeTitle"></iron-ajax>
+    <iron-ajax id="youtubeApi" handle-as="json" verbose="true" on-response="_handleYoutubeTitle" loading="{{loading}}"></iron-ajax>
   </template>
 </dom-module>
 
@@ -37,6 +37,7 @@
           parent: this.parentId
         };
 
+        this.loading=false;
         this.$.createUnitDialog.open();
       },
 
@@ -81,7 +82,7 @@
 
         this.timer = setTimeout(function() {
           service.generateRequest();
-        }, 200);
+        }, 100);
 
       },
 
