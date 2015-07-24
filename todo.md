@@ -15,6 +15,8 @@ Projekt: Deploy Channels Editor alpha bis Sonntag Abend.
 -"admin & author" vs "admin vs channelAdmin" ist unklare terminologie. nur noch ersteres.  -> Pascal?
 -leere listen ausblenden, wenn man keine rechte hat items hinzu zu fügen
 -tests schreiben?
+-sortable mit permissions verheiraten
+-"player vs. editor" je nach permissions verlinken
 
 
 
@@ -24,6 +26,7 @@ Projekt: Deploy Channels Editor alpha bis Sonntag Abend.
 ==Sprint 2  (nicht mehr vor dem ersten deploy)
 -login-page
 -breadcrumbs
+--getPath mit parent berechnen -> Pascal
 -high performance
 -responsive
 -setPrivacy (visible/invisible)
