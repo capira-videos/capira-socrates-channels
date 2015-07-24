@@ -12,7 +12,7 @@
     generateRequest: function(payload, method) {
         var service = this.$.service;
         service.method = method ? method : 'POST';
-        service.url = "/server/permissionServer.php";
+        service.url = '/server/permissionServer.php';
         service.body = JSON.stringify(payload);
         service.generateRequest();
     }

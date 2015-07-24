@@ -170,7 +170,7 @@ gulp.task('vulcanize', function() {
 	return gulp.src('dist/elements/elements.vulcanized.html')
 		.pipe($.vulcanize({
 			dest: DEST_DIR,
-			strip: true,
+			stripComments: true,
 			inlineCss: true,
 			inlineScripts: true
 		}))
@@ -284,7 +284,7 @@ gulp.task('serve:dist', ['default'], function() {
 gulp.task('default', ['clean'], function(cb) {
 	runSequence(
 		['copy', 'styles'],
-		'elements', ['images', 'fonts', 'html'], //'jshint',
+		'elements', ['images', 'fonts', 'html','jshint'],
 		'vulcanize', 'precache',
 		cb);
 });

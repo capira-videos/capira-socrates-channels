@@ -45,13 +45,13 @@
         var that = this;
         this.$.videoId.onkeyup = function() {
           that._handleYoutubeUrls(this.value || '');
-        }
+        };
       },
 
-      _parse_yturl: function(url) {
+      _parseYoutubeUrl: function(url) {
         var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
         var match = url.match(regExp);
-        if (match && match[7].length == 11) {
+        if (match && match[7].length === 11) {
           return match[7];
         } else {
           return false;
@@ -59,7 +59,7 @@
       },
 
       _handleYoutubeUrls: function(youtubeUrl) {
-        var split = this._parse_yturl(youtubeUrl);
+        var split = this._parseYoutubeUrl(youtubeUrl);
 
         if (split) {
           this.set('unit.videoId', split);
@@ -78,8 +78,7 @@
         }
 
         var service = this.$.youtubeApi;
-        service.url = 'https://www.googleapis.com/youtube/v3/videos?id=' + id + '&key=AIzaSyBtulzLnwRn3FfkfL-Lg-AhuO8eR8jfXSQ&fields=items(snippet(title))&part=snippet'
-
+        service.url = 'https://www.googleapis.com/youtube/v3/videos?id=' + id + '&key=AIzaSyBtulzLnwRn3FfkfL-Lg-AhuO8eR8jfXSQ&fields=items(snippet(title))&part=snippet';
         this.timer = setTimeout(function() {
           service.generateRequest();
         }, 100);
@@ -106,7 +105,7 @@
 
       _confirmed: function(resp) {
         var unit = resp.detail;
-        console.log("Response:", unit);
+        console.log('Response:', unit);
         this.fire('created', unit);
         this.$.createUnitDialog.close();
       }

@@ -52,7 +52,7 @@
                 this.set('resultedUsers', []);
             },
 
-            addUser: function(e) {
+            addUser: function() {
                 var user = event.model.item;
                 document.querySelector('#permissions-service').generateRequest({
                     channelId: this.folder.id,
@@ -71,7 +71,7 @@
                 var that = this;
                 this.$.queryInput.onkeyup = function() {
                     that._queryForUsers(this.value);
-                }
+                };
             },
 
             _queryForUsers: function(query) {
@@ -81,7 +81,7 @@
                 if (query.length > 2) {
                     var service = this.$.queryUserServer;
                     this.timer = setTimeout(function() {
-                        service.url = "/server/queryUserServer.php?query=" + query;
+                        service.url = '/server/queryUserServer.php?query=' + query;
                     }, 300);
                 } else {
                     this.set('resultedUsers', []);
