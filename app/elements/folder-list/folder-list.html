@@ -26,6 +26,11 @@
       margin-left: 10px;
     }
 
+    [isEmpty]{
+      @apply(--paper-font-caption);
+      @apply(--material-container);
+    }
+
     paper-item {
       @apply(--material-container);
       padding-top: 8px;
@@ -122,7 +127,7 @@
         <paper-icon-button icon="add" on-click="_createItem" hidden$="{{!isAuthor}}"></paper-icon-button>
       </div>
 
-      <div hidden$="{{list.0}}" class="paper-font-caption">
+      <div hidden$="{{list.0}}" isEmpty>
         Empty. There are no
         <span>
           <span>{{listTitle}}</span>s</span>
