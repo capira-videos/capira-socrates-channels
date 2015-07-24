@@ -77,7 +77,7 @@
           in this Folder yet. Press + to create one.
         </div>
 
-        <sortable-list sortable=".sortable" animation="150" on-sort-update="_onSorted" on-sort-move="_onMoved">
+        <sortable-list sortable=".sortable" animation="150" on-sort-update="_onSorted" on-sort-move="_onMoved" disabled$="{{!isAuthor}}">
           <template is="dom-repeat" items="{{list}}" id="listElement">
             <div item on-click="toggleSelection" selected$="[[item.selected]]" class="sortable">
               <a href="{{reference(item)}}">
