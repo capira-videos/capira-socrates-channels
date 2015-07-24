@@ -176,12 +176,20 @@
         this.$.service.generateRequest(this.listTitle.toLowerCase(), item);
       },
 
-      _onSortStart: function() {
+      _onSortStart: function(event) {
           this._addOrRemoveSortingClass('add');
+          if (event.detail.item.type==='Folder') {
+              this.addEventListener('drag', this._onDrag);
+          }
       },
 
-      _onSortEnd: function() {
+      _onSortEnd: function(event) {
           this._addOrRemoveSortingClass('remove');
+          this._unHighlightFolderForDropping();
+          if (event.detail.item.type==='Folder') {
+              this.removeEventListener('drag', this._onDrag);
+              this._folderDragValues.currentlyHoveredFolder = null;
+          }
       },
 
       _addOrRemoveSortingClass: function(addOrRemove) {
@@ -191,6 +199,17 @@
               var sortableList = Polymer.dom(folderList.root).querySelector('sortable-list');
               Polymer.dom(sortableList).classList[addOrRemove]('sorting');
           });
+      },
+
+      _onDrag: function(event) {
+          this._folderDragValues.mousePosition.x = event.clientX;
+          this._folderDragValues.mousePosition.y = event.clientY;
+      },
+
+      _folderDragValues: {
+          mousePosition: { x:0, y:0 },
+          currentlyHoveredFolder: null,
+          enteredFrom: '' // bottom or top
       },
 
       _onSorted: function(event) {
@@ -228,6 +247,30 @@
               // moved into a folder.
               allowSorting = false;
               this._highlightFolderForDropping(related);
+          } else if (dragged.type==='Folder' && related.type==='Folder') {
+              // sort after moving with the mouse over the mid of the folder
+              var relatedRect = event.detail.relatedRect;
+              var mouseY = this._folderDragValues.mousePosition.y;
+              var folderMidY = (relatedRect.top+relatedRect.bottom)/2;
+              if (related!==this._folderDragValues.currentlyHoveredFolder) {
+                  // freshly entered into new folder element
+                  allowSorting = false;
+                  this._folderDragValues.currentlyHoveredFolder = related;
+                  this._folderDragValues.enteredFrom = mouseY<folderMidY?
+                    'top' : 'bottom';
+                  this._highlightFolderForDropping(related);
+              } else {
+                  var overMid = (this._folderDragValues.enteredFrom === 'bottom'
+                      && mouseY<folderMidY)
+                      || (this._folderDragValues.enteredFrom === 'top'
+                      && mouseY>folderMidY);
+                  if (overMid) {
+                      allowSorting = true;
+                      this._unHighlightFolderForDropping(related);
+                  } else {
+                      allowSorting = false;
+                  }
+              }
           }
           event.returnValue = allowSorting;
       },
@@ -236,14 +279,31 @@
           // we can safely asume that dragLeave only gets called once when
           // leaving an element itself and not when leavin one of its children
           // as we are using pointer-events:none (see above)
-          this._unHighlightFolderForDropping(event.target);
+          if (event.target.type==="Folder") {
+              this._unHighlightFolderForDropping(event.target);
+              this._folderDragValues.currentlyHoveredFolder = null;
+          }
       },
 
+      // Some words about highlighting a folder:
+      // Sortable.js uses HTML5 drag and drop which causes some problems.
+      // Simple stuff like .folder:hover { background:green } doesn't work.
+      // mouse events also did not trigger, so we had to use the dragLeave
+      // event. This however gets not only called when leaving the drop target
+      // (highlighted folder) but also when leaving any of it's children, also
+      // when changing from one child to another. To reliably only trigger
+      // dragLeave when the folder element is left, we set the children to
+      // pointer-events:none; This ist done in onSortStart and onSortEnd on
+      // both lists. To not trigger the highlighting over and over again (the
+      // onMoved event gets called very often), we save a reference to the
+      // highlightedFolder which is unset on unhighlighting. As the highlighting
+      // for a unit does get triggered in the unit list, but the unhighlighting
+      // in the dragLeave event of the folder list, the reference is kept
+      // synchronous using databinding in folder-content.html
       _highlightFolderForDropping: function(folderElement) {
           if (folderElement===this.highlightedFolder) {
               return;
           }
-          console.log('highlighting',this.highlightedFolder, folderElement);
           folderElement.style.backgroundColor = 'lightblue';
           this.highlightedFolder = folderElement;
       },
@@ -252,7 +312,6 @@
           highlightedFolder = highlightedFolder || this.highlightedFolder;
           if (highlightedFolder) {
               highlightedFolder.style.backgroundColor = 'white';
-              console.log('unhighliting', this.highlightedFolder, highlightedFolder, this.highlightedFolder===highlightedFolder);
               if (this.highlightedFolder===highlightedFolder) {
                   this.highlightedFolder = null;
               }
