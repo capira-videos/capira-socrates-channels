@@ -151,7 +151,7 @@
 
       <array-selector id="selector" items="{{list}}" selected="{{selected}}" multi toggle></array-selector>
 
-      <channel-editor-service id="service" on-responded="_handleResponse"></channel-editor-service>
+      <channel-editor-service id="service"></channel-editor-service>
   </template>
 </dom-module>
 
@@ -188,7 +188,7 @@
       },
 
       _saveItem: function(item) {
-        this.$.service.generateRequest(this.listTitle.toLowerCase(), item);
+        return document.querySelector('#channelEditorService').generateRequest(this.listTitle.toLowerCase(), item);
       },
 
       removeItem: function(event) {
@@ -240,7 +240,9 @@
         var i = this.list.indexOf(item);
         this.set('list.' + i + '.title', item.title);
 
-        this._saveItem(item);
+        this._saveItem(item).then(function(e){
+          console.log('saved',e);
+        });
       },
 
       _getFolderListElements: function() {
@@ -355,7 +357,7 @@
           console.log('Dropped ' + item.type + ' ' + itemIndex + ' into Folder ' + folderIndex);
         } else if (oldIndex !== newIndex) { // moved
           changePosition(oldIndex, newIndex);
-          //      this.fire('sorted');
+                this.fire('sorted');
           console.log('Moved ' + event.detail.item.type + ' from position ' + oldIndex + ' to ' + newIndex);
         }
 
