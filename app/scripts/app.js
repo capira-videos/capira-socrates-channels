@@ -7,10 +7,6 @@
   // Learn more about auto-binding templates at http://goo.gl/Dx1u2g
   var app = document.querySelector('#app');
 
-  app.displayInstalledToast = function() {
-    //document.querySelector('#caching-complete').show();
-  };
-
   // Listen for template bound event to know when bindings
   // have resolved and content has been stamped to the page
   app.addEventListener('dom-change', function() {
@@ -22,13 +18,22 @@
     // imports are loaded and elements have been registered
   });
 
-  // Close drawer after menu item is selected if drawerPanel is narrow
-  app.onMenuSelect = function() {
-    var drawerPanel = document.querySelector('#paperDrawerPanel');
-    if (drawerPanel.narrow) {
-      drawerPanel.closeDrawer();
-    }
-  };
+   // paper-inputs are auto-focused only once when contained in a paper-dialog.
+   // we use this fix: https://stackoverflow.com/questions/31600258/autofocus-paper-input-in-a-paper-dialog-works-only-once
+   window.addEventListener('iron-overlay-opened', function(event) {
+       // Grab the autofocus input
+       var input = event.target.querySelector('[autofocus]');
+       // Switch it because some require special treatment
+       switch(input.tagName.toLowerCase()) {
+           case 'input':
+               input.focus();
+               break;
+           case 'paper-textarea':
+           case 'paper-input':
+               input.$.input.focus();
+               break;
+       }
+   });
 
   app.setServiceUrl=function(folderId){
       app.serviceURL="/server/channelServer.php?id="+folderId;

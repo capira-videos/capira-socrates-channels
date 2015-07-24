@@ -1,192 +1,188 @@
 <dom-module id="permissions-dialog">
-  <style>
-    paper-dialog {
-      /* to fix the height-bug in paper-dialog*/
-      max-height: 1000px !important;
-    }
+    <style>
+        paper-dialog {
+            /* to fix the height-bug in paper-dialog*/
+            max-height: 1000px !important;
+        }
 
+        #dialog > * {
+            padding: 0;
+        }
 
-    #dialog > * {
-      padding: 0;
-    }
+        #addDialog {
+            width: 400px;
+        }
 
-    #addDialog {
-      width: 400px;
-    }
+        [header] {
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+            @apply(--shadow-elevation-1dp);
+            height: 64px;
+            background-color: var(--default-primary-color);
+            padding: 0 36px;
+            color: white;
+            margin-top: 0;
+        }
 
-    [header] {
-      @apply(--layout-horizontal);
-      @apply(--layout-center);
-      @apply(--shadow-elevation-1dp);
-      height: 64px;
-      background-color: var(--default-primary-color);
-      padding: 0 36px;
-      color: white;
-      margin-top: 0;
-    }
+        [content] {
+            @apply(--layout-vertical);
+            overflow: auto;
+        }
 
-    [content] {
-      @apply(--layout-vertical);
-      overflow: auto;
-    }
+        [content] > *,
+        [header] {
+            padding: 0 16px 0 24px !important;
+            box-sizing: border-box;
+        }
 
-    [content] > *,
-    [header] {
-      padding: 0 16px 0 24px !important;
-      box-sizing: border-box;
-    }
+        h3 {
+            max-width: 300px;
+        }
 
-    h3 {
-      max-width: 300px;
-    }
+        [list-header] {
+            font-size: 12px;
+            padding-top: 12px;
+        }
 
-    [list-header] {
-      font-size: 12px;
-      padding-top: 12px;
-    }
+        [users] {
+            height: 266px;
+            min-width: 400px;
+            overflow-y: auto;
+            overflow-x: hidden;
+        }
 
-    [users] {
-      height: 266px;
-      min-width: 400px;
-      overflow-y: auto;
-      overflow-x: hidden;
-    }
+        [user] {
+            height: 48px;
+            @apply(--layout-horizontal);
+            @apply(--layout-center);
+        }
 
-    [user] {
-      height: 48px;
-      @apply(--layout-horizontal);
-      @apply(--layout-center);
-    }
+        [username] {
+            @apply(--paper-font-subhead);
+        }
 
-    [username] {
-      @apply(--paper-font-subhead);
-    }
+        [isadmin] {
+            padding-right: 16px;
+            padding-right: 32px;
+        }
 
-    [isadmin] {
-      padding-right: 16px;
-      padding-right: 32px;
-    }
+        [adminlabel] {
+            width: 40px;
+        }
 
-    [adminlabel] {
-      width: 40px;
-    }
+        [add-user] {
+            margin-bottom: 24px;
+            margin-top: 32px;
+        }
 
-    [add-user] {
-      margin-bottom: 24px;
-      margin-top: 32px;
-    }
+        [add-user] > span {
+            font-size: 12px;
+        }
 
-    [add-user] > span {
-      font-size: 12px;
-    }
+        [add-user] paper-input {
+            margin-top: -12px;
+        }
 
-    [add-user] paper-input {
-      margin-top: -12px;
-    }
+        [info] {
+            font-size: 11px;
+        }
 
-    [info] {
-      font-size: 11px;
-    }
+        [remove] {
+            height: 24px;
+        }
 
-    [remove] {
-      height: 24px;
-    }
+        paper-fab {
+            position: absolute;
+            right: 16px;
+            top: 44px;
+        }
+        [content] .buttons{
+          padding-bottom: 1px !important;
+        }
+    </style>
+    <template>
 
-
-
-    paper-fab {
-      position: absolute;
-      right: 16px;
-      top: 44px;
-    }
-  </style>
-  <template>
-
-    <paper-dialog id="dialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
-      <div header>
-        <h3>
-          Authors of
-          <span style="font-style:italic">{{folder.title}}</span>
-        </h3>
-      </div>
-      <div content>
-        <div list-header>
-          Admin
-        </div>
-        <div users>
-          <paper-fab icon="add" mini on-click="openAddUser"></paper-fab>
-          <template is="dom-repeat" items="{{users}}">
-            <div user>
-              <paper-toggle-button isadmin checked="{{item.admin}}"></paper-toggle-button>
-              <span username>{{item.name}}</span>
-              <div class="flex"></div>
-              <paper-icon-button remove icon="close" on-click="_removeUser"></paper-icon-button>
+        <paper-dialog id="dialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <div header>
+                <h3>
+                    Authors of
+                    <span style="font-style:italic">{{folder.title}}</span>
+                </h3>
             </div>
-          </template>
-        </div>
-        <div class="buttons">
-          <paper-button dialog-dismiss>Cancel</paper-button>
-          <paper-button dialog-confirm>Save</paper-button>
-        </div>
-      </div>
-    </paper-dialog>
+            <div content>
+                <div list-header>
+                    Admin
+                </div>
+                <div users>
+                    <paper-fab icon="add" mini on-click="_openAddAuthor"></paper-fab>
+                    <template is="dom-repeat" items="{{users}}">
+                        <div user>
+                            <paper-toggle-button isadmin checked="{{item.admin}}" on-click="_changePermissions"></paper-toggle-button>
+                            <span username>{{item.name}}</span>
+                            <div class="flex"></div>
+                            <paper-icon-button remove icon="close" on-click="_removeUser"></paper-icon-button>
+                        </div>
+                    </template>
+                </div>
+                <div class="buttons">
+                    <paper-button dialog-confirm>Close</paper-button>
+                </div>
+            </div>
+        </paper-dialog>
+
+        <add-author-dialog id="addAuthorDialog" on-closed="open" folder="{{folder}}"></add-author-dialog>
 
 
-    <paper-dialog id="addDialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop on-close="_addClosed">
-      <h2>Invite People</h2>
-      <div>
-        Invite people to become Author in this Channel.
-        <paper-input label="Enter username or email address."></paper-input>
-      </div>
-      <div class="buttons">
-        <paper-button on-click="_addClosed">Back</paper-button>
-        <paper-button dialog-confirm>Invite</paper-button>
-      </div>
-    </paper-dialog>
+        <iron-ajax id="service" handle-as="json" verbose="true" on-response="_usersReceived"></iron-ajax>
 
-    <iron-ajax id="service" handle-as="json" verbose="true" on-response="_usersReceived"></iron-ajax>
-
-  </template>
+    </template>
 </dom-module>
 
 <script>
-  (function() {
-    Polymer({
-      is: 'permissions-dialog',
+    (function() {
+        Polymer({
+            is: 'permissions-dialog',
 
-      open: function() {
-        this.$.dialog.open();
-        var service = this.$.service;
-        service.method = 'GET';
-        service.url = "/server/permissionServer.php?channelId=" + this.folder.id;
-        service.generateRequest();
-      },
+            open: function() {
+                this.$.dialog.open();
 
-      _usersReceived: function() {
-        this.users = this.$.service.lastResponse.list;
-        //this.users=window.users.list;
-        console.log('received users: ',this.users);
-      },
+                this.service=document.querySelector('#permissions-service');
 
-      _removeUser: function(event) {
-        var user = event.model.item;
-        var index = this.users.indexOf(user);
-        this.splice('users', index, 1);
-      },
+                var service = this.$.service;
+                service.method = 'GET';
+                service.url = '/server/permissionServer.php?channelId=' + this.folder.id;
+                service.generateRequest();
+            },
 
-      openAddUser: function() {
-        this.$.dialog.close();
-        this.$.addDialog.open();
-      },
+            _usersReceived: function() {
+                this.users = this.$.service.lastResponse.list;
+                console.log('received users: ', this.users);
+            },
 
-      addUser:function(){
+            _changePermissions: function(event) {
+                var user = event.model.item;
+                this.service.generateRequest({
+                    channelId: this.folder.id,
+                    isAdmin: user.admin,
+                    userId: user.id
+                });
+            },
 
-      },
+            _removeUser: function(event) {
+                var user = event.model.item;
+                var index = this.users.indexOf(user);
+                this.splice('users', index, 1);
 
-      _addClosed:function(){
-        this.$.addDialog.close();
-        this.open();
-      }
-    });
-  })();
+                this.service.generateRequest({
+                    channelId: this.folder.id,
+                    userId: user.id
+                }, 'DELETE');
+            },
+
+            _openAddAuthor:function(){
+                this.$.dialog.close();
+                this.$.addAuthorDialog.open();
+            }
+        });
+    })();
 </script>

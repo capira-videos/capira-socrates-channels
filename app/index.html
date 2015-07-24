@@ -62,27 +62,32 @@
           <paper-icon-button id="paperToggle" icon="arrow-back" id="backbutton"></paper-icon-button>
         </a>
       </capira-tooltip>
+                <paper-spinner alt="Loading users-list" active hidden$="{{!loading}}"></paper-spinner>
         <span class="flex"></span>
         <!-- Toolbar icons -->
-        <capira-tooltip tooltip="Search">
+              <!--  <capira-tooltip tooltip="Search">
           <paper-icon-button icon="search"></paper-icon-button>
-        </capira-tooltip>
+                </capira-tooltip> -->
       </paper-toolbar>
 
       <!-- Main Content -->
       <div class="content">
         <iron-pages attr-for-selected="data-route" selected="{{route}}" >
-
           <section data-route="home">
             <folder-content folder="{{folder}}"></folder-content>
           </section>
+                    <section data-route="login">
+                        hallo
+                    </section>
+                </iron-pages>
 
-        </iron-pages>
       </div>
     </paper-header-panel>
 
     <!-- The Capira-Channels Service -->
-    <iron-ajax id="ajax" auto url="{{serviceURL}}" handle-as="json" last-response="{{folder}}"></iron-ajax>
+        <iron-ajax id="ajax" auto url="{{serviceURL}}" handle-as="json" last-response="{{folder}}" loading="{{loading}}"></iron-ajax>
+        <permissions-service id="permissions-service"></permissions-service>
+
   </template>
 
   <!-- build:js scripts/app.js -->

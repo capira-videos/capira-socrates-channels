@@ -15,7 +15,7 @@
     }
 
     [content] > * {
-      padding: 0 16px 0 24px
+      padding: 0 16px 0 24px;
     }
 
     [header] {
@@ -43,8 +43,8 @@
 
     <div content>
       <!-- Place dialogs on top to avoid interferiences with content size and scrolling -->
-      <create-unit id="createUnit" on-created="_onUnitCreated" parent-id="{{folder.id}}"></create-unit>
-      <create-folder id="createFolder" on-created="_onFolderCreated" parent-id="{{folder.id}}"></create-folder>
+      <create-unit-dialog id="createUnit" on-created="_onUnitCreated" parent-id="{{folder.id}}"></create-unit-dialog>
+      <create-folder-dialog id="createFolder" on-created="_onFolderCreated" parent-id="{{folder.id}}"></create-folder-dialog>
       <permissions-dialog id="permissions" folder="{{folder}}"></permissions-dialog>
 
 
@@ -101,9 +101,9 @@
                 node: this,
                 transformFrom: 'translateY(100%)',
               }]
+            };
             }
           }
-        }
       },
 
 
@@ -113,7 +113,7 @@
             .querySelector('#mainContainer').scrollTop = 0;
 
         //was the folder changed to it's parent?
-        if (oldValue && newValue.id == oldValue.parent) {
+        if (oldValue && newValue.id === oldValue.parent) {
           //go back
           this.playAnimation('exit');
         } else {

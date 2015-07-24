@@ -170,7 +170,7 @@ gulp.task('vulcanize', function() {
 	return gulp.src('dist/elements/elements.vulcanized.html')
 		.pipe($.vulcanize({
 			dest: DEST_DIR,
-			strip: true,
+			stripComments: true,
 			inlineCss: true,
 			inlineScripts: true
 		}))
@@ -247,6 +247,8 @@ gulp.task('serve', ['styles', 'elements', 'images'], function() {
 
 // Build and serve the output from the dist build
 gulp.task('serve:dist', ['default'], function() {
+	var proxy = httpProxy.createProxyServer({});
+
 	browserSync({
 		notify: false,
 		snippetOptions: {
@@ -261,7 +263,20 @@ gulp.task('serve:dist', ['default'], function() {
 		// Note: this uses an unsigned certificate which on first access
 		//       will present a certificate warning in the browser.
 		// https: true,
-		server: 'dist'
+		server: {
+			baseDir: 'dist',
+			middleware: function(req, res, next) {
+				var url = req.url;
+
+				if (url.match(/^\/(server)\//)) {
+					proxy.web(req, res, {
+						target: 'http://127.0.0.1:8888'
+					});
+				} else {
+					next();
+				}
+			}
+		}
 	});
 });
 
@@ -269,7 +284,7 @@ gulp.task('serve:dist', ['default'], function() {
 gulp.task('default', ['clean'], function(cb) {
 	runSequence(
 		['copy', 'styles'],
-		'elements', ['images', 'fonts', 'html'], //'jshint',
+		'elements', ['images', 'fonts', 'html','jshint'],
 		'vulcanize', 'precache',
 		cb);
 });
