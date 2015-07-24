@@ -15,7 +15,7 @@ Projekt: Deploy Channels Editor alpha bis Sonntag Abend.
 -sortable mit permissions verheiraten
 -in den Permissions den Pfad der vererbten Permissions anzeigen
 
-
+-als user "test" "test" kann man nicht löschen ->
 
 
 

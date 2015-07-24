@@ -53,7 +53,7 @@
   <span id="browser-sync-binding"></span>
 
   <template is="dom-bind" id="app">
-
+    <paper-progress indeterminate id="loading" hidden$="{{!loading}}"></paper-progress>
     <paper-header-panel main mode="cover" >
       <!-- Main Toolbar -->
       <paper-toolbar id="mainToolbar" class="tall">
@@ -86,7 +86,8 @@
 
     <!-- The Capira-Channels Service -->
         <iron-ajax id="ajax" auto url="{{serviceURL}}" handle-as="json" last-response="{{folder}}" loading="{{loading}}"></iron-ajax>
-        <permissions-service id="permissions-service"></permissions-service>
+        <permissions-service id="permissions-service" loading="{{loading}}"></permissions-service>
+        <channel-editor-service id="channelEditorService" loading="{{loading}}"></channel-editor-service>
 
   </template>
 

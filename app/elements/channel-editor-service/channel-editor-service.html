@@ -1,24 +1,24 @@
 <dom-module id="channel-editor-service">
   <template>
-    <iron-ajax id="service" url="/server/channelEditorServer.php" handle-as="json" method="POST" verbose="true"></iron-ajax>
+    <iron-ajax id="service" url="/server/channelEditorServer.php" handle-as="json" method="POST" verbose="true" loading="{{loading}}"></iron-ajax>
   </template>
 </dom-module>
 <script>
   (function() {
     Polymer({
       is: 'channel-editor-service',
-
+      properties: {
+        loading: {
+          notify: true
+        }
+      },
       generateRequest: function(type, item, method) {
         var service = this.$.service;
         service.params = {
           a: type
         };
         service.body = JSON.stringify(item);
-        if (method) {
-          service.method = method;
-        } else {
-          service.method = 'POST';
-        }
+        service.method = method ? method : 'POST';
         return service.generateRequest().completes;
       }
     });
