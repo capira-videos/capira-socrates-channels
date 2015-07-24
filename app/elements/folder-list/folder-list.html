@@ -134,7 +134,7 @@
           <div item on-click="toggleSelection" selected$="[[item.selected]]" class="sortable" type="{{listTitle}}" on-dragleave="_dragLeave" on-mouseup="_onMouseUp">
             <a href="{{reference(item)}}">
               <paper-item>
-                <paper-ripple id='ripple' opacityDecayVelocity="0.6" center="false"></paper-ripple>
+                <paper-ripple id='ripple' opacityDecayVelocity="0.6"></paper-ripple>
                 <iron-image src="{{thumbnail(item)}}" sizing="cover" preload fade></iron-image>
                 <div item-title>{{item.title}}</div>
                 <div class="flex"></div>
@@ -275,6 +275,7 @@
         console.log(event.pageY, el.offsetTop);
         var ripple = Polymer.dom(el).querySelector('#ripple');
         ripple.style.display = 'block';
+        event.detail = event; // especially sets event.detail.x and .y
         ripple.downAction(event);
         window.setTimeout(function() {
           //        ripple.upAction(event);
