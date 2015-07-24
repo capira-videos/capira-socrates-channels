@@ -355,6 +355,7 @@
           var sourceList = this._getFolderListElement(draggedEl.type).$.listElement;
           var draggedItem = sourceList.itemForElement(draggedEl);
           var draggedItemIndex = sourceList.indexForElement(draggedEl);
+          draggedItem.folderId = this.folderId;
           draggedItem.parent = folderItem.id;
           this._saveItem(draggedItem); // save to database
           //this.splice('list', draggedItemIndex, 1); // remove from UI
