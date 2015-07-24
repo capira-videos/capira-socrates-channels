@@ -3,13 +3,12 @@ Projekt: Deploy Channels Editor alpha bis Sonntag Abend.
 ==Sprint 1: Sonntag Abend 26.7. erster deploy
 
 ===Features:
--undo
+-"ohne warnung löschen" ist ein zu krasses feature ohne undo funktion -> Dialog
 -units und channels verschieben -> Daniel?
 --dialog zum auswählen des ziel-channels
 --service zum browsen durch die channels, in denen der user permissions hat -> Pascal?
 
 ===Flaws & Bugs
--"ohne warnung löschen" ist ein zu krasses feature ohne undo funktion
 -"has_privilege" funktioniert nur für godmode  -> Pascal
 -"folder vs. channels" ist unklare terminologie. für eins entscheiden. besser auf "channels" refactoren?
 -"admin & author" vs "admin vs channelAdmin" ist unklare terminologie. nur noch ersteres.  -> Pascal?

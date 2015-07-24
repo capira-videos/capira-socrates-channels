@@ -1,0 +1,43 @@
+
+<dom-module id="confirm-delete-dialog">
+  <style>
+    :host {
+      display: block;
+    }
+  </style>
+  <template>
+    <paper-dialog id="confirmDeleteDialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+      <h2>Are you sure?</h2>
+      <p>
+        Do you really want to delete this <span>{{itemType}}</span> from this Channel?
+      </p>
+      <div class="buttons">
+        <paper-button dialog-dismiss>Cancel</paper-button>
+        <paper-button on-click="_confirm">Delete</paper-button>
+      </div>
+    </paper-dialog>
+
+  </template>
+</dom-module>
+<script>
+(function() {
+  Polymer({
+    is: 'confirm-delete-dialog',
+    properties:{
+      itemType:{
+        type:String,
+        value:"Item"
+      }
+    },
+    open:function(item){
+      this.$.confirmDeleteDialog.open();
+      this.item=item;
+    },
+    _confirm:function(){
+      this.$.confirmDeleteDialog.close();
+      this.fire('delete-confirmed',this.item);
+    }
+
+  });
+})();
+</script>

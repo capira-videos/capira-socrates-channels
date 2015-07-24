@@ -87,7 +87,7 @@ img {
 </style>
 <template>
     <rename-dialog id="rename" on-renamed="_onRenamed"></rename-dialog>
-
+    <confirm-delete-dialog id="confirmDelete" on-delete-confirmed="removeItem"></confirm-delete-dialog>
     <paper-toast id="removed" duration="7000">
         <a role="button" tabindex="0" style="color: #eeff41;margin: 10px" onclick="console.log('UNDO')">Undo</a>
     </paper-toast>
@@ -120,7 +120,7 @@ img {
                         <span item-title>{{item.title}}</span>
                         <div class="flex"></div>
                         <div hidden$="{{!isAuthor}}">
-                            <paper-icon-button icon="delete" on-click="removeItem"></paper-icon-button>
+                            <paper-icon-button icon="delete" on-click="_confirmDelete"></paper-icon-button>
                             <paper-icon-button icon="editor:mode-edit" on-click="_rename"></paper-icon-button>
                             <!--TODO: visibility of item  <paper-icon-button icon="social:public" on-click="promptDelete"></paper-icon-button> -->
                         </div>
@@ -162,8 +162,13 @@ img {
         return !(this.list.length > 0 || this.isAuthor);
       },
 
+      _confirmDelete: function(){
+        var item = event.model.item;
+        this.$.confirmDelete.open(item);
+      },
+
         removeItem: function(event) {
-            var item = event.model.item;
+            var item = event.detail;
             item.deleted = true;
             item.folderId = this.folderId;
             this.$.service.generateRequest(this.listTitle.toLowerCase(), item);
@@ -175,6 +180,8 @@ img {
             toast.text = 'Removed one ' + this.listTitle + '.';
             toast.show();
         },
+
+
 
         thumbnail: function(item) {
             return 'http://img.youtube.com/vi/' + (item.thumbnail ? item.thumbnail : item.videoId) + '/default.jpg';
