@@ -3,20 +3,17 @@ Projekt: Deploy Channels Editor alpha bis Sonntag Abend.
 ==Sprint 1: Sonntag Abend 26.7. erster deploy
 
 ===Features:
--"ohne warnung löschen" ist ein zu krasses feature ohne undo funktion -> Dialog
 -units und channels verschieben -> Daniel?
 --dialog zum auswählen des ziel-channels
 --service zum browsen durch die channels, in denen der user permissions hat -> Pascal?
 
 ===Flaws & Bugs
--"has_privilege" funktioniert nur für godmode  -> Pascal
+-"homeChannel" beim verschieben von units updaten
 -"folder vs. channels" ist unklare terminologie. für eins entscheiden. besser auf "channels" refactoren?
 -"admin & author" vs "admin vs channelAdmin" ist unklare terminologie. nur noch ersteres.  -> Pascal?
--leere listen ausblenden, wenn man keine rechte hat items hinzu zu fügen
 -tests schreiben?
 -sortable mit permissions verheiraten
--"player vs. editor" je nach permissions verlinken
-
+-in den Permissions den Pfad der vererbten Permissions anzeigen
 
 
 
