@@ -37,7 +37,7 @@
           parent: this.parentId
         };
 
-        this.loading=false;
+        this.loading = false;
         this.$.createUnitDialog.open();
       },
 
@@ -68,17 +68,17 @@
         }
 
         this.set('valid', false);
-        this._fetchYoutubeTitle();
+        this._fetchYoutubeTitle(this.unit.videoId);
       },
 
       _fetchYoutubeTitle: function(id) {
-        var service = this.$.youtubeApi;
-        service.url = 'https://www.googleapis.com/youtube/v3/videos?id=' + this.unit.videoId + '&key=AIzaSyBtulzLnwRn3FfkfL-Lg-AhuO8eR8jfXSQ&fields=items(snippet(title))&part=snippet'
-
         //timeout for to frequent changes in the video-id input
         if (this.timer && this.timer.cancel) {
           this.timer.cancel();
         }
+
+        var service = this.$.youtubeApi;
+        service.url = 'https://www.googleapis.com/youtube/v3/videos?id=' + id + '&key=AIzaSyBtulzLnwRn3FfkfL-Lg-AhuO8eR8jfXSQ&fields=items(snippet(title))&part=snippet'
 
         this.timer = setTimeout(function() {
           service.generateRequest();

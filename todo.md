@@ -38,6 +38,7 @@ Projekt: Deploy Channels Editor alpha bis Sonntag Abend.
 -Units als Material-Cards
 -Momentan gibt es mehrere Wurzeln - das verwirrt in der navigation
 -Units per Suche hinzufügen
+-"Thumbnail selector"-dialog für folders
 
 user interface von hier übernehmen:
 https://drive.google.com/drive/my-drive
