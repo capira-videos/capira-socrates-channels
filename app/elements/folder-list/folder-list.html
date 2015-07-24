@@ -188,7 +188,7 @@
       },
 
       _saveItem: function(item) {
-        return document.querySelector('#channelEditorService').generateRequest(this.listTitle.toLowerCase(), item);
+        return app.editorService.generateRequest(this.listTitle.toLowerCase(), item);
       },
 
       removeItem: function(event) {

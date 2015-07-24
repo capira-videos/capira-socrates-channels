@@ -18,7 +18,6 @@
         <paper-button on-click="_confirm" disabled$="{{!valid}}">Create</paper-button>
       </div>
     </paper-dialog>
-    <channel-editor-service id="createUnitService" on-responded="_confirmed"></channel-editor-service>
     <iron-ajax id="youtubeApi" handle-as="json" verbose="true" on-response="_handleYoutubeTitle" loading="{{loading}}"></iron-ajax>
   </template>
 </dom-module>
@@ -98,16 +97,18 @@
 
       _confirm: function() {
         if (this.valid) {
-          var service = this.$.createUnitService;
-          service.generateRequest('unit', this.unit, 'PUT');
+          var service = app.editorService;
+          var that=this;
+          service.generateRequest('unit', this.unit, 'PUT').then(function(req){
+            var unit = req.response;
+            that.fire('created', unit);
+            that.$.createUnitDialog.close();
+          });
         }
       },
 
       _confirmed: function(resp) {
-        var unit = resp.detail;
-        console.log('Response:', unit);
-        this.fire('created', unit);
-        this.$.createUnitDialog.close();
+
       }
 
       //TODO: on-enter-press in allen dialogen

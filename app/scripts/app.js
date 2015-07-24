@@ -15,7 +15,7 @@
 
   // See https://github.com/Polymer/polymer/issues/1381
   window.addEventListener('WebComponentsReady', function() {
-    // imports are loaded and elements have been registered
+      app.editorService=document.querySelector('#channelEditorService');
   });
 
    // paper-inputs are auto-focused only once when contained in a paper-dialog.

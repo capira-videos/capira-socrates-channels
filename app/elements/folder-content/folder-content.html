@@ -61,9 +61,6 @@
     </div>
 
 
-    <channel-editor-service id="channelEditorService"></channel-editor-service>
-
-
   </template>
 </dom-module>
 <script>
@@ -140,7 +137,7 @@
       },
 
       _updateOrder: function() {
-        this.$.channelEditorService.generateRequest('order', this.folder).then(function(){
+        app.editorService.generateRequest('order', this.folder).then(function(){
           console.log('Sorted');
         });
       }
