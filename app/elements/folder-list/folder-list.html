@@ -349,15 +349,19 @@
 
         // perform updates on dataset
         if (this.highlightedFolder) { // dropped into a folder
-          var item = event.detail.item;
-          var folderIndex = this._getFolderListElement('Folder')
-            .$.listElement.indexForElement(this.highlightedFolder);
-          var itemIndex = this._getFolderListElement(item.type)
-            .$.listElement.indexForElement(item);
-          console.log('Dropped ' + item.type + ' ' + itemIndex + ' into Folder ' + folderIndex);
+          var draggedEl = event.detail.item;
+          var folderItem = this._getFolderListElement('Folder')
+            .$.listElement.itemForElement(this.highlightedFolder);
+          var sourceList = this._getFolderListElement(draggedEl.type).$.listElement;
+          var draggedItem = sourceList.itemForElement(draggedEl);
+          var draggedItemIndex = sourceList.indexForElement(draggedEl);
+          draggedItem.parent = folderItem.id;
+          this._saveItem(draggedItem); // save to database
+          //this.splice('list', draggedItemIndex, 1); // remove from UI
+          console.log('Dropped ', draggedItem, ' into Folder ', folderItem);
         } else if (oldIndex !== newIndex) { // moved
           changePosition(oldIndex, newIndex);
-                this.fire('sorted');
+          this.fire('sorted');
           console.log('Moved ' + event.detail.item.type + ' from position ' + oldIndex + ' to ' + newIndex);
         }
 
