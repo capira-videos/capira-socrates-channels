@@ -83,6 +83,13 @@ img {
 
 .sortable-ghost {
     opacity: 0.3;
+    position: relative;
+}
+.sortable-ghost:after {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background-color: black;
+    z-index: 100;
 }
 </style>
 <template>
