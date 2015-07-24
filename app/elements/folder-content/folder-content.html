@@ -14,8 +14,6 @@
       background-color: white;
     }
 
-
-
     [header] {
       @apply(--layout-horizontal);
       @apply(--layout-center);
@@ -57,12 +55,8 @@
         </div>
       </div>
 
-      <folder-list list="{{folder.units}}" list-title="Unit"
-      is-author="{{folder.admin}}" on-create="createUnit" folder-id={{folder.id}}
-      on-sorted="_updateOrder" highlighted-folder="{{highlightedFolder}}"></folder-list>
-      <folder-list list="{{folder.folders}}" list-title="Folder"
-      is-author="{{folder.admin}}" on-create="createFolder"
-      on-sorted="_updateOrder" highlighted-folder="{{highlightedFolder}}"></folder-list>
+      <folder-list list="{{folder.units}}" list-title="Unit" is-author="{{folder.admin}}" on-create="createUnit" folder-id={{folder.id}} on-sorted="_updateOrder" highlighted-folder="{{highlightedFolder}}"></folder-list>
+      <folder-list list="{{folder.folders}}" list-title="Folder" is-author="{{folder.admin}}" on-create="createFolder" on-sorted="_updateOrder" highlighted-folder="{{highlightedFolder}}"></folder-list>
 
     </div>
 
@@ -101,23 +95,25 @@
                 transformFrom: 'translateY(100%)',
               }]
             };
-            }
           }
+        }
       },
 
 
       _folderChanged: function(newValue, oldValue) {
         //scroll to top of page
         Polymer.dom(document.querySelector('paper-header-panel').root)
-            .querySelector('#mainContainer').scrollTop = 0;
+          .querySelector('#mainContainer').scrollTop = 0;
 
         //was the folder changed to it's parent?
         if (oldValue && newValue.id === oldValue.parent) {
           //go back
           this.playAnimation('exit');
         } else {
-          //go deeper
-          this.playAnimation('entry');
+          //go deeper if not empty folder
+          if (newValue.id) {
+            this.playAnimation('entry');
+          }
         }
       },
 
@@ -143,8 +139,8 @@
         this.$.permissions.open();
       },
 
-      _updateOrder: function(){
-        this.$.updateOrderService.generateRequest('order',this.folder);
+      _updateOrder: function() {
+        this.$.updateOrderService.generateRequest('order', this.folder);
       }
 
     });
