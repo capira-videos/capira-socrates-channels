@@ -54,6 +54,12 @@
     [selected] {
       background-color: red;
     }
+
+    .sorting .sortable * {
+        pointer-events: none; /* a nice hack to avoid that dragEnter and dragLeave
+        get called for every child of a draggable.
+        See http://stackoverflow.com/questions/7110353/html5-dragleave-fired-when-hovering-a-child-element*/
+    }
   </style>
   <template>
     <rename-dialog id="rename" on-renamed="_onRenamed"></rename-dialog>
@@ -78,10 +84,11 @@
         </div>
 
         <sortable-list sortable=".sortable" animation="150"
-        on-sort-update="_onSorted" on-sort-move="_onMoved">
+        on-sort-update="_onSorted" on-sort-start="_onSortStart"
+        on-sort-move="_onMoved" on-sort-end="_onSortEnd" group="all-sortables">
             <template is="dom-repeat" items="{{list}}" id="listElement">
               <div item on-click="toggleSelection" selected$="[[item.selected]]"
-              class="sortable">
+              class="sortable" type="{{listTitle}}" on-dragleave="_dragLeave">
                 <a href="{{reference(item)}}">
                   <span class="crop">
                     <img src="{{thumbnail(item)}}" />
@@ -114,6 +121,11 @@
       is: 'folder-list',
       properties: {
         list: Array,
+        highlightedFolder: {
+            type: HTMLElement,
+            notify: true,
+            value: null
+        }
       },
 
       removeItem: function(event) {
@@ -164,6 +176,23 @@
         this.$.service.generateRequest(this.listTitle.toLowerCase(), item);
       },
 
+      _onSortStart: function() {
+          this._addOrRemoveSortingClass('add');
+      },
+
+      _onSortEnd: function() {
+          this._addOrRemoveSortingClass('remove');
+      },
+
+      _addOrRemoveSortingClass: function(addOrRemove) {
+          var parent = Polymer.dom(this).parentNode;
+          var folderLists = Polymer.dom(parent).querySelectorAll('folder-list');
+          folderLists.forEach(function(folderList) {
+              var sortableList = Polymer.dom(folderList.root).querySelector('sortable-list');
+              Polymer.dom(sortableList).classList[addOrRemove]('sorting');
+          });
+      },
+
       _onSorted: function(event) {
           var oldIndex = event.detail.oldIndex-1; // -1 because in the dom is a
           var newIndex = event.detail.newIndex-1; // <style> node as first child
@@ -181,12 +210,53 @@
           // and results in the expected buggy behaviour.
           this.splice('list', oldIndex, 1); // remove at old position
           this.splice('list', newIndex, 0, dataEntry); // put at new position
-          this.fire('sorted');
+    //      this.fire('sorted');
       },
 
       _onMoved: function(event) {
-          console.log('on moved inner');
-    //      event.returnValue = false;
+          var allowSorting;
+          var dragged = event.detail.dragged;
+          var related = event.detail.related;
+          if (dragged.type==='Unit' && related.type==='Unit') {
+              // a unit is moved along other units
+              allowSorting = true;
+          } else if (dragged.type==='Folder' && related.type==='Unit') {
+              // a folder wants to move to the unit list
+              allowSorting = false;
+          } else if (dragged.type==='Unit' && related.type==='Folder') {
+              // a unit can not be sorted along folders, however it can be
+              // moved into a folder.
+              allowSorting = false;
+              this._highlightFolderForDropping(related);
+          }
+          event.returnValue = allowSorting;
+      },
+
+      _dragLeave: function(event) {
+          // we can safely asume that dragLeave only gets called once when
+          // leaving an element itself and not when leavin one of its children
+          // as we are using pointer-events:none (see above)
+          this._unHighlightFolderForDropping(event.target);
+      },
+
+      _highlightFolderForDropping: function(folderElement) {
+          if (folderElement===this.highlightedFolder) {
+              return;
+          }
+          console.log('highlighting',this.highlightedFolder, folderElement);
+          folderElement.style.backgroundColor = 'lightblue';
+          this.highlightedFolder = folderElement;
+      },
+
+      _unHighlightFolderForDropping: function(highlightedFolder) {
+          highlightedFolder = highlightedFolder || this.highlightedFolder;
+          if (highlightedFolder) {
+              highlightedFolder.style.backgroundColor = 'white';
+              console.log('unhighliting', this.highlightedFolder, highlightedFolder, this.highlightedFolder===highlightedFolder);
+              if (this.highlightedFolder===highlightedFolder) {
+                  this.highlightedFolder = null;
+              }
+          }
       },
 
       _createItem: function() {

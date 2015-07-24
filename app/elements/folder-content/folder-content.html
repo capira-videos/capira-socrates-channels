@@ -58,8 +58,12 @@
         </div>
       </div>
 
-      <folder-list list="{{folder.units}}" list-title="Unit" is-author="{{folder.admin}}" on-create="createUnit" folder-id={{folder.id}} on-sorted="_updateOrder"></folder-list>
-      <folder-list list="{{folder.folders}}" list-title="Folder" is-author="{{folder.admin}}" on-create="createFolder" on-sorted="_updateOrder"></folder-list>
+      <folder-list list="{{folder.units}}" list-title="Unit"
+      is-author="{{folder.admin}}" on-create="createUnit" folder-id={{folder.id}}
+      on-sorted="_updateOrder" highlighted-folder="{{highlightedFolder}}"></folder-list>
+      <folder-list list="{{folder.folders}}" list-title="Folder"
+      is-author="{{folder.admin}}" on-create="createFolder"
+      on-sorted="_updateOrder" highlighted-folder="{{highlightedFolder}}"></folder-list>
 
     </div>
 
