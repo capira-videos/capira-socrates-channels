@@ -186,7 +186,7 @@ opacity: 0;
         },
 
         computeIsHidden: function(list, isAuthor) {
-            return !(this.list.length > 0 || this.isAuthor);
+            return !(list.length > 0 || isAuthor);
         },
 
         _confirmDelete: function(event) {
@@ -335,7 +335,7 @@ opacity: 0;
                 // and results in the expected buggy behaviour.
                 this.splice('list', oldIndex, 1); // remove at old position
                 this.splice('list', newIndex, 0, dataEntry); // put at new position
-            }.bind(this)
+            }.bind(this);
 
             function computeIndex(domElement) {
                 var index = 0;
@@ -393,7 +393,7 @@ opacity: 0;
             }, 100);
 
             console.log(document.querySelector('folder-list').list.map(function(entry) {
-                return entry.title
+                return entry.title;
             }));
         },
 
@@ -425,10 +425,9 @@ opacity: 0;
                     'top' : 'bottom';
                     this._highlightFolderForDropping(related);
                 } else {
-                    var overMid = (this._folderDragValues.enteredFrom === 'bottom'
-                        && mouseY < folderMidY)
-                        || (this._folderDragValues.enteredFrom === 'top'
-                        && mouseY > folderMidY);
+                    var from=this._folderDragValues.enteredFrom;
+                    var overMid = (from === 'bottom' && mouseY < folderMidY) ||
+                                  (from === 'top' && mouseY > folderMidY);
                     if (overMid) {
                         allowSorting = true;
                         this._unHighlightFolderForDropping(related);
@@ -444,7 +443,7 @@ opacity: 0;
             // we can safely asume that dragLeave only gets called once when
             // leaving an element itself and not when leavin one of its children
             // as we are using pointer-events:none (see above)
-            if (event.target.type === "Folder") {
+            if (event.target.type === 'Folder') {
                 this._unHighlightFolderForDropping(event.target);
                 this._folderDragValues.currentlyHoveredFolder = null;
             }
