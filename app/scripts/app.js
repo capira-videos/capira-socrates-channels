@@ -15,28 +15,28 @@
 
   // See https://github.com/Polymer/polymer/issues/1381
   window.addEventListener('WebComponentsReady', function() {
-      app.editorService=document.querySelector('#channelEditorService');
+    app.editorService = document.querySelector('#channelEditorService');
   });
 
-   // paper-inputs are auto-focused only once when contained in a paper-dialog.
-   // we use this fix: https://stackoverflow.com/questions/31600258/autofocus-paper-input-in-a-paper-dialog-works-only-once
-   window.addEventListener('iron-overlay-opened', function(event) {
-       // Grab the autofocus input
-       var input = event.target.querySelector('[autofocus]');
-       // Switch it because some require special treatment
-       switch(input.tagName.toLowerCase()) {
-           case 'input':
-               input.focus();
-               break;
-           case 'paper-textarea':
-           case 'paper-input':
-               input.$.input.focus();
-               break;
-       }
-   });
+  // paper-inputs are auto-focused only once when contained in a paper-dialog.
+  // we use this fix: https://stackoverflow.com/questions/31600258/autofocus-paper-input-in-a-paper-dialog-works-only-once
+  window.addEventListener('iron-overlay-opened', function(event) {
+    // Grab the autofocus input
+    var input = event.target.querySelector('[autofocus]');
+    // Switch it because some require special treatment
+    switch (input.tagName.toLowerCase()) {
+      case 'input':
+        input.focus();
+        break;
+      case 'paper-textarea':
+      case 'paper-input':
+        input.$.input.focus();
+        break;
+    }
+  });
 
-  app.setServiceUrl=function(folderId){
-      app.serviceURL='/server/channelServer.php?id='+folderId; // +'&editor=true';
+  app.setServiceUrl = function(folderId) {
+    app.serviceURL = '/server/channelServer.php?id=' + folderId; // +'&editor=true';
   };
 
 })(document);
