@@ -32,6 +32,7 @@
       padding-bottom: 8px;
       transition: background-color 0.3s;
       position: relative;
+      overflow: hidden;
       /* to fix a bug in paper-ripple which makes it
     extent the containers size */
     }
@@ -40,11 +41,11 @@
       background-color: rgb(253, 253, 200);
     }
 
-    paper-item paper-ripple {
-      color: rgb(250, 250, 100);
+    paper-ripple {
+      color: rgb(250, 250, 0);
       pointer-events: none;
-      display: none;
-      /* will be activated in code */
+      overflow: hidden;
+      display: none; /* will be activated in code */
     }
 
     paper-item iron-image {
@@ -54,6 +55,8 @@
     }
 
     a {
+        display: block;
+        overflow: hidden;
       text-decoration: none !important;
       color: rgb(15, 15, 15) !important;
     }
@@ -72,6 +75,7 @@
     get called for every child of a draggable.
     See http://stackoverflow.com/questions/7110353/html5-dragleave-fired-when-hovering-a-child-element*/
     }
+
     /*
 .sortable {
     transition: background-color 3s, height 3s;
@@ -134,7 +138,7 @@
           <div item on-click="toggleSelection" selected$="[[item.selected]]" class="sortable" type="{{listTitle}}" on-dragleave="_dragLeave" on-mouseup="_onMouseUp">
             <a href="{{reference(item)}}">
               <paper-item>
-                <paper-ripple id='ripple' opacityDecayVelocity="0.6"></paper-ripple>
+                <paper-ripple id='ripple' opacityDecayVelocity="0.3"></paper-ripple>
                 <iron-image src="{{thumbnail(item)}}" sizing="cover" preload fade></iron-image>
                 <div item-title>{{item.title}}</div>
                 <div class="flex"></div>
@@ -264,25 +268,30 @@
       },
 
       _onMouseUp: function(event) {
+          console.log('mouse up');
         // the mouseup event does not get triggered after dragging so we
         // can safely assume that it was a click and perform a clicky
         // paper ripple.
-        console.log('mouse up', event, event.model.item);
         var el = event.target;
         while (!el.hasAttribute('item')) {
           el = el.parentNode;
         }
-        console.log(event.pageY, el.offsetTop);
         var ripple = Polymer.dom(el).querySelector('#ripple');
         ripple.style.display = 'block';
-        event.detail = event; // especially sets event.detail.x and .y
-        ripple.downAction(event);
+        var customEvent = new CustomEvent('mouseup', {
+            detail: {
+                x: event.x,
+                y: event.y
+            }
+        });
+        console.log('mouse up', customEvent);
+        ripple.downAction(customEvent);
         window.setTimeout(function() {
-          //        ripple.upAction(event);
+          ripple.upAction(customEvent);
           window.setTimeout(function() {
             ripple.style.display = 'none';
-          }, 1000);
-        }, 100);
+        }, 1000);
+        }, 1);
       },
 
       _onDrag: function(event) {
@@ -368,15 +377,18 @@
         }
 
         // cleanup
-        this._getFolderListElements().forEach(function(folderList) {
-          var sortableList = Polymer.dom(folderList.root).querySelector('sortable-list');
-          Polymer.dom(sortableList).classList.remove('sorting');
-        });
-        this._unHighlightFolderForDropping();
-        if (event.detail.item.type === 'Folder') {
-          this.removeEventListener('drag', this._onDrag);
-          this._folderDragValues.currentlyHoveredFolder = null;
-        }
+        this.async(function() {
+            // we cleanup async, as otherwise some drawing problems occur in conjunction with ripple
+            this._getFolderListElements().forEach(function(folderList) {
+              var sortableList = Polymer.dom(folderList.root).querySelector('sortable-list');
+              Polymer.dom(sortableList).classList.remove('sorting');
+            });
+            this._unHighlightFolderForDropping();
+            if (event.detail.item.type === 'Folder') {
+              this.removeEventListener('drag', this._onDrag);
+              this._folderDragValues.currentlyHoveredFolder = null;
+            }
+        }, 100);
 
         console.log(document.querySelector('folder-list').list.map(function(entry) {
           return entry.title
