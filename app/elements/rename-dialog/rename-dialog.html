@@ -21,6 +21,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
     }
   </style>
   <template>
+    <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_confirm"></iron-a11y-keys>
     <paper-dialog id="rename" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
       <h2>Rename</h2>
       <p>
@@ -28,7 +29,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
       </p>
       <div class="buttons">
         <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button dialog-confirm on-click="_confirm">Rename</paper-button>
+        <paper-button on-click="_confirm">Rename</paper-button>
       </div>
     </paper-dialog>
   </template>
@@ -43,6 +44,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
         this.item = item;
       },
       _confirm: function() {
+        this.$.rename.close();
         this.fire('renamed', this.item);
       }
     });
