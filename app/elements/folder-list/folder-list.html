@@ -137,7 +137,9 @@ opacity: 0;
         in this Folder yet. Press + to create one.
       </div>
 
-      <sortable-list id="sortable-list" sortable=".sortable" animation="150" on-sort-start="_onSortStart" on-sort-move="_onMoved" on-sort-end="_onSortEnd" group="all-sortables">
+      <sortable-list id="sortable-list" sortable=".sortable" animation="150"
+      on-sort-start="_onSortStart" on-sort-move="_onMoved"
+      on-sort-end="_onSortEnd" disabled="{{!isAuthor}}" group="all-sortables">
         <template is="dom-repeat" items="{{list}}" id="listElement">
           <div item on-click="toggleSelection" selected$="[[item.selected]]" class="sortable" type="{{listTitle}}" on-dragleave="_dragLeave" on-mouseup="_onMouseUp">
             <a href="{{reference(item)}}">
@@ -352,7 +354,8 @@ opacity: 0;
             var indexOffset =
             computeIndex(this.$['sortable-list'].querySelector('.sortable'));
             var oldIndex = event.detail.oldIndex - indexOffset;
-            var newIndex = event.detail.newIndex - indexOffset;
+            var newIndex = typeof(event.detail.newIndex)==='number'?
+                event.detail.newIndex- indexOffset : oldIndex;
 
             // perform updates on dataset
             if (this.highlightedFolder) { // dropped into a folder
@@ -365,7 +368,7 @@ opacity: 0;
                 draggedItem.folderId = this.folderId;
                 draggedItem.parent = folderItem.id;
                 this._saveItem(draggedItem); // save to database
-                //this.splice('list', draggedItemIndex, 1); // remove from UI
+                this.splice('list', draggedItemIndex, 1); // remove from UI
                 console.log('Dropped ', draggedItem, ' into Folder ', folderItem);
             } else if (oldIndex !== newIndex) { // moved
                 changePosition(oldIndex, newIndex);
@@ -420,7 +423,10 @@ opacity: 0;
                     'top' : 'bottom';
                     this._highlightFolderForDropping(related);
                 } else {
-                    var overMid = (this._folderDragValues.enteredFrom === 'bottom' && mouseY < folderMidY) || (this._folderDragValues.enteredFrom === 'top' && mouseY > folderMidY);
+                    var overMid = (this._folderDragValues.enteredFrom === 'bottom'
+                        && mouseY < folderMidY)
+                        || (this._folderDragValues.enteredFrom === 'top'
+                        && mouseY > folderMidY);
                     if (overMid) {
                         allowSorting = true;
                         this._unHighlightFolderForDropping(related);
