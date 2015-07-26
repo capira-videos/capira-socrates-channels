@@ -49,9 +49,10 @@
         <span page-title>{{folder.title}}</span>
         <div class="flex"></div>
         <div header-toolbar hidden$="{{!folder.channelAdmin}}">
-          <capira-tooltip tooltip="Permissions">
-            <paper-icon-button icon="social:group-add" on-click="_openPermissions"></paper-icon-button>
-          </capira-tooltip>
+          <div>
+            <paper-icon-button icon="social:group-add" on-click="_openPermissions" id="permissionsIcon"></paper-icon-button>
+            <paper-tooltip for="permissionsIcon">Authors and Admins of <span>{{folder.title}}</span></paper-tooltip>
+          </div>
         </div>
       </div>
 

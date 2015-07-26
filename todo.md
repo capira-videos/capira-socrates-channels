@@ -8,11 +8,10 @@ Projekt: Deploy Channels Editor alpha bis Sonntag Abend.
 ===Flaws & Bugs
 -"homeChannel" beim verschieben von units updaten
 -als user "test" "test" kann man nicht löschen -> Pascal
--alte Permissions updaten -> Pascal?
+-alte Permissions migrieren -> Pascal?
 -in den Permissions den Pfad der vererbten Permissions anzeigen (path refactoren) -> Pascal?
 -"folder vs. channels" ist unklare terminologie. für eins entscheiden. besser auf "channels" refactoren?
 -"admin & author" vs "admin vs channelAdmin" ist unklare terminologie. nur noch ersteres.  -> Pascal?
--sortieren ausschalten, wenn user keine Rechte hat
 
 
 

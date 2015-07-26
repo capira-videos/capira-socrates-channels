@@ -120,7 +120,10 @@
                             <paper-toggle-button isadmin checked="{{item.admin}}" on-click="_changePermissions"></paper-toggle-button>
                             <span username>{{item.name}}</span>
                             <div class="flex"></div>
-                            <paper-icon-button remove icon="close" on-click="_removeUser"></paper-icon-button>
+                            <div>
+                            <paper-icon-button remove icon="close" on-click="_removeUser" id="removeAuthorIcon"></paper-icon-button>
+                              <paper-tooltip for="removeAuthorIcon">Authors and Admins of <span>{{folder.title}}</span></paper-tooltip>
+          </div>
                         </div>
                     </template>
                 </div>

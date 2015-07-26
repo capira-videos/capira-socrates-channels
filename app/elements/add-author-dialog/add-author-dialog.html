@@ -29,7 +29,11 @@
                     <div user>
                         <span username>{{item.name}}</span>
                         <div class="flex"></div>
-                        <paper-icon-button remove icon="add" on-click="addUser"></paper-icon-button>
+                        <div>
+                            <paper-icon-button remove icon="add" on-click="addUser" id="adduser">
+                            </paper-icon-button>
+                            <paper-tooltip for="adduser">Add as Author</paper-tooltip>
+                        </div>
                     </div>
                 </template>
             </div>
