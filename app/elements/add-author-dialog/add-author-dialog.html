@@ -81,7 +81,7 @@
             _queryForUsers: function(query) {
                 if (this.timer && this.timer.cancel) {
                     this.timer.cancel();
-                }
+                };
                 if (query.length > 2) {
                     var service = this.$.queryUserServer;
                     this.timer = setTimeout(function() {
@@ -91,7 +91,6 @@
                     this.set('resultedUsers', []);
                 }
             }
-
 
         });
     })();
