@@ -127,7 +127,10 @@ opacity: 0;
         <span list-title>
           <span>{{listTitle}}</span>s</span>
         <div class="flex"></div>
-        <paper-icon-button icon="add" on-click="_createItem" hidden$="{{!isAuthor}}"></paper-icon-button>
+        <div>
+            <paper-icon-button icon="add" on-click="_createItem" hidden$="{{!isAuthor}}" id="create"></paper-icon-button>
+            <paper-tooltip for="create">Create a new <span>{{listTitle}}</span></paper-tooltip>
+        </div>
       </div>
 
       <div hidden$="{{list.0}}" isEmpty>
@@ -149,8 +152,14 @@ opacity: 0;
                 <div item-title>{{item.title}}</div>
                 <div class="flex"></div>
                 <div hidden$="{{!isAuthor}}">
-                  <paper-icon-button icon="delete" on-click="_confirmDelete"></paper-icon-button>
-                  <paper-icon-button icon="editor:mode-edit" on-click="_rename"></paper-icon-button>
+                    <span>
+                    <paper-icon-button icon="delete" on-click="_confirmDelete" id="deleteIcon"></paper-icon-button>
+                    <paper-tooltip for="deleteIcon">Delete this <span>{{listTitle}}</span></paper-tooltip>
+                    </span>
+                    <span>
+                  <paper-icon-button icon="editor:mode-edit" on-click="_rename" id="renameIcon"></paper-icon-button>
+                  <paper-tooltip for="renameIcon">Rename this <span>{{listTitle}}</span></paper-tooltip>
+                    </span>
                   <!--TODO: visibility of item  <paper-icon-button icon="social:public" on-click="promptDelete"></paper-icon-button> -->
                 </div>
               </paper-item>
@@ -342,7 +351,7 @@ opacity: 0;
                 // Here we use native previousElementSibling by
                 // purpose to also count shallow elements which were inserted
                 // for shadydom polyfill.
-                while (domElement = domElement.previousElementSibling) {
+                while ((domElement = domElement.previousElementSibling)) {
                     index++;
                 }
                 return index;

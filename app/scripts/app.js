@@ -14,7 +14,7 @@
   });
 
   // See https://github.com/Polymer/polymer/issues/1381
-  window.addEventListener('WebComponentsReady', function() {
+  window.addEventListener("WebComponentsReady", function() {
     app.editorService = document.querySelector('#channelEditorService');
   });
 
@@ -24,14 +24,16 @@
     // Grab the autofocus input
     var input = event.target.querySelector('[autofocus]');
     // Switch it because some require special treatment
-    switch (input.tagName.toLowerCase()) {
-      case 'input':
-        input.focus();
-        break;
-      case 'paper-textarea':
-      case 'paper-input':
-        input.$.input.focus();
-        break;
+    if (input.tagName) {
+      switch (input.tagName.toLowerCase()) {
+        case 'input':
+          input.focus();
+          break;
+        case 'paper-textarea':
+        case 'paper-input':
+          input.$.input.focus();
+          break;
+      }
     }
   });
 

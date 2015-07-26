@@ -2,98 +2,97 @@
 <html lang="">
 
 <head>
-  <meta charset="utf-8">
-  <meta name="description" content="">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="generator" content="Polymer Starter Kit" />
-  <title>Capira Channel Editor</title>
-  <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
+    <meta charset="utf-8">
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Polymer Starter Kit" />
+    <title>Capira Channel Editor</title>
+    <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
 
-  <!-- Chrome for Android theme color -->
-  <meta name="theme-color" content="#303F9F">
+    <!-- Chrome for Android theme color -->
+    <meta name="theme-color" content="#303F9F">
 
-  <!-- Web Application Manifest -->
-  <link rel="manifest" href="manifest.json">
+    <!-- Web Application Manifest -->
+    <link rel="manifest" href="manifest.json">
 
-  <!-- Tile color for Win8 -->
-  <meta name="msapplication-TileColor" content="#3372DF">
+    <!-- Tile color for Win8 -->
+    <meta name="msapplication-TileColor" content="#3372DF">
 
-  <!-- Add to homescreen for Chrome on Android -->
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="application-name" content="Polymer Starter Kit">
-  <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png">
+    <!-- Add to homescreen for Chrome on Android -->
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Polymer Starter Kit">
+    <link rel="icon" sizes="192x192" href="images/touch/chrome-touch-icon-192x192.png">
 
-  <!-- Add to homescreen for Safari on iOS -->
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="Polymer Starter Kit">
-  <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
+    <!-- Add to homescreen for Safari on iOS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black">
+    <meta name="apple-mobile-web-app-title" content="Polymer Starter Kit">
+    <link rel="apple-touch-icon" href="images/touch/apple-touch-icon.png">
 
-  <!-- Tile icon for Win8 (144x144) -->
-  <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
+    <!-- Tile icon for Win8 (144x144) -->
+    <meta name="msapplication-TileImage" content="images/touch/ms-touch-icon-144x144-precomposed.png">
 
-  <!-- build:css styles/main.css -->
-  <link rel="stylesheet" href="styles/main.css">
-  <!-- endbuild-->
+    <!-- build:css styles/main.css -->
+    <link rel="stylesheet" href="styles/main.css">
+    <!-- endbuild-->
 
-  <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
-  <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
-  <!-- endbuild -->
-  <!--<script>
+    <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
+    <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <!-- endbuild -->
+    <!--<script>
      window.Polymer = window.Polymer || {};
      window.Polymer.dom = 'shadow';
  </script>-->
 
-  <!-- will be replaced with elements/elements.vulcanized.html -->
-  <link rel="import" href="elements/elements.html" >
-  <!-- endreplace-->
+    <!-- will be replaced with elements/elements.vulcanized.html -->
+    <link rel="import" href="elements/elements.html">
+    <!-- endreplace-->
 </head>
 
 <body unresolved class="fullbleed layout vertical">
-  <span id="browser-sync-binding"></span>
+    <span id="browser-sync-binding"></span>
 
-  <template is="dom-bind" id="app">
-    <paper-progress indeterminate id="loading" hidden$="{{!loading}}"></paper-progress>
-    <paper-header-panel main mode="cover" >
-      <!-- Main Toolbar -->
-      <paper-toolbar id="mainToolbar" class="tall">
-        <capira-tooltip tooltip="Back">
-        <a href={{folder.parent}}>
-          <paper-icon-button id="paperToggle" icon="arrow-back" id="backbutton"></paper-icon-button>
-        </a>
-      </capira-tooltip>
+    <template is="dom-bind" id="app">
+        <paper-progress indeterminate id="loading" hidden$="{{!loading}}"></paper-progress>
+        <paper-header-panel main mode="cover">
+            <!-- Main Toolbar -->
+            <paper-toolbar id="mainToolbar" class="tall">
+            <div>
+                <a href="{{folder.parent}}" id="backbutton">
+                        <paper-icon-button id="paperToggle" icon="arrow-back"></paper-icon-button>
+                </a>
+                <paper-tooltip for="backbutton">Back</paper-tooltip>
+            </div>
+
                 <paper-spinner alt="Loading users-list" active hidden$="{{!loading}}"></paper-spinner>
-        <span class="flex"></span>
-        <!-- Toolbar icons -->
-              <!--  <capira-tooltip tooltip="Search">
+                <span class="flex"></span>
+                <!-- Toolbar icons -->
+                <!--  <capira-tooltip tooltip="Search">
           <paper-icon-button icon="search"></paper-icon-button>
                 </capira-tooltip> -->
-      </paper-toolbar>
+            </paper-toolbar>
 
-      <!-- Main Content -->
-      <div class="content">
-        <iron-pages attr-for-selected="data-route" selected="{{route}}" >
-          <section data-route="home">
-            <folder-content folder="{{folder}}"></folder-content>
-          </section>
-                    <section data-route="login">
-                        hallo
+            <!-- Main Content -->
+            <div class="content">
+                <iron-pages attr-for-selected="data-route" selected="{{route}}">
+                    <section data-route="home">
+                        <folder-content folder="{{folder}}"></folder-content>
                     </section>
                 </iron-pages>
 
-      </div>
-    </paper-header-panel>
+            </div>
+        </paper-header-panel>
 
-    <!-- The Capira-Channels Service -->
+        <!-- The Capira-Channels Service -->
         <iron-ajax id="ajax" auto url="{{serviceURL}}" handle-as="json" last-response="{{folder}}" loading="{{loading}}"></iron-ajax>
         <permissions-service id="permissions-service" loading="{{loading}}"></permissions-service>
         <channel-editor-service id="channelEditorService" loading="{{loading}}"></channel-editor-service>
 
-  </template>
+    </template>
 
-  <!-- build:js scripts/app.js -->
-  <script src="scripts/app.js"></script>
-  <!-- endbuild-->
+    <!-- build:js scripts/app.js -->
+    <script src="scripts/app.js"></script>
+    <!-- endbuild-->
 
 
 </body>
