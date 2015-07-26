@@ -7,7 +7,7 @@ Projekt: Deploy Channels Editor alpha bis Sonntag Abend.
 
 ===Flaws & Bugs
 -"homeChannel" beim verschieben von units updaten
--als user "test" "test" kann man nicht löschen -> Pascal
+-als user "test" "test" kann man units nicht updaten -> Pascal
 -alte Permissions migrieren -> Pascal?
 -in den Permissions den Pfad der vererbten Permissions anzeigen (path refactoren) -> Pascal?
 -"folder vs. channels" ist unklare terminologie. für eins entscheiden. besser auf "channels" refactoren?
@@ -51,14 +51,3 @@ implementieren mit:
 https://www.polymer-project.org/1.0/docs/devguide/templates.html#array-selector
 
 
-
-
-==Stack
-Polymer 1.x
-Nodejs
-bower
-Gulp
-yeoman
-jshint
-vulcanizer
-jscs
