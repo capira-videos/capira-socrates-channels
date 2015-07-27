@@ -140,11 +140,12 @@ opacity: 0;
         in this Folder yet. Press + to create one.
       </div>
 
-      <sortable-droppable-list style="display:none; background:green;" id="sortable-list" sortable=".sortable" animation="150"
-      on-sort-start="_onSortStart" on-sort-move="_onMoved"
-      on-sort-end="_onSortEnd" disabled="{{!isAuthor}}" group="all-sortables">
+      <sortable-droppable-list style="background:green; display:none;"
+      id="sortable-list" sortable=".sortable" animation="150"
+      disabled="{{!isAuthor}}"
+      type={{listTitle}} drop-types='["Folder"]'>
         <template is="dom-repeat" items="{{list}}" id="listElement">
-          <div item on-click="toggleSelection" selected$="[[item.selected]]" class="sortable" type="{{listTitle}}" on-dragleave="_dragLeave" on-mouseup="_onMouseUp">
+          <div item on-click="toggleSelection" selected$="[[item.selected]]" class="sortable" type="{{listTitle}}" on-mouseup="_onMouseUp">
             <a href="{{reference(item)}}">
               <paper-item>
                 <paper-ripple id='ripple' opacityDecayVelocity="0.6"></paper-ripple>
@@ -216,11 +217,6 @@ opacity: 0;
             isAuthor: {
                 type: Boolean,
                 value: false
-            },
-            highlightedFolder: {
-                type: HTMLElement,
-                notify: true,
-                value: null
             }
         },
 
