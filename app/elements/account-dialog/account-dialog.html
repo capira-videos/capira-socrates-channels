@@ -1,0 +1,91 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<dom-module id="account-dialog">
+    <style>
+    :host {
+        display: block;
+    }
+    
+    paper-dialog {
+        width: 400px;
+    }
+    </style>
+    <template>
+        <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_confirm"></iron-a11y-keys>
+        <paper-dialog id="login" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <h2>Capira Login</h2>
+            <p>
+                <paper-input label="Enter your Username" value="{{username}}" autofocus></paper-input>
+                <paper-input label="Enter your Password" value="{{password}}" type="password"></paper-input>
+            </p>
+            <div class="buttons">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <paper-button on-click="_confirm">Login</paper-button>
+            </div>
+        </paper-dialog>
+        <paper-dialog id="logout" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <h2><span>{{user.name}}</span>'s Profile</h2>
+            <p>
+                Email: <span>{{user.email}}</span>
+            </p>
+            <div class="buttons">
+                <paper-button on-click="_confirmLogout">Logout</paper-button>
+                <paper-button dialog-dismiss>Close</paper-button>
+            </div>
+        </paper-dialog>
+    </template>
+</dom-module>
+<script>
+(function() {
+    Polymer({
+        is: 'account-dialog',
+
+        open: function() {
+            this.username = '';
+            this.password = '';
+            var that = this;
+            app.accountService.generateRequest({
+                mode: 'profile'
+            }).then(function(req) {
+                console.log(req.response);
+                that.user = req.response;
+                if (!that.user.name) {
+                    that.$.login.open();
+                } else {
+                    that.$.logout.open();
+                }
+            });
+        },
+        _confirm: function() {
+            var that = this;
+            app.accountService.generateRequest({
+                mode: 'login',
+                name: this.username,
+                password: this.password
+            }).then(function(req) {
+                var resp = req.response;
+                console.log(resp);
+                switch (resp) {
+                    case 42:
+                        that.$.login.close();
+                        that.fire('change-user');
+                        break;
+                    case -42:
+                        console.log('Wrong username or Password!');
+                        break;
+                    default:
+                        console.log('Sth went terribly wrong!');
+                }
+            });
+        },
+        _confirmLogout: function() {
+            var that = this;
+            app.accountService.generateRequest({
+                mode: 'logout'
+            }).then(function() {
+                that.$.logout.close();
+                that.fire('change-user');
+            });
+        }
+    });
+})();
+</script>

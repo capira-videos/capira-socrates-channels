@@ -15,7 +15,7 @@
         generateRequest: function(payload, method, params) {
             var service = this.$.service;
             service.method = method ? method : 'POST';
-            service.url = '/server/permissionServer.php';
+            service.url = '/services/permissionServer.php';
             service.params = params;
             service.body = JSON.stringify(payload);
             return service.generateRequest().completes;

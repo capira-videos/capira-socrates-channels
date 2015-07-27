@@ -82,7 +82,7 @@
             if (query.length > 2) {
                 var service = this.$.queryUserServer;
                 this.timer = setTimeout(function() {
-                    service.url = '/server/queryUserServer.php?query=' + query;
+                    service.url = '/services/queryUserServer.php?query=' + query;
                 }, 300);
             } else {
                 this.set('resultedUsers', []);

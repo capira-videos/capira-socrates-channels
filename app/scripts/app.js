@@ -17,8 +17,22 @@
   window.addEventListener('WebComponentsReady', function() {
     app.editorService = document.querySelector('#channelEditorService');
     app.permissionsService = document.querySelector('#permissionsService');
+    app.accountService=document.querySelector('#accountService');
   });
 
+  app.setServiceUrl = function(folderId) {
+    app.serviceURL = '/services/channelServer.php?editor=true&id=' + folderId; // +'&editor=true';
+  };
+
+  app.openAccount = function(){
+    document.querySelector('#account').open();
+  };
+
+  app.changedUser = function(){
+    document.querySelector('#channelService').generateRequest();
+  };
+
+  
   // paper-inputs are auto-focused only once when contained in a paper-dialog.
   // we use this fix: https://stackoverflow.com/questions/31600258/autofocus-paper-input-in-a-paper-dialog-works-only-once
   window.addEventListener('iron-overlay-opened', function(event) {
@@ -37,9 +51,5 @@
       }
     }
   });
-
-  app.setServiceUrl = function(folderId) {
-    app.serviceURL = '/server/channelServer.php?editor=true&id=' + folderId; // +'&editor=true';
-  };
 
 })(document);
