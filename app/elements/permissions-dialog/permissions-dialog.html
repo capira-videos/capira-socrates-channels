@@ -110,7 +110,7 @@
             <div header>
                 <h3>
                     Who can edit 
-                    <span style="font-style:italic">{{folder.title}}</span>?
+                    <span style="font-style:italic">{{folder.title}}</span> ?
                 </h3>
             </div>
             <div content>
@@ -163,7 +163,7 @@
 
             var service = this.$.service;
             service.method = 'GET';
-            service.url = '/server/permissionServer.php?channelId=' + this.folder.id;
+            service.url = '/services/permissionServer.php?channelId=' + this.folder.id;
             service.generateRequest();*/
             var that = this;
             app.permissionsService.generateRequest({}, 'GET', {

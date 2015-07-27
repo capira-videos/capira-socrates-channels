@@ -1,0 +1,9 @@
+RewriteEngine on
+RewriteBase /
+
+# Don't apply to URLs that go to existing files or folders
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+
+# Rewrite all those to insert /folder
+RewriteRule ^(.*)$  /$1 [L]
