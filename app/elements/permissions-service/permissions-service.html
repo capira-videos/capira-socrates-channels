@@ -1,25 +1,25 @@
-
 <dom-module id="permissions-service">
-  <template>
-    <iron-ajax id="service" handle-as="json" loading="{{loading}}"></iron-ajax>
-  </template>
+    <template>
+        <iron-ajax id="service" handle-as="json" loading="{{loading}}"></iron-ajax>
+    </template>
 </dom-module>
 <script>
 (function() {
-  Polymer({
-    is: 'permissions-service',
-    properties : {
-      loading :{
-        notify:true,
-      }
-    },
-    generateRequest: function(payload, method) {
-        var service = this.$.service;
-        service.method = method ? method : 'POST';
-        service.url = '/server/permissionServer.php';
-        service.body = JSON.stringify(payload);
-        return service.generateRequest().completes;
-    }
-  });
+    Polymer({
+        is: 'permissions-service',
+        properties: {
+            loading: {
+                notify: true,
+            }
+        },
+        generateRequest: function(payload, method, params) {
+            var service = this.$.service;
+            service.method = method ? method : 'POST';
+            service.url = '/server/permissionServer.php?editor';
+            service.params = params;
+            service.body = JSON.stringify(payload);
+            return service.generateRequest().completes;
+        }
+    });
 })();
 </script>

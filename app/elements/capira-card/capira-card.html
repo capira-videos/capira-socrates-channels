@@ -1,0 +1,59 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/paper-material/paper-material.html">
+<link rel="import" href="../../bower_components/iron-image/iron-image.html">
+<link rel="import" href="../../bower_components/paper-ripple/paper-ripple.html">
+<link rel="import" href="../../bower_components/paper-styles/paper-styles.html">
+<link rel="import" href="../../styles/app-theme.html">
+<dom-module id="capira-card">
+    <style>
+    :host {
+        display: block;
+        margin:4px;
+    }
+    
+    paper-material {
+        width: 300px;
+    }
+    paper-material:hover {
+        background-color: green;
+    }
+    paper-material:hover.card-content{
+      color:white;
+    }
+    iron-image {
+        width: 100%;
+        height: 180px;
+    }
+    
+    .card-content {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--paper-font-subhead);
+        margin-left: 12px;
+        margin-right: 12px;
+        height: 80px;
+    }
+    </style>
+    <template>
+        <paper-material>
+            <iron-image src="{{imageUrl}}" sizing="cover" preload fade></iron-image>
+            <paper-ripple id='ripple' opacityDecayVelocity="0.6"></paper-ripple>
+            <div class="card-content">
+                <content></content>
+            </div>
+        </paper-material>
+    </template>
+    <script>
+    (function() {
+        Polymer({
+            is: 'capira-card',
+            properties: {
+                imageUrl: {
+                    value: 'http://img.youtube.com/vi/vJcHp9j8U_s/mqdefault.jpg',
+                }
+            },
+
+        });
+    })();
+    </script>
+</dom-module>

@@ -1,129 +1,144 @@
 <dom-module id="permissions-dialog">
     <style>
-        paper-dialog {
-            /* to fix the height-bug in paper-dialog*/
-            max-height: 1000px !important;
-        }
+    paper-dialog {
+        /* to fix the height-bug in paper-dialog*/
+        max-height: 1000px !important;
+    }
+    
+    #dialog > * {
+        padding: 0;
+    }
+    
+    #addDialog {
+        width: 400px;
+    }
+    
+    [header] {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--shadow-elevation-1dp);
+        height: 64px;
+        background-color: var(--default-primary-color);
+        padding: 0 36px;
+        color: white;
+        margin-top: 0;
+    }
+    
+    [content] {
+        @apply(--layout-vertical);
+        overflow: auto;
+    }
+    
+    [content] > *,
+    [header] {
+        padding: 0 16px 0 24px !important;
+        box-sizing: border-box;
+    }
+    
+    h3 {
+        max-width: 300px;
+    }
+    
+    [list-header] {
+        font-size: 12px;
+        padding-top: 12px;
+    }
 
-        #dialog > * {
-            padding: 0;
-        }
-
-        #addDialog {
-            width: 400px;
-        }
-
-        [header] {
-            @apply(--layout-horizontal);
-            @apply(--layout-center);
-            @apply(--shadow-elevation-1dp);
-            height: 64px;
-            background-color: var(--default-primary-color);
-            padding: 0 36px;
-            color: white;
-            margin-top: 0;
-        }
-
-        [content] {
-            @apply(--layout-vertical);
-            overflow: auto;
-        }
-
-        [content] > *,
-        [header] {
-            padding: 0 16px 0 24px !important;
-            box-sizing: border-box;
-        }
-
-        h3 {
-            max-width: 300px;
-        }
-
-        [list-header] {
-            font-size: 12px;
-            padding-top: 12px;
-        }
-
-        [users] {
-            height: 266px;
-            min-width: 400px;
-            overflow-y: auto;
-            overflow-x: hidden;
-        }
-
-        [user] {
-            height: 48px;
-            @apply(--layout-horizontal);
-            @apply(--layout-center);
-        }
-
-        [username] {
-            @apply(--paper-font-subhead);
-        }
-
-        [isadmin] {
-            padding-right: 16px;
-            padding-right: 32px;
-        }
-
-        [adminlabel] {
-            width: 40px;
-        }
-
-        [add-user] {
-            margin-bottom: 24px;
-            margin-top: 32px;
-        }
-
-        [add-user] > span {
-            font-size: 12px;
-        }
-
-        [add-user] paper-input {
-            margin-top: -12px;
-        }
-
-        [info] {
-            font-size: 11px;
-        }
-
-        [remove] {
-            height: 24px;
-        }
-
-        paper-fab {
-            position: absolute;
-            right: 16px;
-            top: 44px;
-        }
-        [content] .buttons{
-          padding-bottom: 1px !important;
-        }
+    [inheriteds]{
+        margin-bottom: 24px;
+    }
+    
+    [users] {
+        height: 266px;
+        min-width: 400px;
+        overflow-y: auto;
+        overflow-x: hidden;
+    }
+    
+    [user] {
+        height: 48px;
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+    }
+    
+    [username] {
+        @apply(--paper-font-subhead);
+    }
+    
+    [isadmin] {
+        padding-right: 16px;
+        padding-right: 32px;
+    }
+    
+    [adminlabel] {
+        width: 40px;
+    }
+    
+    [add-user] {
+        margin-bottom: 24px;
+        margin-top: 32px;
+    }
+    
+    [add-user] > span {
+        font-size: 12px;
+    }
+    
+    [add-user] paper-input {
+        margin-top: -12px;
+    }
+    
+    [info] {
+        font-size: 11px;
+    }
+    
+    [remove] {
+        height: 24px;
+    }
+    
+    paper-fab {
+        position: absolute;
+        right: 16px;
+        top: 44px;
+    }
+    
+    [content] .buttons {
+        padding-bottom: 1px !important;
+    }
     </style>
     <template>
-
         <paper-dialog id="dialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
             <div header>
                 <h3>
-                    Authors of
-                    <span style="font-style:italic">{{folder.title}}</span>
+                    Who can edit 
+                    <span style="font-style:italic">{{folder.title}}</span>?
                 </h3>
             </div>
             <div content>
                 <div list-header>
+                    All Authors of:
+                </div>
+                <div inheriteds>
+                    <ul>
+                        <template is="dom-repeat" items="{{folder.path}}">
+                            <li>{{item.title}}</li>
+                        </template>
+                    </ul>
+                </div>
+                <div list-header hidden$="{{!users.0}}">
                     Admin
                 </div>
-                <div users>
+                <div users >
                     <paper-fab icon="add" mini on-click="_openAddAuthor"></paper-fab>
+                    <span hidden$="{{users.0}}" list-header>No Authors in this Channel yet. Press + to invited people...</span>
                     <template is="dom-repeat" items="{{users}}">
                         <div user>
                             <paper-toggle-button isadmin checked="{{item.admin}}" on-click="_changePermissions"></paper-toggle-button>
                             <span username>{{item.name}}</span>
                             <div class="flex"></div>
                             <div>
-                            <paper-icon-button remove icon="close" on-click="_removeUser" id="removeAuthorIcon"></paper-icon-button>
-                              <paper-tooltip for="removeAuthorIcon">Authors and Admins of <span>{{folder.title}}</span></paper-tooltip>
-          </div>
+                                <paper-icon-button remove icon="close" on-click="_removeUser" id="removeAuthorIcon"></paper-icon-button>
+                                <paper-tooltip for="removeAuthorIcon">Authors and Admins of <span>{{folder.title}}</span></paper-tooltip>
+                            </div>
                         </div>
                     </template>
                 </div>
@@ -132,60 +147,61 @@
                 </div>
             </div>
         </paper-dialog>
-
         <add-author-dialog id="addAuthorDialog" on-closed="open" folder="{{folder}}"></add-author-dialog>
-
-
         <iron-ajax id="service" handle-as="json" verbose="true" on-response="_usersReceived"></iron-ajax>
-
     </template>
 </dom-module>
-
 <script>
-    (function() {
-        Polymer({
-            is: 'permissions-dialog',
+(function() {
+    Polymer({
+        is: 'permissions-dialog',
 
-            open: function() {
-                this.$.dialog.open();
+        open: function() {
+            this.$.dialog.open();
+            this.users = [];
+            /*this.service=document.querySelector('#permissions-service');
 
-                this.service=document.querySelector('#permissions-service');
+            var service = this.$.service;
+            service.method = 'GET';
+            service.url = '/server/permissionServer.php?channelId=' + this.folder.id;
+            service.generateRequest();*/
+            var that = this;
+            app.permissionsService.generateRequest({}, 'GET', {
+                channelId: this.folder.id
+            }).then(function(req) {
+                that._usersReceived(req.response.list);
+            });
+        },
 
-                var service = this.$.service;
-                service.method = 'GET';
-                service.url = '/server/permissionServer.php?channelId=' + this.folder.id;
-                service.generateRequest();
-            },
+        _usersReceived: function(resp) {
+            this.users = resp;
+            console.log('received users: ', resp);
+        },
 
-            _usersReceived: function() {
-                this.users = this.$.service.lastResponse.list;
-                console.log('received users: ', this.users);
-            },
+        _changePermissions: function(event) {
+            var user = event.model.item;
+            app.permissionsService.generateRequest({
+                channelId: this.folder.id,
+                isAdmin: user.admin,
+                userId: user.id
+            });
+        },
 
-            _changePermissions: function(event) {
-                var user = event.model.item;
-                this.service.generateRequest({
-                    channelId: this.folder.id,
-                    isAdmin: user.admin,
-                    userId: user.id
-                });
-            },
+        _removeUser: function(event) {
+            var user = event.model.item;
+            var index = this.users.indexOf(user);
+            this.splice('users', index, 1);
 
-            _removeUser: function(event) {
-                var user = event.model.item;
-                var index = this.users.indexOf(user);
-                this.splice('users', index, 1);
+            app.permissionsService.generateRequest({
+                channelId: this.folder.id,
+                userId: user.id
+            }, 'DELETE');
+        },
 
-                this.service.generateRequest({
-                    channelId: this.folder.id,
-                    userId: user.id
-                }, 'DELETE');
-            },
-
-            _openAddAuthor:function(){
-                this.$.dialog.close();
-                this.$.addAuthorDialog.open();
-            }
-        });
-    })();
+        _openAddAuthor: function() {
+            this.$.dialog.close();
+            this.$.addAuthorDialog.open();
+        }
+    });
+})();
 </script>

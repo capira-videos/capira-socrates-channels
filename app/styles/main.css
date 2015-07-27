@@ -33,6 +33,8 @@ iron-pages{
 
 #topBar {
   z-index: 1;
-  left: 0;
-  right: 0;
+}
+
+#topBar a{
+  text-decoration: none;
 }
