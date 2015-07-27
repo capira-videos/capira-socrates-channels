@@ -1,309 +1,126 @@
 <dom-module id="folder-list">
-  <style>
-    :host {
-      display: block;
-      padding-top: 18px !important;
-    }
-
-    [list] {
-      @apply(--layout-vertical);
-    }
-
-    [list-header] {
-      @apply(--layout-horizontal);
-      @apply(--layout-center);
-      @apply(--material-container);
-      height: 64px;
-    }
-
-    [list-title] {
-      @apply(--paper-font-headline);
-    }
-
-    [item-title] {
-      @apply(--paper-font-subhead);
-      max-width: 460px;
-      margin-left: 10px;
-    }
-
-    [isEmpty]{
-      @apply(--paper-font-caption);
-      @apply(--material-container);
-    }
-
-    paper-item {
-      @apply(--material-container);
-      padding-top: 8px;
-      padding-bottom: 8px;
-      transition: background-color 0.1s;
-        /* to fix a bug in paper-ripple which makes it extent the containers size */
-      position: relative;
-    }
-
-
-    paper-item:hover {
-        background-color: var(--paper-blue-500);
-      color:white;
-    }
-
-    paper-item:hover paper-icon-button{
-        color:white;
-    }
-
-    paper-item paper-ripple {
-      color: rgb(250, 250, 0);
-      pointer-events: none;
-        /* will be activated in code */
-      display: none;
-    }
-
-    paper-item iron-image {
-      width: 106px;
-      height: 60px;
-      background-color: lightgray;
-    }
-
-    a {
-      display: block;
-      overflow: hidden;
-      text-decoration: none !important;
-      color: rgb(15, 15, 15) !important;
-    }
-
-    img {
-      border: none;
-    }
-
-    .sorting .sortable * {
-      pointer-events: none;
-      /* a nice hack to avoid that dragEnter and dragLeave
-    get called for every child of a draggable.
-    See http://stackoverflow.com/questions/7110353/html5-dragleave-fired-when-hovering-a-child-element*/
+<style>
+:host {
+    display: block;
+    padding-top: 18px !important;
 }
-    .sortable-ghost {
-      opacity: 0;
-      position: relative;
-    }
 
-  </style>
-  <template>
+[list] {
+    @apply(--layout-vertical);
+}
+
+[list-header] {
+    @apply(--layout-horizontal);
+    @apply(--layout-center);
+    @apply(--material-container);
+    height: 64px;
+}
+
+[list-title] {
+    @apply(--paper-font-headline);
+}
+
+[isEmpty]{
+    @apply(--paper-font-caption);
+    @apply(--material-container);
+}
+
+.sortable-ghost {
+    opacity: 0;
+    position: relative;
+}
+
+</style>
+<template>
     <rename-dialog id="rename" on-renamed="_onRenamed"></rename-dialog>
     <confirm-delete-dialog id="confirmDelete" on-delete-confirmed="removeItem"></confirm-delete-dialog>
     <div list hidden$="{{computeIsHidden(list,isAuthor)}}">
-      <div list-header>
-        <span list-title>
-          <span>{{listTitle}}</span>s</span>
-        <div class="flex"></div>
-        <div>
-            <paper-icon-button icon="add" on-click="_createItem" hidden$="{{!isAuthor}}" id="create"></paper-icon-button>
-            <paper-tooltip for="create">Create a new <span>{{listTitle}}</span></paper-tooltip>
-        </div>
-      </div>
-      <div hidden$="{{list.0}}" isEmpty>
-        Empty. There are no
-        <span>
-          <span>{{listTitle}}</span>s</span>
-        in this Folder yet. Press + to create one.
-      </div>
-
-      <sortable-droppable-list style="background:green; display:none;"
-      id="sortable-list" sortable=".sortable" animation="150"
-      disabled="{{!isAuthor}}"
-      type={{listTitle}} drop-types='["Folder"]'>
-        <template is="dom-repeat" items="{{list}}" id="listElement">
-            <list-item item="{{item}}" type="{{listTitle}}" isAuthor={{isAuthor}} on-item-rename-requested="_onRenameRequested" on-item-delete-requested="_onDeleteRequested">
-            </list-item>
-        </template>
-      </sortable-droppable-list>
-            <sortable-list id="sortable-list" sortable=".sortable" animation="150" on-sort-start="_onSortStart" on-sort-move="_onMoved" on-sort-end="_onSortEnd" disabled="{{!isAuthor}}" group="all-sortables">
-        <template is="dom-repeat" items="{{list}}" id="listElement">
-          <div item on-click="toggleSelection" selected$="[[item.selected]]" class="sortable" type="{{listTitle}}" on-dragleave="_dragLeave" on-mouseup="_onMouseUp">
-            <a href="{{reference(item)}}">
-              <paper-item>
-                <paper-ripple id='ripple' opacityDecayVelocity="0.6"></paper-ripple>
-                <iron-image src="{{thumbnail(item)}}" sizing="cover" preload fade></iron-image>
-                <div item-title>{{item.title}}</div>
+        <div list-header>
+            <span list-title>
+                <span>{{listTitle}}</span>s</span>
                 <div class="flex"></div>
-                <div hidden$="{{!isAuthor}}">
-                    <span>
-                    <paper-icon-button icon="delete" on-click="_confirmDelete" id="deleteIcon"></paper-icon-button>
-                    <paper-tooltip for="deleteIcon">Delete this <span>{{listTitle}}</span></paper-tooltip>
-                    </span>
-                    <span>
-                  <paper-icon-button icon="editor:mode-edit" on-click="_rename" id="renameIcon"></paper-icon-button>
-                  <paper-tooltip for="renameIcon">Rename this <span>{{listTitle}}</span></paper-tooltip>
-                    </span>
-                  <!--TODO: visibility of item  <paper-icon-button icon="social:public" on-click="promptDelete"></paper-icon-button> -->
+                <div>
+                    <paper-icon-button icon="add" on-click="_createItem" hidden$="[[!isAuthor]]" id="create"></paper-icon-button>
+                    <paper-tooltip for="create">Create a new <span>{{listTitle}}</span></paper-tooltip>
                 </div>
-              </paper-item>
-            </a>
-          </div>
+            </div>
+            <div hidden$="[[list.0]]" isEmpty>
+                Empty. There are no
+                <span>
+                    <span>{{listTitle}}</span>s</span>
+                    in this Folder yet. Press + to create one.
+                </div>
+
+                <sortable-droppable-list
+                id="sortable-list" sortable=".sortable" animation="150"
+                disabled="[[!isAuthor]]" on-sort-change="_sortChanged"
+                on-sort-drop="_droppedIntoFolder" type="[[listTitle]]"
+                drop-types='["Folder"]' >
+                <template is="dom-repeat" items="[[list]]" id="listElement">
+                    <list-item item="[[item]]" type="[[listTitle]]"
+                    isAuthor="[[isAuthor]]" on-item-rename-requested="_onRenameRequested"
+                    on-item-delete-requested="_onDeleteRequested" on-click="toggleSelection"
+                    selected$="[[item.selected]]">
+                    </list-item>
+                </template>
+            </sortable-droppable-list>
+            <array-selector id="selector" items="[[list]]" selected="{{selected}}" multi toggle></array-selector>
+            <channel-editor-service id="service"></channel-editor-service>
         </template>
-      </sortable-list>
-      <array-selector id="selector" items="{{list}}" selected="{{selected}}" multi toggle></array-selector>
-      <channel-editor-service id="service"></channel-editor-service>
-    </template>
-</dom-module>
-<script>
-(function() {
-    Polymer({
-        is: 'folder-list',
-        properties: {
-            list: {
-                type: Array,
-                value: [],
-                notify: true
-            },
-            isAuthor: {
-                type: Boolean,
-                value: false
-            }
-        },
-
-        computeIsHidden: function(list, isAuthor) {
-            return !(list.length > 0 || isAuthor);
-        },
-
-        _confirmDelete: function(event) {
-            event.preventDefault();
-            event.stopPropagation();
-            var item = event.model.item;
-            this.$.confirmDelete.open(item);
-        },
-
-        _onDeleteRequested: function(event) {
-            this.$.confirmDelete.open(event.item);
-        },
-
-        _saveItem: function(item) {
-            return app.editorService.generateRequest(this.listTitle.toLowerCase(), item);
-        },
-
-        removeItem: function(event) {
-            var item = event.detail;
-            item.deleted = true;
-            item.folderId = this.folderId;
-            this._saveItem(item);
-
-            this.deleteIndex = this.list.indexOf(item);
-            this.splice('list', this.deleteIndex, 1);
-        },
-
-
-        thumbnail: function(item) {
-            return 'http://img.youtube.com/vi/' + (item.thumbnail ? item.thumbnail : item.videoId) + '/default.jpg';
-        },
-
-        reference: function(item) {
-            if (item.videoId) {
-                return this.unitRef(item);
-            } else {
-                return this.folderRef(item);
-            }
-        },
-
-        unitRef: function(unit) {
-            return 'https://capira.de/' + (this.isAuthor ? 'editor' : 'player') + '/#/' + unit.id;
-        },
-
-        folderRef: function(item) {
-            return item.id;
-        },
-
-        _rename: function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            var item = this.$.listElement.itemForElement(e.target);
-            var dialog = this.$.rename;
-            dialog.open(item);
-        },
-
-        _onRenameRequested: function(event) {
-            this.$.rename.open(event.item);
-        },
-
-        _onRenamed: function(e) {
-            var item = e.detail;
-            var i = this.list.indexOf(item);
-            this.set('list.' + i + '.title', item.title);
-
-            this._saveItem(item).then(function(e){
-                console.log('saved',e);
-            });
-        },
-
-        _getFolderListElements: function() {
-            var parent = Polymer.dom(this).parentNode;
-            return Polymer.dom(parent).querySelectorAll('folder-list');
-        },
-
-        _getFolderListElement: function(type) {
-            if (this.listTitle === type) {
-                return this;
-            } else {
-                var folderLists = this._getFolderListElements();
-                for (var i = 0; i < folderLists.length; ++i) {
-                    if (folderLists[i].listTitle === type) {
-                        return folderLists[i];
-                    }
+    </dom-module>
+    <script>
+    (function() {
+        Polymer({
+            is: 'folder-list',
+            properties: {
+                list: {
+                    type: Array,
+                    value: [],
+                    notify: true
+                },
+                isAuthor: {
+                    type: Boolean,
+                    value: false
                 }
-            }
-        },
-
-        _onMouseUp: function(event) {
-            console.log('mouse up');
-            // the mouseup event does not get triggered after dragging so we
-            // can safely assume that it was a click and perform a clicky
-            // paper ripple.
-            var el = event.target;
-            while (!el.hasAttribute('item')) {
-                el = el.parentNode;
-            }
-            var ripple = Polymer.dom(el).querySelector('#ripple');
-            ripple.style.display = 'block';
-            var customEvent = new CustomEvent('mouseup', {
-                detail: {
-                    x: event.x,
-                    y: event.y
-                }
-            });
-            console.log('mouse up', customEvent);
-            ripple.downAction(customEvent);
-            window.setTimeout(function() {
-                ripple.upAction(customEvent);
-                window.setTimeout(function() {
-                    ripple.style.display = 'none';
-                }, 1000);
-            }, 1);
-        },
-
-        _onDrag: function(event) {
-            this._folderDragValues.mousePosition.x = event.clientX;
-            this._folderDragValues.mousePosition.y = event.clientY;
-        },
-
-        _folderDragValues: {
-            mousePosition: {
-                x: 0,
-                y: 0
             },
-            currentlyHoveredFolder: null,
-            enteredFrom: '' // bottom or top
-        },
 
-        _onSortStart: function(event) {
-            this._getFolderListElements().forEach(function(folderList) {
-                var sortableList = Polymer.dom(folderList.root).querySelector('sortable-list');
-                Polymer.dom(sortableList).classList.add('sorting');
-            });
-            if (event.detail.item.type === 'Folder') {
-                this.addEventListener('drag', this._onDrag);
-            }
-        },
+            computeIsHidden: function(list, isAuthor) {
+                return !(list.length > 0 || isAuthor);
+            },
 
-        _onSortEnd: function(event) {
-            var changePosition = function(oldIndex, newIndex) {
-                var dataEntry = this.list[oldIndex];
+            _saveItem: function(item) {
+                return app.editorService.generateRequest(this.listTitle.toLowerCase(), item);
+            },
+
+            _onDeleteRequested: function(event) {
+                this.$.confirmDelete.open(event.detail.item);
+            },
+
+            removeItem: function(event) {
+                var item = event.detail;
+                item.deleted = true;
+                item.folderId = this.folderId;
+                this._saveItem(item);
+
+                this.deleteIndex = this.list.indexOf(item);
+                this.splice('list', this.deleteIndex, 1);
+            },
+
+            _onRenameRequested: function(event) {
+                this.$.rename.open(event.detail.item);
+            },
+
+            _onRenamed: function(e) {
+                var item = e.detail;
+                var i = this.list.indexOf(item);
+                this.set('list.' + i + '.title', item.title);
+
+                this._saveItem(item).then(function(e){
+                    console.log('saved',e);
+                });
+            },
+
+            _sortChanged: function(event) {
                 // update the position in the dataset
                 // One might maybe expect that some special treatment would be needed
                 // as the dom element is switched first and then the databound list
@@ -315,164 +132,36 @@
                 // position, where it actually already happened to be. Thus, using
                 // splices, we are save. this.set() doesnt have this behaviour
                 // and results in the expected buggy behaviour.
-                this.splice('list', oldIndex, 1); // remove at old position
-                this.splice('list', newIndex, 0, dataEntry); // put at new position
-            }.bind(this);
+                // As folders and units can not be mixed, we simply assume here that
+                // event.oldList === event.newList === sortable-droppable-list here
+                var entry = this.splice('list', event.detail.oldIndex, 1)[0]; // remove
+                this.splice('list', event.detail.newIndex, 0, entry); // put at new position
+                this.fire('sorted'); // fire event to save to database
+            },
 
-            function computeIndex(domElement) {
-                var index = 0;
-                // Here we use native previousElementSibling by
-                // purpose to also count shallow elements which were inserted
-                // for shadydom polyfill.
-                while ((domElement = domElement.previousElementSibling)) {
-                    index++;
+            _droppedIntoFolder: function(event) {
+                var oldIndex = event.detail.oldIndex;
+                var item = this.list[oldIndex];
+                var folderList = event.detail.dropList;
+                while (folderList.tagName.toLowerCase()!=='folder-list') {
+                    folderList = folderList.parentNode;
                 }
-                return index;
+                var folderEl = event.detail.dropTarget;
+                var folder = folderList.$.listElement.itemForElement(folderEl);
+                item.parent = folder.id;
+                this._saveItem(item); // save to database
+                this.splice('list', oldIndex, 1); // remove from UI
+            },
+
+            _createItem: function() {
+                this.fire('create');
+            },
+
+            toggleSelection: function(e) {
+                var item = this.$.listElement.itemForElement(e.target);
+                item.selected = !item.selected;
+                this.$.selector.select(item);
             }
-
-            // In shady dom, a style tag gets inserted in front of our sortable
-            // items. In shadow dom its not. We have thus have to adapt our
-            // retrieved indices. Native querySelector is used here to get
-            // the current state of the actual dom. On shadow dom, the
-            // indexOffset will correctly be 0.
-            var indexOffset =
-            computeIndex(this.$['sortable-list'].querySelector('.sortable'));
-            var oldIndex = event.detail.oldIndex - indexOffset;
-            var newIndex = typeof(event.detail.newIndex)==='number'?
-                event.detail.newIndex- indexOffset : oldIndex;
-
-            // perform updates on dataset
-            if (this.highlightedFolder) { // dropped into a folder
-                var draggedEl = event.detail.item;
-                var folderItem = this._getFolderListElement('Folder')
-                .$.listElement.itemForElement(this.highlightedFolder);
-                var sourceList = this._getFolderListElement(draggedEl.type).$.listElement;
-                var draggedItem = sourceList.itemForElement(draggedEl);
-                var draggedItemIndex = sourceList.indexForElement(draggedEl);
-                draggedItem.folderId = this.folderId;
-                draggedItem.parent = folderItem.id;
-                this._saveItem(draggedItem); // save to database
-                this.splice('list', draggedItemIndex, 1); // remove from UI
-                console.log('Dropped ', draggedItem, ' into Folder ', folderItem);
-            } else if (oldIndex !== newIndex) { // moved
-                changePosition(oldIndex, newIndex);
-                this.fire('sorted');
-                console.log('Moved ' + event.detail.item.type + ' from position ' + oldIndex + ' to ' + newIndex);
-            }
-
-            // cleanup
-            this.async(function() {
-                // we cleanup async, as otherwise some drawing problems occur in conjunction with ripple
-                this._getFolderListElements().forEach(function(folderList) {
-                    var sortableList = Polymer.dom(folderList.root).querySelector('sortable-list');
-                    Polymer.dom(sortableList).classList.remove('sorting');
-                });
-                this._unHighlightFolderForDropping();
-                if (event.detail.item.type === 'Folder') {
-                    this.removeEventListener('drag', this._onDrag);
-                    this._folderDragValues.currentlyHoveredFolder = null;
-                }
-            }, 100);
-
-            console.log(document.querySelector('folder-list').list.map(function(entry) {
-                return entry.title;
-            }));
-        },
-
-        _onMoved: function(event) {
-            var allowSorting;
-            var dragged = event.detail.dragged;
-            var related = event.detail.related;
-            if (dragged.type === 'Unit' && related.type === 'Unit') {
-                // a unit is moved along other units
-                allowSorting = true;
-            } else if (dragged.type === 'Folder' && related.type === 'Unit') {
-                // a folder wants to move to the unit list
-                allowSorting = false;
-            } else if (dragged.type === 'Unit' && related.type === 'Folder') {
-                // a unit can not be sorted along folders, however it can be
-                // moved into a folder.
-                allowSorting = false;
-                this._highlightFolderForDropping(related);
-            } else if (dragged.type === 'Folder' && related.type === 'Folder') {
-                // sort after moving with the mouse over the mid of the folder
-                var relatedRect = event.detail.relatedRect;
-                var mouseY = this._folderDragValues.mousePosition.y;
-                var folderMidY = (relatedRect.top + relatedRect.bottom) / 2;
-                if (related !== this._folderDragValues.currentlyHoveredFolder) {
-                    // freshly entered into new folder element
-                    allowSorting = false;
-                    this._folderDragValues.currentlyHoveredFolder = related;
-                    this._folderDragValues.enteredFrom = mouseY < folderMidY ?
-                    'top' : 'bottom';
-                    this._highlightFolderForDropping(related);
-                } else {
-                    var from=this._folderDragValues.enteredFrom;
-                    var overMid = (from === 'bottom' && mouseY < folderMidY) ||
-                                  (from === 'top' && mouseY > folderMidY);
-                    if (overMid) {
-                        allowSorting = true;
-                        this._unHighlightFolderForDropping(related);
-                    } else {
-                        allowSorting = false;
-                    }
-                }
-            }
-            event.returnValue = allowSorting;
-        },
-
-        _dragLeave: function(event) {
-            // we can safely asume that dragLeave only gets called once when
-            // leaving an element itself and not when leavin one of its children
-            // as we are using pointer-events:none (see above)
-            if (event.target.type === 'Folder') {
-                this._unHighlightFolderForDropping(event.target);
-                this._folderDragValues.currentlyHoveredFolder = null;
-            }
-        },
-
-        // Some words about highlighting a folder:
-        // Sortable.js uses HTML5 drag and drop which causes some problems.
-        // Simple stuff like .folder:hover { background:green } doesn't work.
-        // mouse events also did not trigger, so we had to use the dragLeave
-        // event. This however gets not only called when leaving the drop target
-        // (highlighted folder) but also when leaving any of it's children, also
-        // when changing from one child to another. To reliably only trigger
-        // dragLeave when the folder element is left, we set the children to
-        // pointer-events:none; This ist done in onSortStart and onSortEnd on
-        // both lists. To not trigger the highlighting over and over again (the
-        // onMoved event gets called very often), we save a reference to the
-        // highlightedFolder which is unset on unhighlighting. As the highlighting
-        // for a unit does get triggered in the unit list, but the unhighlighting
-        // in the dragLeave event of the folder list, the reference is kept
-        // synchronous using databinding in folder-content.html
-        _highlightFolderForDropping: function(folderElement) {
-            if (folderElement === this.highlightedFolder) {
-                return;
-            }
-            folderElement.style.backgroundColor = 'lightblue';
-            this.highlightedFolder = folderElement;
-        },
-
-        _unHighlightFolderForDropping: function(highlightedFolder) {
-            highlightedFolder = highlightedFolder || this.highlightedFolder;
-            if (highlightedFolder) {
-                highlightedFolder.style.backgroundColor = 'white';
-                if (this.highlightedFolder === highlightedFolder) {
-                    this.highlightedFolder = null;
-                }
-            }
-        },
-
-        _createItem: function() {
-            this.fire('create');
-        },
-
-        toggleSelection: function(e) {
-            var item = this.$.listElement.itemForElement(e.target);
-            item.selected = !item.selected;
-            this.$.selector.select(item);
-        }
-    });
-})();
-</script>
+        });
+    })();
+    </script>

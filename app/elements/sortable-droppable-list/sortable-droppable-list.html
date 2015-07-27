@@ -1,0 +1,501 @@
+<link rel="import" href="..\..\bower_components/polymer/polymer.html">
+
+<link rel="import" href="sortable-import.html">
+
+<!--
+This component uses enables sorting it's children and dropping items into other
+items, also across several lists.
+It is based on the [Sortable.js](http://rubaxa.github.io/Sortable/) library.
+
+##### Example
+
+```HTML
+<sortable-droppable-list>
+<div>First Item</div>
+<div>Second Item</div>
+<div>Third Item</div>
+</sortable-droppable-list>
+```
+
+or
+
+```HTML
+<sortable-droppable-list>
+<template is="dom-repeat" items"{{items}}"">
+<div>{{item.title}}</div>
+</template>
+</sortable-droppable-list>
+```
+
+@element sortable-droppable-list
+-->
+<dom-module id="sortable-droppable-list">
+    <template>
+        <content></content>
+    </template>
+</dom-module>
+
+<script>
+(function closure() {
+    // static variables:
+    var statics = {
+        /**
+        * List of all attached sortable-droppable-lists
+        */
+        lists: [],
+        dragInformation: {
+            mousePosition: {
+                x: 0,
+                y: 0
+            },
+            enteredFrom: '', // bottom or top
+            currentlyHoveredItem: null,
+            hoveredItems: [],
+            dragEnterLeaveCounts: []
+        },
+        dropTarget: null
+    };
+
+    Polymer({
+        is: 'sortable-droppable-list',
+        properties: {
+            /**
+            * Can specify the type of elements in this list, for example 'Folder'.
+            * Every child can however overwrite this property by setting.
+            * @attribute type
+            * @default null
+            * @type String
+            */
+            type: {
+                type: String,
+                value: null
+            },
+            /**
+            * The type of items, the dragged item can be sorted with.
+            * @attribute sortTypes
+            * @default [this.type]
+            * @type Array
+            */
+            sortTypes: {
+                type: Array,
+                value: null // will be set in the attached event
+            },
+            /*
+            * The type of items, the dragged item can be dropped onto.
+            * @attribute dropTypes
+            * @default []
+            * @type Array
+            */
+            dropTypes: {
+                type: Array,
+                value: []
+            },
+            /*
+            * Specify with which other lists the list can interact with.
+            * Lists can interact with other lists of the same group name. One
+            * can also specify what lists to pull from and what lists to put.
+            *
+            *  * name: String — group name
+            *  * pull: true|false|'clone' — ability to move from the list.
+            *    clone — copy the item, rather than move.
+            *  * put: true|false|["foo", "bar"] — whether elements can be added
+            *    from other lists, or an array of group names from which
+            *    elements can be taken.
+            *
+            * @attribute group
+            * @default "default-group"
+            * @type Object
+            */
+            group: {
+                type: Object,
+                value: 'default-group',
+                observer: '_reactivate'
+            },
+            /**
+            * When present, disables dragging/sorting/dropping.
+            * @attribute disabled
+            * @default false
+            * @type Boolean
+            */
+            disabled: {
+                type: Boolean,
+                value: false,
+                observer: '_reactivate'
+            },
+            /**
+            * Length of sorting animation (`0` for no animation).
+            * @attribute animation
+            * @default 0
+            * @type Integer
+            */
+            animation: {
+                type: Number,
+                value: 0,
+                observer: '_reactivate'
+            },
+            /**
+            * CSS selector for a handle inside the sortable item (if any).
+            * @attribute handle
+            * @default null
+            * @type String
+            */
+            handle: {
+                type: String,
+                value: null,
+                observer: '_reactivate'
+            },
+            /**
+            * CSS selector for elements to ignore for sorting purposes.
+            * @attribute filter
+            * @default null
+            * @type String
+            */
+            filter: {
+                type: String,
+                value: null,
+                observer: '_reactivate'
+            },
+            /**
+            * Simple class selector for which child elements should be sortable.
+            * Selector * can be used to select all children.
+            * @attribute sortable
+            * @default '*'
+            * @type String
+            */
+            sortable: {
+                type: String,
+                value: '*',
+                observer: '_reactivate'
+            },
+            /**
+            * Whether or not to scroll when dragging to edges.
+            * @attribute scroll
+            * @default true
+            * @type Boolean
+            */
+            scroll: {
+                type: Boolean,
+                value: true,
+                observer: '_reactivate'
+            },
+            /**
+            * Sensitivity of scroll boundary detection.
+            * @attribute scrollSensitivity
+            * @default 35
+            * @type Integer
+            */
+            scrollSensitivity: {
+                type: Number,
+                value: 35,
+                observer: '_reactivate'
+            },
+            /**
+            * Scrolling speed.
+            * @attribute scrollSpeed
+            * @default 15
+            * @type Integer
+            */
+            scrollSpeed: {
+                type: Number,
+                value: 20,
+                observer: '_reactivate'
+            }
+        },
+        attached: function() {
+            statics.lists.push(this);
+            if (this.sortTypes===null) {
+                this.sortTypes = [this.type];
+            }
+            this._reactivate();
+        },
+        detached: function() {
+            statics.lists.splice(statics.lists.indexOf(this), 1);
+        },
+        /**
+        * Manually destroy and recreate scrollable.
+        * @method _reactivate
+        */
+        _reactivate: function() {
+            if (this._sortable) { this._sortable.destroy(); }
+            this._sortable = Sortable.create(this, this.generateOptions());
+        },
+        generateOptions: function() {
+            return {
+                group: this.group || Math.random(),
+                disabled: this.disabled,
+                animation: this.animation,
+                handle: this.handle,
+                filter: this.filter,
+                draggable: this.sortable==='*'? '>*' : this.sortable,
+                scroll: this.scroll,
+                scrollSensitivity: this.scrollSensitivity,
+                scrollSpeed: this.scrollSpeed,
+                /**
+                * Triggered when a sort begins.
+                * @event sort-start
+                */
+                onStart: function(evt) {
+                    this._onSortStart(evt);
+                    this.fire('sort-start', evt);
+                    evt.stopPropagation();
+                }.bind(this),
+                /**
+                * Triggered when a sort ends.
+                * @event sort-end
+                */
+                onEnd: function(evt) {
+                    this._onSortEnd(evt);
+                    this.fire('sort-end', evt);
+                    evt.stopPropagation();
+                }.bind(this),
+                onMove: this._onMove.bind(this)
+                /**
+                * Triggered when the item was moved to another position.
+                * @event sort-change
+                */
+                // triggered below in the code
+                /**
+                * Triggered when an element was dropped onto another sortable
+                * element.
+                * @event sort-drop
+                */
+                /**
+                * Triggered when an element is set as drop target. The event
+                * gets fired on the item itself and bubbles up
+                * @event sort-drop-target-set
+                */
+                /**
+                * Triggered when an element is unset as drop target. The event
+                * gets fired on the item itself and bubbles up.
+                * @event sort-drop-target-unset
+                */
+                // triggered below in the code
+            };
+        },
+
+        _cleanUp: function() {
+            this.async(function() {
+                // we cleanup async, as otherwise some drawing problems occur in conjunction with ripple
+                statics.lists.forEach(function(list) {
+                    list.removeEventListener('drag', this._onDrag);
+                    list.removeEventListener('dragenter', this._onDragEnter);
+                    list.removeEventListener('dragleave', this._onDragLeave);
+                    list.classList.remove('sorting');
+                }.bind(this));
+                statics.dragInformation.currentlyHoveredItem = null;
+                statics.dragInformation.hoveredItems = [];
+                statics.dragInformation.dragEnterLeaveCounts = [];
+                this._unsetDropTarget();
+            }, 100);
+        },
+
+        // ####### sort events triggered by Sortable.js ########
+
+        _onSortStart: function(event) {
+            statics.lists.forEach(function(list) {
+                list.addEventListener('drag', this._onDrag);
+                list.addEventListener('dragenter', this._onDragEnter);
+                list.addEventListener('dragleave', this._onDragLeave);
+                list.classList.add('sorting');
+            }.bind(this));
+        },
+
+        _onMove: function(event) {
+            var allowSorting;
+            var dragged = event.dragged;
+            var related = event.related;
+            var relatedType = related.type || related.getAttribute('type')
+                || Polymer.dom(related).parentNode.type;
+            var inSortTypes = this.sortTypes.indexOf(relatedType)!==-1;
+            var inDropTypes = this.dropTypes.indexOf(relatedType)!==-1;
+
+            if (!inSortTypes && !inDropTypes) {
+                // can neither be sorted nor dropped
+                allowSorting = false;
+            } else if (inSortTypes && !inDropTypes) {
+                // can be sorted but not dropped
+                allowSorting = true;
+            } else if (!inSortTypes && inDropTypes) {
+                // can not be sorted with but dropped into related element
+                allowSorting = false;
+                this._setDropTarget(related, dragged);
+            } else {
+                // can bes sorted and dropped
+                // -> sort when moving with the mouse over the mid of the item
+                var relatedRect = event.relatedRect;
+                var mouseY = statics.dragInformation.mousePosition.y;
+                var itemMidY = (relatedRect.top + relatedRect.bottom) / 2;
+                if (related !== statics.dragInformation.currentlyHoveredItem) {
+                    // freshly entered into new item element
+                    allowSorting = false;
+                    statics.dragInformation.currentlyHoveredItem = related;
+                    statics.dragInformation.enteredFrom = mouseY < itemMidY ?
+                        'top' : 'bottom';
+                    this._setDropTarget(related, dragged);
+                } else {
+                    var from = statics.dragInformation.enteredFrom;
+                    var overMid = (from === 'bottom' && mouseY < itemMidY) ||
+                                  (from === 'top' && mouseY > itemMidY);
+                    if (overMid) {
+                        allowSorting = true;
+                        this._unsetDropTarget(related);
+                    } else {
+                        allowSorting = false;
+                    }
+                }
+            }
+            return allowSorting;
+        },
+
+        _onSortEnd: function(event) {
+            var dragged = event.item;
+            var oldList = this;
+            var newList = dragged.parentNode; // we are not using Polymer.dom
+            // here as it has not the actual current state of the dom yet
+            var oldListOffset = this._computeListOffset(oldList, this.sortable);
+            var newListOffset = this._computeListOffset(newList, this.sortable);
+            var oldIndex = event.oldIndex - oldListOffset;
+            var newIndex = typeof(event.newIndex)==='number'?
+                event.newIndex - newListOffset : oldIndex;
+
+            // fire events
+            if (statics.dropTarget) { // dropped onto an item
+                var dropEl = statics.dropTarget;
+                var dropList = dropEl.parentNode;
+                var dropIndex = this._computeListOffset(dropList, dropEl, dragged);
+                this.fire('sort-drop', {
+                    oldList: oldList,
+                    oldIndex: oldIndex,
+                    dropList: dropList,
+                    dropIndex: dropIndex,
+                    dropTarget: dropEl,
+                    draggedItem: dragged
+                });
+            } else if (oldIndex !== newIndex) { // moved
+                this.fire('sort-change', {
+                    oldList: oldList,
+                    oldIndex: oldIndex,
+                    newList: newList,
+                    newIndex: newIndex,
+                    draggedItem: dragged
+                });
+            }
+
+            this._cleanUp();
+        },
+
+        _computeListOffset: function(list, selectorOrElement, ignoreEl) {
+            var domElement;
+            if (typeof(selectorOrElement)==='string') {
+                // We use a native querySelector and not Polymer.dom() to
+                // get the actual current state of the dom, which is not
+                // represented yet by Polymer.dom() on shady dom
+                domElement = list.querySelector(selectorOrElement);
+            } else {
+                domElement = selectorOrElement;
+            }
+            var offset = 0;
+            // Here we use native previousElementSibling by
+            // purpose to also count shallow elements which were inserted
+            // by shadydom polyfill for the temploate of
+            // sortable-draggable-list. This works correct on shady and
+            // shadow dom.
+            while ((domElement = domElement.previousElementSibling)) {
+                if (domElement!==ignoreEl) {
+                    offset++;
+                }
+            }
+            return offset;
+        },
+
+        _setDropTarget: function(dropTarget, draggedElement) {
+            if (dropTarget === statics.dropTarget) {
+                return;
+            }
+            statics.dropTarget = dropTarget;
+            this.fire('sort-drop-target-set', {
+                draggedElement: draggedElement
+            }, {
+                node: dropTarget,
+                bubbles: false
+            });
+            dropTarget.style.backgroundColor = 'lightblue';
+        },
+
+        _unsetDropTarget: function(dropTarget) {
+            dropTarget = dropTarget || statics.dropTarget;
+            if (dropTarget) {
+                if (dropTarget === statics.dropTarget) {
+                    statics.dropTarget = null;
+                }
+                this.fire('sort-drop-target-unset', {}, {
+                    node: dropTarget,
+                    bubbles: false
+                });
+                dropTarget.style.backgroundColor = 'white';
+            }
+        },
+
+
+        // ######### native drag events #########
+        // These events are triggered by the list, the mouse is currently over.
+        // That list is not neccesarily the source list of the dragged item.
+        // Values between the lists are shared by static variables
+
+        _onDrag: function(event) {
+            statics.dragInformation.mousePosition.x = event.clientX;
+            statics.dragInformation.mousePosition.y = event.clientY;
+        },
+
+        // Some words about hover detection of an item:
+        // Sortable.js uses HTML5 drag and drop which causes some problems.
+        // Simple stuff like .sortable:hover { background:green } doesn't work.
+        // Mouse events also did not trigger, so we had to use the dragLeave
+        // event. This however gets not only called when leaving the drop target
+        // (highlighted item) but also when leaving any of it's children, also
+        // when changing from one child to another. To reliably only trigger
+        // dragLeave when the item element is left, we use a counter that
+        // counts up on any enter event on any child and counts down on any
+        // leave event. If the counter is back to 0, the item was left again.
+        _onDragEnter: function(event) {
+            var item = this._getItemRootElement(event.srcElement);
+            var hoveredItems = statics.dragInformation.hoveredItems;
+            var dragEnterLeaveCounts = statics.dragInformation.dragEnterLeaveCounts;
+            var index = hoveredItems.indexOf(item);
+            if (index===-1) {
+                hoveredItems.push(item);
+                dragEnterLeaveCounts.push(1); // one enter event
+            } else {
+                dragEnterLeaveCounts[index]++;
+            }
+        },
+
+        _onDragLeave: function(event) {
+            var item = this._getItemRootElement(event.srcElement);
+            var hoveredItems = statics.dragInformation.hoveredItems;
+            var dragEnterLeaveCounts = statics.dragInformation.dragEnterLeaveCounts;
+            var index = hoveredItems.indexOf(item);
+            dragEnterLeaveCounts[index]--;
+            if (dragEnterLeaveCounts[index]===0) {
+                statics.dragInformation.currentlyHoveredItem = null;
+                this._unsetDropTarget(item);
+            }
+        },
+
+        _getItemRootElement: function(descendant) {
+            var el = descendant;
+            if (el.tagName.toLowerCase()==='sortable-droppable-list') {
+                // this can happen, as we registered the event listener on the
+                // list. However, we are only interested in the children.
+                return;
+            }
+            var parent = el.parentNode;
+            while (parent.tagName.toLowerCase()!=='sortable-droppable-list') {
+                el = parent;
+                parent = el.parentNode;
+            }
+            return el;
+        }
+    });
+})();
+</script>
