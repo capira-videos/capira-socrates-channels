@@ -1,49 +1,49 @@
 <dom-module id="folder-list">
-    <style>
+  <style>
     :host {
-        display: block;
-        padding-top: 18px !important;
+      display: block;
+      padding-top: 18px !important;
     }
-    
+
     [list] {
-        @apply(--layout-vertical);
+      @apply(--layout-vertical);
     }
-    
+
     [list-header] {
-        @apply(--layout-horizontal);
-        @apply(--layout-center);
-        @apply(--material-container);
-        height: 64px;
+      @apply(--layout-horizontal);
+      @apply(--layout-center);
+      @apply(--material-container);
+      height: 64px;
     }
-    
+
     [list-title] {
-        @apply(--paper-font-headline);
+      @apply(--paper-font-headline);
     }
-    
+
     [item-title] {
-        @apply(--paper-font-subhead);
-        max-width: 460px;
-        margin-left: 10px;
+      @apply(--paper-font-subhead);
+      max-width: 460px;
+      margin-left: 10px;
     }
-    
-    [isEmpty] {
-        @apply(--paper-font-caption);
-        @apply(--material-container);
+
+    [isEmpty]{
+      @apply(--paper-font-caption);
+      @apply(--material-container);
     }
-    
+
     paper-item {
-        @apply(--material-container);
-        padding-top: 8px;
-        padding-bottom: 8px;
-        transition: background-color 0.1s;
+      @apply(--material-container);
+      padding-top: 8px;
+      padding-bottom: 8px;
+      transition: background-color 0.1s;
         /* to fix a bug in paper-ripple which makes it extent the containers size */
-        position: relative;
+      position: relative;
     }
-    
-    
+
+
     paper-item:hover {
         background-color: var(--paper-blue-500);
-        color: white;
+      color:white;
     }
 
     paper-item:hover paper-icon-button{
@@ -51,112 +51,116 @@
     }
     
     paper-item paper-ripple {
-        color: rgb(250, 250, 0);
-        pointer-events: none;
+      color: rgb(250, 250, 0);
+      pointer-events: none;
         /* will be activated in code */
-        display: none;
+      display: none;
     }
-    
+
     paper-item iron-image {
-        width: 106px;
-        height: 60px;
-        background-color: lightgray;
+      width: 106px;
+      height: 60px;
+      background-color: lightgray;
     }
-    
+
     a {
-        display: block;
-        overflow: hidden;
-        text-decoration: none !important;
-        color: rgb(15, 15, 15) !important;
+      display: block;
+      overflow: hidden;
+      text-decoration: none !important;
+      color: rgb(15, 15, 15) !important;
     }
-    
+
     img {
-        border: none;
+      border: none;
     }
-    
+
     .sorting .sortable * {
-        pointer-events: none;
-        /* a nice hack to avoid that dragEnter and dragLeave
+      pointer-events: none;
+      /* a nice hack to avoid that dragEnter and dragLeave
     get called for every child of a draggable.
     See http://stackoverflow.com/questions/7110353/html5-dragleave-fired-when-hovering-a-child-element*/
-    }
+}
     .sortable-ghost {
-        opacity: 0;
-        position: relative;
+      opacity: 0;
+      position: relative;
     }
-    
-    </style>
-    <template>
-        <rename-dialog id="rename" on-renamed="_onRenamed"></rename-dialog>
-        <confirm-delete-dialog id="confirmDelete" on-delete-confirmed="removeItem"></confirm-delete-dialog>
-        <div list hidden$="{{computeIsHidden(list,isAuthor)}}">
-            <div list-header>
-                <span list-title>
+
+  </style>
+  <template>
+    <rename-dialog id="rename" on-renamed="_onRenamed"></rename-dialog>
+    <confirm-delete-dialog id="confirmDelete" on-delete-confirmed="removeItem"></confirm-delete-dialog>
+    <div list hidden$="{{computeIsHidden(list,isAuthor)}}">
+      <div list-header>
+        <span list-title>
           <span>{{listTitle}}</span>s</span>
+        <div class="flex"></div>
+        <div>
+            <paper-icon-button icon="add" on-click="_createItem" hidden$="{{!isAuthor}}" id="create"></paper-icon-button>
+            <paper-tooltip for="create">Create a new <span>{{listTitle}}</span></paper-tooltip>
+        </div>
+      </div>
+      <div hidden$="{{list.0}}" isEmpty>
+        Empty. There are no
+        <span>
+          <span>{{listTitle}}</span>s</span>
+        in this Folder yet. Press + to create one.
+      </div>
+
+      <sortable-droppable-list style="background:green; display:none;"
+      id="sortable-list" sortable=".sortable" animation="150"
+      disabled="{{!isAuthor}}"
+      type={{listTitle}} drop-types='["Folder"]'>
+        <template is="dom-repeat" items="{{list}}" id="listElement">
+          <div item on-click="toggleSelection" selected$="[[item.selected]]" class="sortable" type="{{listTitle}}" on-mouseup="_onMouseUp">
+            <a href="{{reference(item)}}">
+              <paper-item>
+                <paper-ripple id='ripple' opacityDecayVelocity="0.6"></paper-ripple>
+                <iron-image src="{{thumbnail(item)}}" sizing="cover" preload fade></iron-image>
+                <div item-title>{{item.title}}</div>
                 <div class="flex"></div>
-                <div>
-                    <paper-icon-button icon="add" on-click="_createItem" hidden$="{{!isAuthor}}" id="create"></paper-icon-button>
-                    <paper-tooltip for="create">Create a new <span>{{listTitle}}</span></paper-tooltip>
+                <div hidden$="{{!isAuthor}}">
+                    <span>
+                    <paper-icon-button icon="delete" on-click="_confirmDelete" id="deleteIcon"></paper-icon-button>
+                    <paper-tooltip for="deleteIcon">Delete this <span>{{listTitle}}</span></paper-tooltip>
+                    </span>
+                    <span>
+                  <paper-icon-button icon="editor:mode-edit" on-click="_rename" id="renameIcon"></paper-icon-button>
+                  <paper-tooltip for="renameIcon">Rename this <span>{{listTitle}}</span></paper-tooltip>
+                    </span>
+                  <!--TODO: visibility of item  <paper-icon-button icon="social:public" on-click="promptDelete"></paper-icon-button> -->
                 </div>
-            </div>
-            <div hidden$="{{list.0}}" isEmpty>
-                Empty. There are no
-                <span>
-          <span>{{listTitle}}</span>s</span>
-                in this Folder yet. Press + to create one.
-            </div>
-            <sortable-droppable-list style="display:none; background:green;" id="sortable-list" sortable=".sortable" animation="150" on-sort-start="_onSortStart" on-sort-move="_onMoved" on-sort-end="_onSortEnd" disabled="{{!isAuthor}}" group="all-sortables">
-                <template is="dom-repeat" items="{{list}}" id="listElement">
-                    <div item on-click="toggleSelection" selected$="[[item.selected]]" class="sortable" type="{{listTitle}}" on-dragleave="_dragLeave" on-mouseup="_onMouseUp">
-                        <a href="{{reference(item)}}">
-                            <paper-item>
-                                <paper-ripple id='ripple' opacityDecayVelocity="0.6"></paper-ripple>
-                                <iron-image src="{{thumbnail(item)}}" sizing="cover" preload fade></iron-image>
-                                <div item-title>{{item.title}}</div>
-                                <div class="flex"></div>
-                                <div hidden$="{{!isAuthor}}">
-                                    <span>
-                    <paper-icon-button icon="delete" on-click="_confirmDelete" id="deleteIcon"></paper-icon-button>
-                    <paper-tooltip for="deleteIcon">Delete this <span>{{listTitle}}</span></paper-tooltip>
-                                    </span>
-                                    <span>
-                  <paper-icon-button icon="editor:mode-edit" on-click="_rename" id="renameIcon"></paper-icon-button>
-                  <paper-tooltip for="renameIcon">Rename this <span>{{listTitle}}</span></paper-tooltip>
-                                    </span>
-                                    <!--TODO: visibility of item  <paper-icon-button icon="social:public" on-click="promptDelete"></paper-icon-button> -->
-                                </div>
-                            </paper-item>
-                        </a>
-                    </div>
-                </template>
-            </sortable-droppable-list>
+              </paper-item>
+            </a>
+          </div>
+        </template>
+    </sortable-droppable-list>
             <sortable-list id="sortable-list" sortable=".sortable" animation="150" on-sort-start="_onSortStart" on-sort-move="_onMoved" on-sort-end="_onSortEnd" disabled="{{!isAuthor}}" group="all-sortables">
-                <template is="dom-repeat" items="{{list}}" id="listElement">
-                    <div item on-click="toggleSelection" selected$="[[item.selected]]" class="sortable" type="{{listTitle}}" on-dragleave="_dragLeave" on-mouseup="_onMouseUp">
-                        <a href="{{reference(item)}}">
-                            <paper-item>
-                                <paper-ripple id='ripple' opacityDecayVelocity="0.6"></paper-ripple>
-                                <iron-image src="{{thumbnail(item)}}" sizing="cover" preload fade></iron-image>
-                                <div item-title>{{item.title}}</div>
-                                <div class="flex"></div>
-                                <div hidden$="{{!isAuthor}}">
-                                    <span>
+        <template is="dom-repeat" items="{{list}}" id="listElement">
+          <div item on-click="toggleSelection" selected$="[[item.selected]]" class="sortable" type="{{listTitle}}" on-dragleave="_dragLeave" on-mouseup="_onMouseUp">
+            <a href="{{reference(item)}}">
+              <paper-item>
+                <paper-ripple id='ripple' opacityDecayVelocity="0.6"></paper-ripple>
+                <iron-image src="{{thumbnail(item)}}" sizing="cover" preload fade></iron-image>
+                <div item-title>{{item.title}}</div>
+                <div class="flex"></div>
+                <div hidden$="{{!isAuthor}}">
+                    <span>
                     <paper-icon-button icon="delete" on-click="_confirmDelete" id="deleteIcon"></paper-icon-button>
                     <paper-tooltip for="deleteIcon">Delete this <span>{{listTitle}}</span></paper-tooltip>
-                                    </span>
-                                    <span>
+                    </span>
+                    <span>
                   <paper-icon-button icon="editor:mode-edit" on-click="_rename" id="renameIcon"></paper-icon-button>
                   <paper-tooltip for="renameIcon">Rename this <span>{{listTitle}}</span></paper-tooltip>
-                                    </span>
-                                    <!--TODO: visibility of item  <paper-icon-button icon="social:public" on-click="promptDelete"></paper-icon-button> -->
-                                </div>
-                            </paper-item>
-                        </a>
-                    </div>
-                </template>
-            </sortable-list>
-            <array-selector id="selector" items="{{list}}" selected="{{selected}}" multi toggle></array-selector>
-            <channel-editor-service id="service"></channel-editor-service>
+                    </span>
+                  <!--TODO: visibility of item  <paper-icon-button icon="social:public" on-click="promptDelete"></paper-icon-button> -->
+                </div>
+              </paper-item>
+            </a>
+          </div>
+        </template>
+      </sortable-list>
+      <array-selector id="selector" items="{{list}}" selected="{{selected}}" multi toggle></array-selector>
+      <channel-editor-service id="service"></channel-editor-service>
     </template>
 </dom-module>
 <script>
@@ -172,11 +176,6 @@
             isAuthor: {
                 type: Boolean,
                 value: false
-            },
-            highlightedFolder: {
-                type: HTMLElement,
-                notify: true,
-                value: null
             }
         },
 
@@ -240,8 +239,8 @@
             var i = this.list.indexOf(item);
             this.set('list.' + i + '.title', item.title);
 
-            this._saveItem(item).then(function(e) {
-                console.log('saved', e);
+            this._saveItem(item).then(function(e){
+                console.log('saved',e);
             });
         },
 
@@ -349,16 +348,16 @@
             // the current state of the actual dom. On shadow dom, the
             // indexOffset will correctly be 0.
             var indexOffset =
-                computeIndex(this.$['sortable-list'].querySelector('.sortable'));
+            computeIndex(this.$['sortable-list'].querySelector('.sortable'));
             var oldIndex = event.detail.oldIndex - indexOffset;
-            var newIndex = typeof(event.detail.newIndex) === 'number' ?
-                event.detail.newIndex - indexOffset : oldIndex;
+            var newIndex = typeof(event.detail.newIndex)==='number'?
+                event.detail.newIndex- indexOffset : oldIndex;
 
             // perform updates on dataset
             if (this.highlightedFolder) { // dropped into a folder
                 var draggedEl = event.detail.item;
                 var folderItem = this._getFolderListElement('Folder')
-                    .$.listElement.itemForElement(this.highlightedFolder);
+                .$.listElement.itemForElement(this.highlightedFolder);
                 var sourceList = this._getFolderListElement(draggedEl.type).$.listElement;
                 var draggedItem = sourceList.itemForElement(draggedEl);
                 var draggedItemIndex = sourceList.indexForElement(draggedEl);
@@ -417,12 +416,12 @@
                     allowSorting = false;
                     this._folderDragValues.currentlyHoveredFolder = related;
                     this._folderDragValues.enteredFrom = mouseY < folderMidY ?
-                        'top' : 'bottom';
+                    'top' : 'bottom';
                     this._highlightFolderForDropping(related);
                 } else {
-                    var from = this._folderDragValues.enteredFrom;
+                    var from=this._folderDragValues.enteredFrom;
                     var overMid = (from === 'bottom' && mouseY < folderMidY) ||
-                        (from === 'top' && mouseY > folderMidY);
+                                  (from === 'top' && mouseY > folderMidY);
                     if (overMid) {
                         allowSorting = true;
                         this._unHighlightFolderForDropping(related);

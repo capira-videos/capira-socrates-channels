@@ -39,7 +39,7 @@
   });
 
   app.setServiceUrl = function(folderId) {
-    app.serviceURL = '/server/channelServer.php?id=' + folderId; // +'&editor=true';
+    app.serviceURL = '/server/channelServer.php?editor=true&id=' + folderId; // +'&editor=true';
   };
 
 })(document);
