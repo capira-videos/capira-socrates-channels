@@ -36,26 +36,25 @@
       padding-top: 8px;
       padding-bottom: 8px;
       transition: background-color 0.1s;
+        /* to fix a bug in paper-ripple which makes it extent the containers size */
       position: relative;
-      border-bottom: var(--drawer-toolbar-border-color);
-      /* to fix a bug in paper-ripple which makes it
-    extent the containers size */
     }
 
-    [list-header]{
-      border-bottom: var(--drawer-toolbar-border-color);
-    }
 
     paper-item:hover {
-      background-color: var(--paper-blue-300);
+        background-color: var(--paper-blue-500);
       color:white;
     }
 
+    paper-item:hover paper-icon-button{
+        color:white;
+    }
+    
     paper-item paper-ripple {
       color: rgb(250, 250, 0);
       pointer-events: none;
+        /* will be activated in code */
       display: none;
-      /* will be activated in code */
     }
 
     paper-item iron-image {
@@ -75,53 +74,21 @@
       border: none;
     }
 
-
     .sorting .sortable * {
       pointer-events: none;
       /* a nice hack to avoid that dragEnter and dragLeave
     get called for every child of a draggable.
     See http://stackoverflow.com/questions/7110353/html5-dragleave-fired-when-hovering-a-child-element*/
 }
-
-/*
-.sortable {
-transition: background-color 3s, height 3s;
-background-color: white;
-}
-
-.sortable>* {
-transition: opacity 2s;
-opacity: 1;
-}
-
-.sortable.sortable-ghost {
-background-color: blue;
-height: 3px;
-}
-
-.sortable.sortable-ghost>* {
-opacity: 0;
-}*/
-
     .sortable-ghost {
       opacity: 0;
       position: relative;
     }
 
-    .sortable-ghost:after {
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      border: 1px black;
-      z-index: 100;
-    }
   </style>
   <template>
     <rename-dialog id="rename" on-renamed="_onRenamed"></rename-dialog>
     <confirm-delete-dialog id="confirmDelete" on-delete-confirmed="removeItem"></confirm-delete-dialog>
-
     <div list hidden$="{{computeIsHidden(list,isAuthor)}}">
       <div list-header>
         <span list-title>
@@ -132,7 +99,6 @@ opacity: 0;
             <paper-tooltip for="create">Create a new <span>{{listTitle}}</span></paper-tooltip>
         </div>
       </div>
-
       <div hidden$="{{list.0}}" isEmpty>
         Empty. There are no
         <span>
@@ -168,10 +134,7 @@ opacity: 0;
           </div>
         </template>
     </sortable-droppable-list>
-
-      <sortable-list id="sortable-list" sortable=".sortable" animation="150"
-      on-sort-start="_onSortStart" on-sort-move="_onMoved"
-      on-sort-end="_onSortEnd" disabled="{{!isAuthor}}" group="all-sortables">
+            <sortable-list id="sortable-list" sortable=".sortable" animation="150" on-sort-start="_onSortStart" on-sort-move="_onMoved" on-sort-end="_onSortEnd" disabled="{{!isAuthor}}" group="all-sortables">
         <template is="dom-repeat" items="{{list}}" id="listElement">
           <div item on-click="toggleSelection" selected$="[[item.selected]]" class="sortable" type="{{listTitle}}" on-dragleave="_dragLeave" on-mouseup="_onMouseUp">
             <a href="{{reference(item)}}">
@@ -196,15 +159,12 @@ opacity: 0;
           </div>
         </template>
       </sortable-list>
-
       <array-selector id="selector" items="{{list}}" selected="{{selected}}" multi toggle></array-selector>
-
       <channel-editor-service id="service"></channel-editor-service>
     </template>
 </dom-module>
-
-
 <script>
+'use strict';
 (function() {
     Polymer({
         is: 'folder-list',

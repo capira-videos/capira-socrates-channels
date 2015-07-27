@@ -14,7 +14,7 @@
   });
 
   // See https://github.com/Polymer/polymer/issues/1381
-  window.addEventListener("WebComponentsReady", function() {
+  window.addEventListener('WebComponentsReady', function() {
     app.editorService = document.querySelector('#channelEditorService');
   });
 
