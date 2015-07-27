@@ -48,7 +48,7 @@
       <div header>
         <span page-title>{{folder.title}}</span>
         <div class="flex"></div>
-        <div header-toolbar hidden$="{{!folder.channelAdmin}}">
+        <div header-toolbar hidden$="{{!folder.admin}}">
           <div>
             <paper-icon-button icon="social:group-add" on-click="_openPermissions" id="permissionsIcon"></paper-icon-button>
             <paper-tooltip for="permissionsIcon">Authors and Admins of <span>{{folder.title}}</span></paper-tooltip>
@@ -58,6 +58,7 @@
 
       <folder-list list="{{folder.units}}" list-title="Unit" is-author="{{folder.admin}}" on-create="createUnit" folder-id={{folder.id}} on-sorted="_updateOrder"></folder-list>
       <folder-list list="{{folder.folders}}" list-title="Folder" is-author="{{folder.admin}}" on-create="createFolder" on-sorted="_updateOrder"></folder-list>
+
 
     </div>
 

@@ -55,7 +55,7 @@
 
         addUser: function() {
             var user = event.model.item;
-            document.querySelector('#permissions-service').generateRequest({
+            app.permissionsService.generateRequest({
                 channelId: this.folder.id,
                 isAdmin: false,
                 userId: user.id

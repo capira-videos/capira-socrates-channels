@@ -16,6 +16,7 @@
   // See https://github.com/Polymer/polymer/issues/1381
   window.addEventListener('WebComponentsReady', function() {
     app.editorService = document.querySelector('#channelEditorService');
+    app.permissionsService = document.querySelector('#permissionsService');
   });
 
   // paper-inputs are auto-focused only once when contained in a paper-dialog.
@@ -24,7 +25,7 @@
     // Grab the autofocus input
     var input = event.target.querySelector('[autofocus]');
     // Switch it because some require special treatment
-    if (input.tagName) {
+    if (input && input.tagName) {
       switch (input.tagName.toLowerCase()) {
         case 'input':
           input.focus();
@@ -38,7 +39,7 @@
   });
 
   app.setServiceUrl = function(folderId) {
-    app.serviceURL = '/server/channelServer.php?id=' + folderId; // +'&editor=true';
+    app.serviceURL = '/server/channelServer.php?editor=true&id=' + folderId; // +'&editor=true';
   };
 
 })(document);
