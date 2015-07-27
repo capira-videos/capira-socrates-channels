@@ -49,7 +49,7 @@
     paper-item:hover paper-icon-button{
         color:white;
     }
-    
+
     paper-item paper-ripple {
       color: rgb(250, 250, 0);
       pointer-events: none;
@@ -111,29 +111,10 @@
       disabled="{{!isAuthor}}"
       type={{listTitle}} drop-types='["Folder"]'>
         <template is="dom-repeat" items="{{list}}" id="listElement">
-          <div item on-click="toggleSelection" selected$="[[item.selected]]" class="sortable" type="{{listTitle}}" on-mouseup="_onMouseUp">
-            <a href="{{reference(item)}}">
-              <paper-item>
-                <paper-ripple id='ripple' opacityDecayVelocity="0.6"></paper-ripple>
-                <iron-image src="{{thumbnail(item)}}" sizing="cover" preload fade></iron-image>
-                <div item-title>{{item.title}}</div>
-                <div class="flex"></div>
-                <div hidden$="{{!isAuthor}}">
-                    <span>
-                    <paper-icon-button icon="delete" on-click="_confirmDelete" id="deleteIcon"></paper-icon-button>
-                    <paper-tooltip for="deleteIcon">Delete this <span>{{listTitle}}</span></paper-tooltip>
-                    </span>
-                    <span>
-                  <paper-icon-button icon="editor:mode-edit" on-click="_rename" id="renameIcon"></paper-icon-button>
-                  <paper-tooltip for="renameIcon">Rename this <span>{{listTitle}}</span></paper-tooltip>
-                    </span>
-                  <!--TODO: visibility of item  <paper-icon-button icon="social:public" on-click="promptDelete"></paper-icon-button> -->
-                </div>
-              </paper-item>
-            </a>
-          </div>
+            <list-item item="{{item}}" type="{{listTitle}}" isAuthor={{isAuthor}} on-item-rename-requested="_onRenameRequested" on-item-delete-requested="_onDeleteRequested">
+            </list-item>
         </template>
-    </sortable-droppable-list>
+      </sortable-droppable-list>
             <sortable-list id="sortable-list" sortable=".sortable" animation="150" on-sort-start="_onSortStart" on-sort-move="_onMoved" on-sort-end="_onSortEnd" disabled="{{!isAuthor}}" group="all-sortables">
         <template is="dom-repeat" items="{{list}}" id="listElement">
           <div item on-click="toggleSelection" selected$="[[item.selected]]" class="sortable" type="{{listTitle}}" on-dragleave="_dragLeave" on-mouseup="_onMouseUp">
@@ -191,6 +172,10 @@
             this.$.confirmDelete.open(item);
         },
 
+        _onDeleteRequested: function(event) {
+            this.$.confirmDelete.open(event.item);
+        },
+
         _saveItem: function(item) {
             return app.editorService.generateRequest(this.listTitle.toLowerCase(), item);
         },
@@ -204,7 +189,6 @@
             this.deleteIndex = this.list.indexOf(item);
             this.splice('list', this.deleteIndex, 1);
         },
-
 
 
         thumbnail: function(item) {
@@ -233,6 +217,10 @@
             var item = this.$.listElement.itemForElement(e.target);
             var dialog = this.$.rename;
             dialog.open(item);
+        },
+
+        _onRenameRequested: function(event) {
+            this.$.rename.open(event.item);
         },
 
         _onRenamed: function(e) {
