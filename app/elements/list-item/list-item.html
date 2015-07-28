@@ -49,7 +49,6 @@
 
         a {
           display: block;
-          overflow: hidden;
           text-decoration: none !important;
           color: rgb(15, 15, 15) !important;
         }
@@ -57,7 +56,7 @@
     <template>
         <a href="{{_reference(item)}}" on-mouseup="_onMouseUp">
             <paper-item>
-                <paper-ripple id='ripple' opacityDecayVelocity="0.6"></paper-ripple>
+                <paper-ripple id='ripple' opacityDecayVelocity="0.6" noink></paper-ripple>
                 <iron-image src="{{_thumbnail(item)}}" sizing="cover" preload fade></iron-image>
                 <div item-title>{{item.title}}</div>
                 <div class="flex"></div>
