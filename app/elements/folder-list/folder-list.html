@@ -85,6 +85,12 @@
                 isAuthor: {
                     type: Boolean,
                     value: false
+                },
+                parentId: {
+                    type: Number
+                },
+                parentAuthor: {
+                    type: Boolean
                 }
             },
 
@@ -151,6 +157,9 @@
                 var item = this.list[oldIndex];
                 var folderEl = event.detail.dropTarget;
                 if (folderEl.type==="Parent") {
+                    if (!this.parentAuthor) {
+                        return;
+                    }
                     item.parent = folderEl.parentId;
                 } else {
                     var folderList = event.detail.dropList;
