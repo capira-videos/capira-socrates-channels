@@ -1,6 +1,85 @@
 # capira-socrates
 
-## Install Tools
+#Capira Stack
+
+##Frontend Frameworks
+- [Polymer 1.x](https://www.polymer-project.org/1.0/docs/devguide/feature-overview.html)
+    - [Custom Elements Golden Standard](https://github.com/webcomponents/gold-standard/wiki)
+    - [Atomic Design](http://patternlab.io/) 
+        - "The Web-App itself is not the primary thing I am creating. The primary thing I am creating is the the Design System and the final web experience is just one instance of that." [Google Podcast](https://www.youtube.com/watch?v=7gVOeAdHt0E)
+- [Material Design](https://www.google.com/design/spec/material-design/introduction.html)
+    - [Icons](https://www.google.com/design/icons/)
+- [Polymer Elements](https://elements.polymer-project.org/browse)
+- [ECMA Script 6](http://codepen.io/mikkokam/pen/jPMLJN) ?
+
+##Backend Frameworks
+- PHP >= 5.3
+- RESTful JSON API
+    - Testing: [Behat](http://docs.behat.org/en/v2.5/)
+    - DocGen: [apidocjs](http://apidocjs.com/)
+        - Gulp Task: [gulp-apidocjs](https://www.npmjs.com/package/gulp-apidocjs)
+    - [Swagger](http://swagger.io)
+        - Gulp Task: [gulp-apidoc-swagger](https://www.npmjs.com/package/gulp-apidoc-swagger)
+
+
+##Dependencies Management 
+- Nodejs
+- Bower
+
+##Dev & Build Tools
+- Automate Workflow: [Gulp](http://gulpjs.com/)
+- Scaffolding: Yeoman
+    - [Polymer-Generator](https://github.com/yeoman/generator-polymer)
+    - [Polymer Starter Kit](https://developers.google.com/web/tools/polymer-starter-kit/index?hl=en)
+- vulcanizer
+- jscs
+- jshint
+- browser-sync
+- [Polybuild](https://github.com/PolymerLabs/polybuild) ?
+
+##Testing & Documentation
+- Auto-Docs: [iron-component-pages](https://elements.polymer-project.org/elements/iron-component-page)
+    - [Hydrolysis](https://github.com/Polymer/hydrolysis)
+
+##IDE
+- [Sublime Text 3](http://www.sublimetext.com/3) ?
+    - Package Manager 
+    - linter
+    - plugins ... 
+
+
+##Repository 
+- [git](https://git-scm.com/)
+- Hoster: [github](https://github.com/capira12/capira-socrates-polymer)
+- GUI for Mac: [Tower](http://www.git-tower.com/)
+
+##Deployment and Hosting
+- Hoster: Hetzner 
+- Deployment: Filezilla
+
+##Speed and Performance Measurement
+- [Polymer for the performance obsessed](https://aerotwist.com/blog/polymer-for-the-performance-obsessed/)
+- [Webpage Test](http://www.webpagetest.org/)
+- [PageSpeed Insights](https://developers.google.com/speed/pagespeed/insights/)
+
+##Project Management and Communication
+- Project Management System [Jira](https://www.atlassian.com/software/jira)
+- Team Communication: [Slack](https://slack.com/) 
+
+
+##Ressources
+- [Polymer Slack Channel](https://polymer.slack.com/)
+- [Google Developers](https://developers.google.com/web/)
+    - [Totally Tooling Tips](https://developers.google.com/web/shows/ttt/)
+- [The Web Plattform Podcast](https://www.youtube.com/channel/UCjz3j22CyBpy6Qk5SL6UwcQ)
+- 
+
+
+
+
+
+
+# Install Tools
 If you don't have npm, install Node.js first. npm comes bundled with Node.js. Node.js 0.12.x or nwer is required.
 When you have npm, run:
 
