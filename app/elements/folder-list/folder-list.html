@@ -52,10 +52,14 @@
                 </div>
 
                 <sortable-droppable-list
-                id="sortable-list" sortable=".sortable" animation="150"
+                id="sortable-list" animation="150"
                 disabled="[[!isAuthor]]" on-sort-change="_sortChanged"
                 on-sort-drop="_droppedIntoFolder" type="[[listTitle]]"
-                drop-types='["Folder"]' >
+                drop-targets='["Folder","Parent"]'>
+                <template is="dom-if" if="[[parentId]]">
+                    <parent-folder type="Parent" parent-id="[[parentId]]">
+                    </parent-folder>
+                </template>
                 <template is="dom-repeat" items="[[list]]" id="listElement">
                     <list-item item="[[item]]" type="[[listTitle]]"
                     isAuthor="[[isAuthor]]" on-item-rename-requested="_onRenameRequested"
@@ -99,7 +103,8 @@
             removeItem: function(event) {
                 var item = event.detail;
                 item.deleted = true;
-                item.folderId = this.folderId;
+                item.folderId = this.folderId; // the folder id is only for
+                // unit defined, at least it seems so
                 this._saveItem(item);
 
                 this.deleteIndex = this.list.indexOf(item);
@@ -137,18 +142,24 @@
                 var entry = this.splice('list', event.detail.oldIndex, 1)[0]; // remove
                 this.splice('list', event.detail.newIndex, 0, entry); // put at new position
                 this.fire('sorted'); // fire event to save to database
+                console.log('sort', event.detail);
             },
 
             _droppedIntoFolder: function(event) {
+                console.log('drop', event.detail);
                 var oldIndex = event.detail.oldIndex;
                 var item = this.list[oldIndex];
-                var folderList = event.detail.dropList;
-                while (folderList.tagName.toLowerCase()!=='folder-list') {
-                    folderList = folderList.parentNode;
-                }
                 var folderEl = event.detail.dropTarget;
-                var folder = folderList.$.listElement.itemForElement(folderEl);
-                item.parent = folder.id;
+                if (folderEl.type==="Parent") {
+                    item.parent = folderEl.parentId;
+                } else {
+                    var folderList = event.detail.dropList;
+                    while (folderList.tagName.toLowerCase()!=='folder-list') {
+                        folderList = folderList.parentNode;
+                    }
+                    var folder = folderList.$.listElement.itemForElement(folderEl);
+                    item.parent = folder.id;
+                }
                 this._saveItem(item); // save to database
                 this.splice('list', oldIndex, 1); // remove from UI
             },

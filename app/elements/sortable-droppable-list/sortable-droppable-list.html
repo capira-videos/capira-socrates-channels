@@ -71,22 +71,32 @@ or
                 value: null
             },
             /**
+            * The types that can be sorted, e.g. ["Folder"]
+            * @attribute sortables
+            * @default [this.type]
+            * @type String
+            */
+            sortables: {
+                type: Array,
+                value: null // will be set in the attached event
+            },
+            /**
             * The type of items, the dragged item can be sorted with.
-            * @attribute sortTypes
+            * @attribute sortTargets
             * @default [this.type]
             * @type Array
             */
-            sortTypes: {
+            sortTargets: {
                 type: Array,
                 value: null // will be set in the attached event
             },
             /*
             * The type of items, the dragged item can be dropped onto.
-            * @attribute dropTypes
+            * @attribute dropTargets
             * @default []
             * @type Array
             */
-            dropTypes: {
+            dropTargets: {
                 type: Array,
                 value: []
             },
@@ -145,27 +155,15 @@ or
                 observer: '_reactivate'
             },
             /**
-            * CSS selector for elements to ignore for sorting purposes.
+            * Avoid sorting / drag and drop when the result of the filter
+            * function is true.
             * @attribute filter
             * @default null
-            * @type String
+            * @type Function
             */
             filter: {
-                type: String,
-                value: null,
-                observer: '_reactivate'
-            },
-            /**
-            * Simple class selector for which child elements should be sortable.
-            * Selector * can be used to select all children.
-            * @attribute sortable
-            * @default '*'
-            * @type String
-            */
-            sortable: {
-                type: String,
-                value: '*',
-                observer: '_reactivate'
+                type: Function,
+                value: null
             },
             /**
             * Whether or not to scroll when dragging to edges.
@@ -203,8 +201,11 @@ or
         },
         attached: function() {
             statics.lists.push(this);
-            if (this.sortTypes===null) {
-                this.sortTypes = [this.type];
+            if (this.sortTargets===null) {
+                this.sortTargets = [this.type];
+            }
+            if (this.sortables===null) {
+                this.sortables = [this.type];
             }
             this._reactivate();
         },
@@ -225,11 +226,10 @@ or
                 disabled: this.disabled,
                 animation: this.animation,
                 handle: this.handle,
-                filter: this.filter,
-                draggable: this.sortable==='*'? '>*' : this.sortable,
                 scroll: this.scroll,
                 scrollSensitivity: this.scrollSensitivity,
                 scrollSpeed: this.scrollSpeed,
+                filter: this._filter.bind(this),
                 /**
                 * Triggered when a sort begins.
                 * @event sort-start
@@ -273,6 +273,20 @@ or
             };
         },
 
+        _filter: function(evt, targetEl, sortableJs) {
+            var targetList = targetEl.parentNode;
+            var type = targetEl.type || targetEl.getAttribute('type') ||
+                targetList.type;
+            if (targetList.sortables.indexOf(type)===-1) {
+                return true;
+            }
+            if (typeof(targetList.filter)==='function') {
+                return targetList.filter(evt, targetEl, sortableJs);
+            } else {
+                return false;
+            }
+        },
+
         _cleanUp: function() {
             this.async(function() {
                 // we cleanup async, as otherwise some drawing problems occur in conjunction with ripple
@@ -306,16 +320,16 @@ or
             var related = event.related;
             var relatedType = related.type || related.getAttribute('type')
                 || Polymer.dom(related).parentNode.type;
-            var inSortTypes = this.sortTypes.indexOf(relatedType)!==-1;
-            var inDropTypes = this.dropTypes.indexOf(relatedType)!==-1;
+            var insortTargets = this.sortTargets.indexOf(relatedType)!==-1;
+            var indropTargets = this.dropTargets.indexOf(relatedType)!==-1;
 
-            if (!inSortTypes && !inDropTypes) {
+            if (!insortTargets && !indropTargets) {
                 // can neither be sorted nor dropped
                 allowSorting = false;
-            } else if (inSortTypes && !inDropTypes) {
+            } else if (insortTargets && !indropTargets) {
                 // can be sorted but not dropped
                 allowSorting = true;
-            } else if (!inSortTypes && inDropTypes) {
+            } else if (!insortTargets && indropTargets) {
                 // can not be sorted with but dropped into related element
                 allowSorting = false;
                 this._setDropTarget(related, dragged);
@@ -352,8 +366,8 @@ or
             var oldList = this;
             var newList = dragged.parentNode; // we are not using Polymer.dom
             // here as it has not the actual current state of the dom yet
-            var oldListOffset = this._computeListOffset(oldList, this.sortable);
-            var newListOffset = this._computeListOffset(newList, this.sortable);
+            var oldListOffset = this._computeListOffset(oldList);
+            var newListOffset = this._computeListOffset(newList);
             var oldIndex = event.oldIndex - oldListOffset;
             var newIndex = typeof(event.newIndex)==='number'?
                 event.newIndex - newListOffset : oldIndex;
@@ -362,12 +376,10 @@ or
             if (statics.dropTarget) { // dropped onto an item
                 var dropEl = statics.dropTarget;
                 var dropList = dropEl.parentNode;
-                var dropIndex = this._computeListOffset(dropList, dropEl, dragged);
                 this.fire('sort-drop', {
                     oldList: oldList,
                     oldIndex: oldIndex,
                     dropList: dropList,
-                    dropIndex: dropIndex,
                     dropTarget: dropEl,
                     draggedItem: dragged
                 });
@@ -384,26 +396,24 @@ or
             this._cleanUp();
         },
 
-        _computeListOffset: function(list, selectorOrElement, ignoreEl) {
-            var domElement;
-            if (typeof(selectorOrElement)==='string') {
-                // We use a native querySelector and not Polymer.dom() to
-                // get the actual current state of the dom, which is not
-                // represented yet by Polymer.dom() on shady dom
-                domElement = list.querySelector(selectorOrElement);
-            } else {
-                domElement = selectorOrElement;
-            }
+        /**
+        * Compute the offset of an element in the list. One can specify the
+        * element or if not specified, the first draggable element is used.
+        * Additionally one can specify an element not to count
+        */
+        _computeListOffset: function(list, element, ignoreEl) {
             var offset = 0;
-            // Here we use native previousElementSibling by
+            // Here we use native firstChildElement and nextElementSibling by
             // purpose to also count shallow elements which were inserted
             // by shadydom polyfill for the temploate of
             // sortable-draggable-list. This works correct on shady and
             // shadow dom.
-            while ((domElement = domElement.previousElementSibling)) {
-                if (domElement!==ignoreEl) {
+            var el = list.firstElementChild;
+            while (el && (element? el!==element : this._filter(null, el))) {
+                if (el!==ignoreEl && el.tagName.toLowerCase()!=='template') {
                     offset++;
                 }
+                el = el.nextElementSibling;
             }
             return offset;
         },

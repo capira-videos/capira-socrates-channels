@@ -96,17 +96,17 @@
             },
 
             _confirm: function() {
-                    if (this.valid) {
-                        var service = app.editorService;
-                        var that = this;
-                        service.generateRequest('unit', this.unit, 'PUT').then(function(req) {
-                            var unit = req.response;
-                            that.fire('created', unit);
-                            that.$.createUnitDialog.close();
-                        });
-                    }
+                if (this.valid) {
+                    var service = app.editorService;
+                    var that = this;
+                    service.generateRequest('unit', this.unit, 'PUT').then(function(req) {
+                        var unit = req.response;
+                        that.fire('created', unit);
+                        that.$.createUnitDialog.close();
+                    });
                 }
-                //TODO: on-enter-press in allen dialogen
+            }
+            //TODO: on-enter-press in allen dialogen
 
         });
     })();
