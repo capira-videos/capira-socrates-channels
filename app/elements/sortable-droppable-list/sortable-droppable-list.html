@@ -429,12 +429,11 @@ or
                 node: dropTarget,
                 bubbles: false
             });
-            dropTarget.style.backgroundColor = 'lightblue';
         },
 
         _unsetDropTarget: function(dropTarget) {
             dropTarget = dropTarget || statics.dropTarget;
-            if (dropTarget) {
+            if (dropTarget && !dropTarget.classList.contains('sortable-ghost')) {
                 if (dropTarget === statics.dropTarget) {
                     statics.dropTarget = null;
                 }
@@ -442,7 +441,6 @@ or
                     node: dropTarget,
                     bubbles: false
                 });
-                dropTarget.style.backgroundColor = 'white';
             }
         },
 

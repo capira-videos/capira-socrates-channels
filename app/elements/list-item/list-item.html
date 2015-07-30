@@ -4,6 +4,7 @@
     <style>
         :host {
             display: block;
+            position: relative;
         }
 
         :host-context(.sorting)>* {
@@ -35,7 +36,6 @@
         }
 
         paper-item paper-ripple {
-          /*color: rgb(250, 250, 0);*/
           color: var(--paper-blue-100);
           pointer-events: none;
             /* will be activated in code */
@@ -52,6 +52,36 @@
           display: block;
           text-decoration: none !important;
           color: rgb(15, 15, 15) !important;
+        }
+
+        :host-context(.drop-target) {
+            background-color: var(--paper-blue-100);;
+        }
+
+        :host-context(.drop-target) #drop-hint {
+            display: flex;
+        }
+
+        :host-context(.drop-target)>*:not(#drop-hint) {
+            opacity: 0.4;
+        }
+
+        #drop-hint {
+            height: 100%;
+            width: 100%;
+            position: absolute;
+            top: 0;
+            display: none;
+        }
+
+        #drop-hint-text {
+            @apply(--layout-center);
+            display: flex;
+            margin-left: auto;
+            margin-right: auto;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
         }
     </style>
     <template>
@@ -74,6 +104,9 @@
                 </div>
             </paper-item>
         </a>
+        <div id="drop-hint">
+            <div id="drop-hint-text">Drop here to move to that folder.</div>
+        </div>
     </template>
 </dom-module>
 <script>
@@ -92,6 +125,15 @@
             isAuthor: {
                 type: Boolean
             }
+        },
+
+        attached: function() {
+            this.addEventListener('sort-drop-target-set', function() {
+                this.classList.add('drop-target');
+            });
+            this.addEventListener('sort-drop-target-unset', function() {
+                this.classList.remove('drop-target');
+            });
         },
 
         _thumbnail: function(item) {

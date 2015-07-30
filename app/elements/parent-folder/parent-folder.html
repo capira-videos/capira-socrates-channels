@@ -6,10 +6,11 @@
     display: block;
     --iron-icon-width: 106px;
     --iron-icon-height: 60px;
-    transition: opacity 0.2s, height 0.2s;
+    transition: opacity 0.3s, height 0.3s;
+    overflow: hidden;
+    position: relative;
     opacity: 0;
     height: 0px;
-    overflow: hidden;
 }
 
 :host-context(.sorting) {
@@ -31,14 +32,47 @@ paper-item {
     /* to fix a bug in paper-ripple which makes it extent the containers size */
     position: relative;
 }
+
+:host-context(.drop-target) {
+    background-color: var(--paper-blue-100);;
+}
+
+:host-context(.drop-target) #drop-hint {
+    display: flex;
+}
+
+:host-context(.drop-target)>*:not(#drop-hint) {
+    opacity: 0.4;
+}
+
+#drop-hint {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    display: none;
+}
+
+#drop-hint-text {
+    @apply(--layout-center);
+    display: flex;
+    margin-left: auto;
+    margin-right: auto;
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+}
 </style>
 <template>
     <paper-item>
         <iron-icon icon="launch"></iron-icon>
         <div item-title>
-            Move to parent folder.
+            Move to the parent folder.
         </div>
     </paper-item>
+    <div id="drop-hint">
+        <div id="drop-hint-text">Drop here to move to the parent folder.</div>
+    </div>
 </template>
 </dom-module>
 <script>
@@ -47,14 +81,20 @@ paper-item {
         is: 'parent-folder',
 
         properties: {
-            parentId: {
-                type: Number
-            },
             type: {
                 type: String,
                 value: "Parent",
                 readOnly: true
             }
+        },
+
+        attached: function() {
+            this.addEventListener('sort-drop-target-set', function() {
+                this.classList.add('drop-target');
+            });
+            this.addEventListener('sort-drop-target-unset', function() {
+                this.classList.remove('drop-target');
+            });
         }
     });
 })();

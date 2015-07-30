@@ -56,8 +56,8 @@
                 disabled="[[!isAuthor]]" on-sort-change="_sortChanged"
                 on-sort-drop="_droppedIntoFolder" type="[[listTitle]]"
                 drop-targets='["Folder","Parent"]'>
-                <template is="dom-if" if="[[parentId]]">
-                    <parent-folder type="Parent" parent-id="[[parentId]]">
+                <template is="dom-if" if="[[_computeShowParentFolder(parentId,parentAuthor)]]">
+                    <parent-folder type="Parent">
                     </parent-folder>
                 </template>
                 <template is="dom-repeat" items="[[list]]" id="listElement">
@@ -96,6 +96,10 @@
 
             computeIsHidden: function(list, isAuthor) {
                 return !(list.length > 0 || isAuthor);
+            },
+
+            _computeShowParentFolder: function(parentId, parentAuthor) {
+                return parentId && parentAuthor;
             },
 
             _saveItem: function(item) {
