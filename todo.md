@@ -7,26 +7,17 @@ Projekt: Deploy Channels Editor alpha bis Sonntag Abend.
 
 ===Flaws & Bugs
 -"homeChannel" beim verschieben von units updaten
--als user "test" "test" kann man units nicht updaten -> Pascal
--alte Permissions migrieren -> Pascal?
--in den Permissions den Pfad der vererbten Permissions anzeigen (path refactoren) -> Pascal?
 -"folder vs. channels" ist unklare terminologie. für eins entscheiden. besser auf "channels" refactoren?
--"admin & author" vs "admin vs channelAdmin" ist unklare terminologie. nur noch ersteres.  -> Pascal?
-
-
 
 
 
 ==Sprint 2  (nicht mehr vor dem ersten deploy)
--login-page
 --login mit google
 
 -units und channels per dialog verschieben
 --dialog zum auswählen des ziel-channels
 --service zum browsen durch die channels, in denen der user permissions hat -> Pascal?
 
--breadcrumbs
---getPath mit parent berechnen -> Pascal
 -high performance
 -responsive
 -setPrivacy (visible/invisible)

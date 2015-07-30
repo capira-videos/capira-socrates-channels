@@ -1,9 +1,3 @@
-RewriteEngine on
-RewriteBase /
-
-# Don't apply to URLs that go to existing files or folders
+RewriteEngine On
 RewriteCond %{REQUEST_FILENAME} !-f
-RewriteCond %{REQUEST_FILENAME} !-d
-
-# Rewrite all those to insert /folder
-RewriteRule ^(.*)$  /$1 [L]
+RewriteRule ^ index.html [QSA,L]
