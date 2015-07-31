@@ -32,9 +32,9 @@
     <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <!-- endbuild -->
     <!--<script>
-     window.Polymer = window.Polymer || {};
-     window.Polymer.dom = 'shadow';
- </script>-->
+       window.Polymer = window.Polymer || {};
+       window.Polymer.dom = 'shadow';
+   </script>-->
     <!-- will be replaced with elements/elements.vulcanized.html -->
     <link rel="import" href="elements/elements.html">
     <!-- endreplace-->
@@ -58,7 +58,7 @@
                 <span class="flex"></span>
                 <!-- Toolbar icons -->
           <paper-icon-button icon="social:person" on-click="openAccount"></paper-icon-button>
-                
+
             </paper-toolbar>
             <!-- Main Content -->
             <div class="content">
@@ -70,7 +70,7 @@
             </div>
         </paper-header-panel>
         <!-- The Capira-Channels Service -->
-        <iron-ajax id="channelService" auto url="{{serviceURL}}" handle-as="json" last-response="{{folder}}" 
+        <iron-ajax id="channelService" auto url="{{serviceURL}}" handle-as="json" last-response="{{folder}}"
         loading="{{loading}}"></iron-ajax>
         <permissions-service id="permissionsService" loading="{{loading}}"></permissions-service>
         <channel-editor-service id="channelEditorService" loading="{{loading}}"></channel-editor-service>
