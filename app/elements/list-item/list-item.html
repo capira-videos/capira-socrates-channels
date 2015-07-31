@@ -93,11 +93,11 @@
                 <div class="flex"></div>
                 <div hidden$="{{!isAuthor}}">
                     <span>
-                        <paper-icon-button icon="delete" on-click="_deleteRequested" id="deleteIcon"></paper-icon-button>
+                        <paper-icon-button icon="channel-icons:delete" on-click="_deleteRequested" id="deleteIcon"></paper-icon-button>
                         <paper-tooltip for="deleteIcon">Delete this <span>{{type}}</span></paper-tooltip>
                     </span>
                     <span>
-                        <paper-icon-button icon="editor:mode-edit" on-click="_renameRequested" id="renameIcon"></paper-icon-button>
+                        <paper-icon-button icon="channel-icons:mode-edit" on-click="_renameRequested" id="renameIcon"></paper-icon-button>
                         <paper-tooltip for="renameIcon">Rename this <span>{{type}}</span></paper-tooltip>
                     </span>
                     <!--TODO: visibility of item  <paper-icon-button icon="social:public" on-click="promptDelete"></paper-icon-button> -->
@@ -123,7 +123,8 @@
                 value: ''
             },
             isAuthor: {
-                type: Boolean
+                type: Boolean,
+                value:false,
             }
         },
 

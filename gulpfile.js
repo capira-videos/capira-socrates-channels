@@ -251,7 +251,7 @@ gulp.task('serve', ['styles', 'elements', 'images'], function() {
 
                 if (url.match(/^\/(services)\//)) {
                     proxy.web(req, res, {
-                        target: 'http://127.0.0.1:8888'
+                        target: 'http://capira.de/build'
                     });
                 } else {
                     next();

@@ -128,7 +128,7 @@
                     Admin
                 </div>
                 <div users >
-                    <paper-fab icon="add" mini on-click="_openAddAuthor"></paper-fab>
+                    <paper-fab icon="channel-icons:add" mini on-click="_openAddAuthor"></paper-fab>
                     <span hidden$="{{users.0}}" list-header>No Authors in this Channel yet. Press + to invited people...</span>
                     <template is="dom-repeat" items="{{users}}">
                         <div user>
@@ -136,7 +136,7 @@
                             <span username>{{item.name}}</span>
                             <div class="flex"></div>
                             <div>
-                                <paper-icon-button remove icon="close" on-click="_removeUser" id="removeAuthorIcon"></paper-icon-button>
+                                <paper-icon-button remove icon="channel-icons:close" on-click="_removeUser" id="removeAuthorIcon"></paper-icon-button>
                                 <paper-tooltip for="removeAuthorIcon">Authors and Admins of <span>{{folder.title}}</span></paper-tooltip>
                             </div>
                         </div>
