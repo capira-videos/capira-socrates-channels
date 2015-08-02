@@ -15,11 +15,10 @@
 ##Backend Frameworks
 - PHP >= 5.3
 - RESTful JSON API
-    - Testing: [Behat](http://docs.behat.org/en/v2.5/)
+    - PHP micro framework [Slim]
+    - Testing: [Jasemine]
     - DocGen: [apidocjs](http://apidocjs.com/)
         - Gulp Task: [gulp-apidocjs](https://www.npmjs.com/package/gulp-apidocjs)
-    - [Swagger](http://swagger.io)
-        - Gulp Task: [gulp-apidoc-swagger](https://www.npmjs.com/package/gulp-apidoc-swagger)
 
 
 ##Dependencies Management 
