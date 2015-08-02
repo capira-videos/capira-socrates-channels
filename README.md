@@ -50,7 +50,7 @@
 
 ##Repository 
 - [git](https://git-scm.com/)
-- Hoster: [github](https://github.com/capira12/capira-socrates-polymer)
+- Hoster: [github](https://github.com/capira12/capira-socrates-channels)
 - GUI for Mac: [Tower](http://www.git-tower.com/)
 
 ##Deployment and Hosting
@@ -101,12 +101,12 @@ The workflow is similar for bower.
 Download the project:
 ```
  mkdir capira && cd capira
- git clone https://github.com/capira12/capira-socrates-polymer.git
+ git clone https://github.com/capira12/capira-socrates-channels.git
  ```
  
 Install the dependencies of the project:
 ```
- cd capira-socrates-polymer
+ cd capira-socrates-channels
  bower install
  npm install
  ```
