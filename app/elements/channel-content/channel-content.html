@@ -1,4 +1,4 @@
-<dom-module id="folder-content">
+<dom-module id="channel-content">
   <style>
     :host {
       @apply(--layout-horizontal);
@@ -40,24 +40,24 @@
 
     <div content>
       <!-- Place dialogs on top to avoid interferiences with content size and scrolling -->
-      <create-unit-dialog id="createUnit" on-created="_onUnitCreated" parent-id="{{folder.id}}"></create-unit-dialog>
-      <create-folder-dialog id="createFolder" on-created="_onFolderCreated" parent-id="{{folder.id}}"></create-folder-dialog>
-      <permissions-dialog id="permissions" folder="{{folder}}"></permissions-dialog>
+      <create-unit-dialog id="createUnit" on-created="_onUnitCreated" parent-id="{{channel.id}}"></create-unit-dialog>
+      <create-channel-dialog id="createchannel" on-created="_onchannelCreated" parent-id="{{channel.id}}"></create-channel-dialog>
+      <permissions-dialog id="permissions" channel="{{channel}}"></permissions-dialog>
 
 
       <div header>
-        <span page-title>{{folder.title}}</span>
+        <span page-title>{{channel.title}}</span>
         <div class="flex"></div>
-        <div header-toolbar hidden$="{{!folder.admin}}">
+        <div header-toolbar hidden$="{{!channel.admin}}">
           <div>
-            <paper-icon-button icon="social:group-add" on-click="_openPermissions" id="permissionsIcon"></paper-icon-button>
-            <paper-tooltip for="permissionsIcon">Authors and Admins of <span>{{folder.title}}</span></paper-tooltip>
+            <paper-icon-button icon="channel-icons:group-add" on-click="_openPermissions" id="permissionsIcon"></paper-icon-button>
+            <paper-tooltip for="permissionsIcon">Authors and Admins of <span>{{channel.title}}</span></paper-tooltip>
           </div>
         </div>
       </div>
 
-      <folder-list list="{{folder.units}}" list-title="Unit" is-author="{{folder.author}}" on-create="createUnit" folder-id={{folder.id}} on-sorted="_updateOrder" parent-author="[[folder.parent_author]]"></folder-list>
-      <folder-list list="{{folder.folders}}" list-title="Folder" is-author="{{folder.author}}" on-create="createFolder" on-sorted="_updateOrder" parent-id="{{folder.parent}}" parent-author="[[folder.parent_author]]"></folder-list>
+      <channel-list list="{{channel.units}}" list-title="Unit" is-author="{{channel.author}}" on-create="createUnit" channel-id={{channel.id}} on-sorted="_updateOrder" parent-author="[[channel.parent_author]]"></channel-list>
+      <channel-list list="{{channel.channels}}" list-title="channel" is-author="{{channel.author}}" on-create="createchannel" on-sorted="_updateOrder" parent-id="{{channel.parent}}" parent-author="[[channel.parent_author]]"></channel-list>
 
 
     </div>
@@ -68,7 +68,7 @@
 <script>
   (function() {
     Polymer({
-      is: 'folder-content',
+      is: 'channel-content',
 
       behaviors: [
         Polymer.NeonAnimationRunnerBehavior
@@ -76,8 +76,8 @@
 
       properties: {
 
-        folder: {
-          observer: '_folderChanged',
+        channel: {
+          observer: '_channelChanged',
           notify: true
         },
 
@@ -100,17 +100,17 @@
       },
 
 
-      _folderChanged: function(newValue, oldValue) {
+      _channelChanged: function(newValue, oldValue) {
         //scroll to top of page
         Polymer.dom(document.querySelector('paper-header-panel').root)
           .querySelector('#mainContainer').scrollTop = 0;
 
-        //was the folder changed to it's parent?
+        //was the channel changed to it's parent?
         if (oldValue && newValue.id === oldValue.parent) {
           //go back
           this.playAnimation('exit');
         } else {
-          //go deeper if not empty folder
+          //go deeper if not empty channel
           if (newValue) {
             this.playAnimation('entry');
           }
@@ -121,18 +121,18 @@
         this.$.createUnit.open();
       },
 
-      createFolder: function() {
-        this.$.createFolder.open();
+      createchannel: function() {
+        this.$.createchannel.open();
       },
 
       _onUnitCreated: function(e) {
         var unit = e.detail;
-        this.unshift('folder.units', unit);
+        this.unshift('channel.units', unit);
       },
 
-      _onFolderCreated: function(e) {
-        var folder = e.detail;
-        this.unshift('folder.folders', folder);
+      _onchannelCreated: function(e) {
+        var channel = e.detail;
+        this.unshift('channel.channels', channel);
       },
 
       _openPermissions: function() {
@@ -140,7 +140,7 @@
       },
 
       _updateOrder: function() {
-        app.editorService.generateRequest('order', this.folder).then(function(){
+        app.editorService.generateRequest('order', this.channel).then(function(){
           console.log('Sorted');
         });
       }

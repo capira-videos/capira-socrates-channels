@@ -1,0 +1,81 @@
+<link rel="import" href="../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
+
+<dom-module id="capira-services">
+    <template>
+        <iron-ajax id="service" url="/services/accountServer.php" handle-as="json" verbose="true" loading="{{loading}}"></iron-ajax>
+    </template>
+    <script>
+    'use strict';
+    (function() {
+        Polymer({
+            is: 'capira-services',
+            properties: {
+                loading: {
+                    notify: true
+                }
+            },
+
+            _generateRequest: function(method, url, data) {
+                var service = this.$.service;
+                service.body = data?JSON.stringify(data):'';
+                service.method = method;
+                service.url = '/api'+url;
+                return service.generateRequest().completes;
+            },
+
+            signup: function(user, password, email) {
+                return this._generateRequest('POST', '/signup', {
+                    user: user,
+                    password: password,
+                    email: email
+                });
+            },
+
+            login: function(user, password) {
+                return this._generateRequest('POST', '/login', {
+                    user: user,
+                    password: password
+                });
+            },
+            logout: function() {
+                return this._generateRequest('POST', '/logout');
+            },
+
+            fetchMe: function(){
+              return this._generateRequest('GET','/me');
+            },
+            
+
+            fetchChannel: function(id) {
+                return this._generateRequest('GET', '/channel/editor/' + id);
+            },
+
+            createChannel: function(title, parent) {
+                return this._generateRequest('POST', '/channel', {
+                    title: title,
+                    parent: parent
+                });
+            },
+
+            updateChannel: function(channel) {
+                return this._generateRequest('PUT', '/channel', channel);
+            },
+
+            updateChannelParent: function(channelId, parentId) {
+                return this._generateRequest('POST', '/channel/parent', {
+                    id: channelId,
+                    parent: parentId
+                });
+            },
+
+            updateOrder: function(channel) {
+                return this._generateRequest('POST', '/channel/parent', {
+                    id: channel.id,
+                    parent: channel.parent
+                });
+            }
+        });
+    })();
+    </script>
+</dom-module>

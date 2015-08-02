@@ -36,6 +36,7 @@
 </dom-module>
 <script>
 (function() {
+    'use strict';
     Polymer({
         is: 'account-dialog',
 
@@ -43,9 +44,7 @@
             this.username = '';
             this.password = '';
             var that = this;
-            app.accountService.generateRequest({
-                mode: 'profile'
-            }).then(function(req) {
+            app.services.fetchMe().then(function(req) {
                 console.log(req.response);
                 that.user = req.response;
                 if (!that.user.name) {
@@ -57,11 +56,7 @@
         },
         _confirm: function() {
             var that = this;
-            app.accountService.generateRequest({
-                mode: 'login',
-                name: this.username,
-                password: this.password
-            }).then(function(req) {
+            app.services.login(this.username,this.password).then(function(req) {
                 var resp = req.response;
                 console.log(resp);
                 switch (resp) {
@@ -79,9 +74,7 @@
         },
         _confirmLogout: function() {
             var that = this;
-            app.accountService.generateRequest({
-                mode: 'logout'
-            }).then(function() {
+            app.services.logout().then(function() {
                 that.$.logout.close();
                 that.fire('change-user');
             });

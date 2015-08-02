@@ -105,7 +105,7 @@
             </paper-item>
         </a>
         <div id="drop-hint">
-            <div id="drop-hint-text">Drop here to move to that folder.</div>
+            <div id="drop-hint-text">Drop here to move to that channel.</div>
         </div>
     </template>
 </dom-module>
@@ -138,14 +138,14 @@
         },
 
         _thumbnail: function(item) {
-            return 'http://img.youtube.com/vi/' + (item.thumbnail ? item.thumbnail : item.videoId) + '/default.jpg';
+            return '//img.youtube.com/vi/' + (item.thumbnail ? item.thumbnail : item.videoId) + '/default.jpg';
         },
 
         _reference: function(item) {
             if (item.videoId) {
                 return this._unitRef(item);
             } else {
-                return this._folderRef(item);
+                return this._channelRef(item);
             }
         },
 
@@ -153,7 +153,7 @@
             return 'https://capira.de/' + (this.isAuthor ? 'editor' : 'player') + '/#/' + unit.id;
         },
 
-        _folderRef: function(item) {
+        _channelRef: function(item) {
             return item.id;
         },
 

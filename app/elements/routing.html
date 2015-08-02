@@ -3,7 +3,6 @@
 <script src="../../bower_components/page/page.js"></script>
 <script>
   window.addEventListener('WebComponentsReady', function() {
-
     // We use Page.js for routing. This is a Micro
     // client-side router inspired by the Express router
     // More info: https://visionmedia.github.io/page.js/
@@ -12,7 +11,7 @@
 
     page('/', function () {
       app.route = 'home';
-      app.setServiceUrl(164); // test channel
+      app.fetchChannel(164); // test channel
     });
 
     page('/login', function () {
@@ -21,7 +20,7 @@
 
     page('/:id', function (data) {
       app.route = 'home';
-      app.setServiceUrl(data.params.id);
+      app.fetchChannel(data.params.id);
     });
 
     // add #! before urls

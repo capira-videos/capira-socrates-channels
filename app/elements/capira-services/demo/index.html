@@ -1,3 +1,4 @@
+<!doctype html>
 <!--
 @license
 Copyright (c) 2015 The Polymer Project Authors. All rights reserved.
@@ -7,26 +8,25 @@ The complete set of contributors may be found at http://polymer.github.io/CONTRI
 Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 -->
-
-<!doctype html>
 <html>
-
   <head>
+    <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
-    <title>Elements Test Runner</title>
-    <meta charset="UTF-8">
-
-    <script src="../../bower_components/webcomponentsjs/webcomponents.min.js"></script>
-    <script src="../../bower_components/web-component-tester/browser.js"></script>
+    <title>capira-card Demo</title>
+    <script src="../../../bower_components/webcomponentsjs/webcomponents-lite.js"></script>
+    <link rel="import" href="../capira-services.html">
   </head>
-
   <body>
 
+    <p>An example of <code>&lt;capira-card&gt;</code>:</p>
+
+    <capira-services id="server"></capira-services>
+    
     <script>
-      WCT.loadSuites(['my-greeting-basic.html', 'capira-channel-basic.html']);
+    server.fetchChannel(1).then(function(req){
+      console.log(req.response);
+    });
     </script>
 
-
   </body>
-
 </html>

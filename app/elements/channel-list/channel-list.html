@@ -1,4 +1,4 @@
-<dom-module id="folder-list">
+<dom-module id="channel-list">
 <style>
 :host {
     display: block;
@@ -48,17 +48,17 @@
                 Empty. There are no
                 <span>
                     <span>{{listTitle}}</span>s</span>
-                    in this Folder yet. Press + to create one.
+                    in this channel yet. Press + to create one.
                 </div>
 
                 <sortable-droppable-list
                 id="sortable-list" animation="150"
                 disabled="[[!isAuthor]]" on-sort-change="_sortChanged"
-                on-sort-drop="_droppedIntoFolder" type="[[listTitle]]"
-                drop-targets='["Folder","Parent"]'>
-                <template is="dom-if" if="[[_computeShowParentFolder(parentId,parentAuthor)]]">
-                    <parent-folder type="Parent">
-                    </parent-folder>
+                on-sort-drop="_droppedIntochannel" type="[[listTitle]]"
+                drop-targets='["channel","Parent"]'>
+                <template is="dom-if" if="[[_computeShowParentchannel(parentId,parentAuthor)]]">
+                    <parent-channel type="Parent">
+                    </parent-channel>
                 </template>
                 <template is="dom-repeat" items="[[list]]" id="listElement">
                     <list-item item="[[item]]" type="[[listTitle]]"
@@ -75,7 +75,7 @@
     <script>
     (function() {
         Polymer({
-            is: 'folder-list',
+            is: 'channel-list',
             properties: {
                 list: {
                     type: Array,
@@ -98,7 +98,7 @@
                 return !(list.length > 0 || isAuthor);
             },
 
-            _computeShowParentFolder: function(parentId, parentAuthor) {
+            _computeShowParentchannel: function(parentId, parentAuthor) {
                 return parentId && parentAuthor;
             },
 
@@ -113,7 +113,7 @@
             removeItem: function(event) {
                 var item = event.detail;
                 item.deleted = true;
-                item.folderId = this.folderId; // the folder id is only for
+                item.channelId = this.channelId; // the channel id is only for
                 // unit defined, at least it seems so
                 this._saveItem(item);
 
@@ -147,7 +147,7 @@
                 // position, where it actually already happened to be. Thus, using
                 // splices, we are save. this.set() doesnt have this behaviour
                 // and results in the expected buggy behaviour.
-                // As folders and units can not be mixed, we simply assume here that
+                // As channels and units can not be mixed, we simply assume here that
                 // event.oldList === event.newList === sortable-droppable-list here
                 var entry = this.splice('list', event.detail.oldIndex, 1)[0]; // remove
                 this.splice('list', event.detail.newIndex, 0, entry); // put at new position
@@ -155,23 +155,23 @@
                 console.log('sort', event.detail);
             },
 
-            _droppedIntoFolder: function(event) {
+            _droppedIntochannel: function(event) {
                 console.log('drop', event.detail);
                 var oldIndex = event.detail.oldIndex;
                 var item = this.list[oldIndex];
-                var folderEl = event.detail.dropTarget;
-                if (folderEl.type==="Parent") {
+                var channelEl = event.detail.dropTarget;
+                if (channelEl.type==="Parent") {
                     if (!this.parentAuthor) {
                         return;
                     }
-                    item.parent = folderEl.parentId;
+                    item.parent = channelEl.parentId;
                 } else {
-                    var folderList = event.detail.dropList;
-                    while (folderList.tagName.toLowerCase()!=='folder-list') {
-                        folderList = folderList.parentNode;
+                    var channelList = event.detail.dropList;
+                    while (channelList.tagName.toLowerCase()!=='channel-list') {
+                        channelList = channelList.parentNode;
                     }
-                    var folder = folderList.$.listElement.itemForElement(folderEl);
-                    item.parent = folder.id;
+                    var channel = channelList.$.listElement.itemForElement(channelEl);
+                    item.parent = channel.id;
                 }
                 this._saveItem(item); // save to database
                 this.splice('list', oldIndex, 1); // remove from UI

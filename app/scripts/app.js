@@ -15,13 +15,18 @@
 
   // See https://github.com/Polymer/polymer/issues/1381
   window.addEventListener('WebComponentsReady', function() {
+    app.services=document.querySelector('#services');
     app.editorService = document.querySelector('#channelEditorService');
     app.permissionsService = document.querySelector('#permissionsService');
-    app.accountService=document.querySelector('#accountService');
   });
 
-  app.setServiceUrl = function(folderId) {
-    app.serviceURL = '/services/channelServer.php?editor=true&id=' + folderId; // +'&editor=true';
+  app.fetchChannel = function(channelId) {
+    if(!app.services){
+      app.services=document.querySelector('#services');
+    }
+    app.services.fetchChannel(channelId).then(function(req){
+      app.set('channel',req.response);
+    });
   };
 
   app.openAccount = function(){

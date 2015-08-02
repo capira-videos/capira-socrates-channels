@@ -110,7 +110,7 @@
             <div header>
                 <h3>
                     Who can edit 
-                    <span style="font-style:italic">{{folder.title}}</span> ?
+                    <span style="font-style:italic">{{channel.title}}</span> ?
                 </h3>
             </div>
             <div content>
@@ -119,7 +119,7 @@
                 </div>
                 <div inheriteds>
                     <ul>
-                        <template is="dom-repeat" items="{{folder.path}}">
+                        <template is="dom-repeat" items="{{channel.path}}">
                             <li>{{item.title}}</li>
                         </template>
                     </ul>
@@ -137,7 +137,7 @@
                             <div class="flex"></div>
                             <div>
                                 <paper-icon-button remove icon="channel-icons:close" on-click="_removeUser" id="removeAuthorIcon"></paper-icon-button>
-                                <paper-tooltip for="removeAuthorIcon">Authors and Admins of <span>{{folder.title}}</span></paper-tooltip>
+                                <paper-tooltip for="removeAuthorIcon">Authors and Admins of <span>{{channel.title}}</span></paper-tooltip>
                             </div>
                         </div>
                     </template>
@@ -147,7 +147,7 @@
                 </div>
             </div>
         </paper-dialog>
-        <add-author-dialog id="addAuthorDialog" on-closed="open" folder="{{folder}}"></add-author-dialog>
+        <add-author-dialog id="addAuthorDialog" on-closed="open" channel="{{channel}}"></add-author-dialog>
         <iron-ajax id="service" handle-as="json" verbose="true" on-response="_usersReceived"></iron-ajax>
     </template>
 </dom-module>
@@ -163,11 +163,11 @@
 
             var service = this.$.service;
             service.method = 'GET';
-            service.url = '/services/permissionServer.php?channelId=' + this.folder.id;
+            service.url = '/services/permissionServer.php?channelId=' + this.channel.id;
             service.generateRequest();*/
             var that = this;
             app.permissionsService.generateRequest({}, 'GET', {
-                channelId: this.folder.id
+                channelId: this.channel.id
             }).then(function(req) {
                 that._usersReceived(req.response.list);
             });
@@ -181,7 +181,7 @@
         _changePermissions: function(event) {
             var user = event.model.item;
             app.permissionsService.generateRequest({
-                channelId: this.folder.id,
+                channelId: this.channel.id,
                 isAdmin: user.admin,
                 userId: user.id
             });
@@ -193,7 +193,7 @@
             this.splice('users', index, 1);
 
             app.permissionsService.generateRequest({
-                channelId: this.folder.id,
+                channelId: this.channel.id,
                 userId: user.id
             }, 'DELETE');
         },

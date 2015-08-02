@@ -49,10 +49,10 @@
             <!-- Main Toolbar -->
             <paper-toolbar id="mainToolbar" class="tall">
                 <div>
-                    <a href="{{folder.parent}}">
+                    <a href="{{channel.parent}}">
                         <paper-icon-button id="backbutton" icon="channel-icons:arrow-back"></paper-icon-button>
                         <paper-tooltip for="backbutton">Back</paper-tooltip>
-                        <span>{{folder.path.0.title}}</span>
+                        <span>{{channel.path.0.title}}</span>
                     </a>
                 </div>
                 <span class="flex"></span>
@@ -64,18 +64,18 @@
             <div class="content">
                 <iron-pages attr-for-selected="data-route" selected="{{route}}">
                     <section data-route="home">
-                        <folder-content folder="{{folder}}"></folder-content>
+                        <channel-content channel="{{channel}}"></channel-content>
                     </section>
                 </iron-pages>
             </div>
         </paper-header-panel>
         <!-- The Capira-Channels Service -->
-        <iron-ajax id="channelService" auto url="{{serviceURL}}" handle-as="json" last-response="{{folder}}"
+        <iron-ajax id="channelService" auto url="{{serviceURL}}" handle-as="json" last-response="{{channel}}"
         loading="{{loading}}"></iron-ajax>
         <permissions-service id="permissionsService" loading="{{loading}}"></permissions-service>
         <channel-editor-service id="channelEditorService" loading="{{loading}}"></channel-editor-service>
         <account-service id="accountService" loading="{{loading}}"></account-service>
-
+        <capira-services id="services" loading="{{loading}}"></capira-services>
     </template>
     <!-- build:js scripts/app.js -->
     <script src="scripts/app.js"></script>

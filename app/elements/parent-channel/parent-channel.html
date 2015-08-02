@@ -1,6 +1,6 @@
 <link rel="import" href="..\..\bower_components/polymer/polymer.html">
 
-<dom-module id="parent-folder">
+<dom-module id="parent-channel">
 <style>
 :host {
     display: block;
@@ -67,18 +67,18 @@ paper-item {
     <paper-item>
         <iron-icon icon="launch"></iron-icon>
         <div item-title>
-            Move to the parent folder.
+            Move to the parent channel.
         </div>
     </paper-item>
     <div id="drop-hint">
-        <div id="drop-hint-text">Drop here to move to the parent folder.</div>
+        <div id="drop-hint-text">Drop here to move to the parent channel.</div>
     </div>
 </template>
 </dom-module>
 <script>
 (function() {
     Polymer({
-        is: 'parent-folder',
+        is: 'parent-channel',
 
         properties: {
             type: {
