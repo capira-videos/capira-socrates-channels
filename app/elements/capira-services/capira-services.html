@@ -1,6 +1,5 @@
 <link rel="import" href="../../bower_components/polymer/polymer.html">
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
-
 <dom-module id="capira-services">
     <template>
         <iron-ajax id="service" url="/services/accountServer.php" handle-as="json" verbose="true" loading="{{loading}}"></iron-ajax>
@@ -18,23 +17,24 @@
 
             _generateRequest: function(method, url, data) {
                 var service = this.$.service;
-                service.body = data?JSON.stringify(data):'';
+                service.body = data;
                 service.method = method;
-                service.url = '/api'+url;
+                service.url = '/api' + url;
+                service.contentType = 'application/json';
                 return service.generateRequest().completes;
             },
 
-            signup: function(user, password, email) {
+            signup: function(name, password, email) {
                 return this._generateRequest('POST', '/signup', {
-                    user: user,
+                    name: name,
                     password: password,
                     email: email
                 });
             },
 
-            login: function(user, password) {
+            login: function(name, password) {
                 return this._generateRequest('POST', '/login', {
-                    user: user,
+                    name: name,
                     password: password
                 });
             },
@@ -42,20 +42,17 @@
                 return this._generateRequest('POST', '/logout');
             },
 
-            fetchMe: function(){
-              return this._generateRequest('GET','/me');
+            fetchMe: function() {
+                return this._generateRequest('GET', '/me');
             },
-            
+
 
             fetchChannel: function(id) {
                 return this._generateRequest('GET', '/channel/editor/' + id);
             },
 
-            createChannel: function(title, parent) {
-                return this._generateRequest('POST', '/channel', {
-                    title: title,
-                    parent: parent
-                });
+            createChannel: function(channel) {
+                return this._generateRequest('POST', '/channel', channel);
             },
 
             updateChannel: function(channel) {
@@ -70,11 +67,30 @@
             },
 
             updateOrder: function(channel) {
-                return this._generateRequest('POST', '/channel/parent', {
+                return this._generateRequest('POST', '/channel/sorting', {
                     id: channel.id,
                     parent: channel.parent
                 });
-            }
+            },
+
+            deleteChannel: function(id){
+                return this._generateRequest('DELETE','/channel',{id:id});
+            },
+
+            createUnit: function(unit) {
+                return this._generateRequest('POST', '/unit', unit);
+            },
+
+            updateUnit: function(unit) {
+                return this._generateRequest('PUT', '/unit', unit);
+            },
+
+            updateUnitParent: function(unitId, parentId) {
+                return this._generateRequest('POST', '/unit/parent', {
+                    id: unitId,
+                    parent: parentId
+                });
+            },
         });
     })();
     </script>

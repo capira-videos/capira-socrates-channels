@@ -62,14 +62,13 @@
                 </template>
                 <template is="dom-repeat" items="[[list]]" id="listElement">
                     <list-item item="[[item]]" type="[[listTitle]]"
-                    isAuthor="[[isAuthor]]" on-item-rename-requested="_onRenameRequested"
+                    is-author="[[isAuthor]]" on-item-rename-requested="_onRenameRequested"
                     on-item-delete-requested="_onDeleteRequested" on-click="toggleSelection"
                     selected$="[[item.selected]]">
                     </list-item>
                 </template>
             </sortable-droppable-list>
             <array-selector id="selector" items="[[list]]" selected="{{selected}}" multi toggle></array-selector>
-            <channel-editor-service id="service"></channel-editor-service>
         </template>
     </dom-module>
     <script>
@@ -83,8 +82,8 @@
                     notify: true
                 },
                 isAuthor: {
-                    type: Boolean,
-                    value: false
+                    value: false,
+                    notify: true
                 },
                 parentId: {
                     type: Number
@@ -95,16 +94,13 @@
             },
 
             computeIsHidden: function(list, isAuthor) {
-                return !(list.length > 0 || isAuthor);
+                return false; //list.length === 0 && !isAuthor;
             },
 
             _computeShowParentchannel: function(parentId, parentAuthor) {
                 return parentId && parentAuthor;
             },
 
-            _saveItem: function(item) {
-                return app.editorService.generateRequest(this.listTitle.toLowerCase(), item);
-            },
 
             _onDeleteRequested: function(event) {
                 this.$.confirmDelete.open(event.detail.item);
@@ -115,7 +111,7 @@
                 item.deleted = true;
                 item.channelId = this.channelId; // the channel id is only for
                 // unit defined, at least it seems so
-                this._saveItem(item);
+                this.fire('remove',item);
 
                 this.deleteIndex = this.list.indexOf(item);
                 this.splice('list', this.deleteIndex, 1);
@@ -130,9 +126,7 @@
                 var i = this.list.indexOf(item);
                 this.set('list.' + i + '.title', item.title);
 
-                this._saveItem(item).then(function(e){
-                    console.log('saved',e);
-                });
+                this._updateItem(item);
             },
 
             _sortChanged: function(event) {
@@ -173,7 +167,7 @@
                     var channel = channelList.$.listElement.itemForElement(channelEl);
                     item.parent = channel.id;
                 }
-                this._saveItem(item); // save to database
+              //  this._saveItem(item); // save to database
                 this.splice('list', oldIndex, 1); // remove from UI
             },
 
@@ -185,6 +179,10 @@
                 var item = this.$.listElement.itemForElement(e.target);
                 item.selected = !item.selected;
                 this.$.selector.select(item);
+            },
+
+            _updateItem: function(item){
+                this.fire('update',item);
             }
         });
     })();

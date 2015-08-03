@@ -41,7 +41,7 @@
     <div content>
       <!-- Place dialogs on top to avoid interferiences with content size and scrolling -->
       <create-unit-dialog id="createUnit" on-created="_onUnitCreated" parent-id="{{channel.id}}"></create-unit-dialog>
-      <create-channel-dialog id="createchannel" on-created="_onchannelCreated" parent-id="{{channel.id}}"></create-channel-dialog>
+      <create-channel-dialog id="createChannel" on-created="_onChannelCreated" parent-id="{{channel.id}}"></create-channel-dialog>
       <permissions-dialog id="permissions" channel="{{channel}}"></permissions-dialog>
 
 
@@ -56,8 +56,8 @@
         </div>
       </div>
 
-      <channel-list list="{{channel.units}}" list-title="Unit" is-author="{{channel.author}}" on-create="createUnit" channel-id={{channel.id}} on-sorted="_updateOrder" parent-author="[[channel.parent_author]]"></channel-list>
-      <channel-list list="{{channel.channels}}" list-title="channel" is-author="{{channel.author}}" on-create="createchannel" on-sorted="_updateOrder" parent-id="{{channel.parent}}" parent-author="[[channel.parent_author]]"></channel-list>
+      <channel-list list="{{channel.units}}" list-title="Unit" is-author="{{channel.author}}" on-create="createUnit" channel-id={{channel.id}} on-sorted="_updateOrder" parent-author="[[channel.parent_author]]" on-update="_updateUnit" on-remove="_removeUnit"></channel-list>
+      <channel-list list="{{channel.channels}}" list-title="Channel" is-author="{{channel.author}}" on-create="createChannel" on-sorted="_updateOrder" parent-id="{{channel.parent}}" parent-author="[[channel.parent_author]]" on-update="_updateChannel" on-remove="_removeChannel"></channel-list>
 
 
     </div>
@@ -121,8 +121,8 @@
         this.$.createUnit.open();
       },
 
-      createchannel: function() {
-        this.$.createchannel.open();
+      createChannel: function() {
+        this.$.createChannel.open();
       },
 
       _onUnitCreated: function(e) {
@@ -130,7 +130,7 @@
         this.unshift('channel.units', unit);
       },
 
-      _onchannelCreated: function(e) {
+      _onChannelCreated: function(e) {
         var channel = e.detail;
         this.unshift('channel.channels', channel);
       },
@@ -140,10 +140,25 @@
       },
 
       _updateOrder: function() {
-        app.editorService.generateRequest('order', this.channel).then(function(){
+        app.services.updateOrder(this.channel).then(function(){
           console.log('Sorted');
         });
-      }
+      },
+
+      _updateChannel:function(e){
+        app.services.updateChannel(e.detail);
+      },
+      _removeChannel:function(e){
+        app.services.deleteChannel(e.detail.id);
+      },
+
+      _updateUnit:function(e){
+        app.services.updateUnit(e.detail);
+      },
+
+      _removeUnit:function(e){
+        app.services.deleteUnit(e.detail.id);
+      },
 
     });
   })();

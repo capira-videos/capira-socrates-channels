@@ -1,13 +1,13 @@
 <dom-module id="create-channel-dialog">
     <style>
-        #createchannelDialog {
+        #createChannelDialog {
             width: 400px;
         }
     </style>
     <template>
         <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_confirm"></iron-a11y-keys>
-        <paper-dialog id="createchannelDialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
-            <h2>Create channel</h2>
+        <paper-dialog id="createChannelDialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <h2>Create Channel</h2>
             <p>
                 <paper-input label="Enter a title for the new channel" value="{{channel.title}}" autofocus required></paper-input>
             </p>
@@ -16,7 +16,6 @@
                 <paper-button on-click="_confirm">Create</paper-button>
             </div>
         </paper-dialog>
-        <channel-editor-service id="createchannelService" on-responded="_confirmed"></channel-editor-service>
     </template>
 </dom-module>
 <script>
@@ -25,7 +24,7 @@
             is: 'create-channel-dialog',
 
             open: function() {
-                this.$.createchannelDialog.open();
+                this.$.createChannelDialog.open();
                 this.channel = {
                     title: '',
                     parent: this.parentId
@@ -34,10 +33,10 @@
 
             _confirm: function() {
                 var that = this;
-                app.editorService.generateRequest('channel', this.channel, 'PUT').then(function(req) {
+                app.services.createChannel(this.channel).then(function(req) {
                     var channel = req.response;
                     that.fire('created', channel);
-                    that.$.createchannelDialog.close();
+                    that.$.createChannelDialog.close();
                 });
             }
         });

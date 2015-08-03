@@ -1,7 +1,7 @@
 <dom-module id="create-unit-dialog">
     <style>
         #createUnitDialog {
-            width: 450px !important;
+            width: 400px !important;
             max-height: 1000px !important;
         }
     </style>
@@ -97,16 +97,15 @@
 
             _confirm: function() {
                 if (this.valid) {
-                    var service = app.editorService;
+
                     var that = this;
-                    service.generateRequest('unit', this.unit, 'PUT').then(function(req) {
+                    app.services.createUnit(this.unit).then(function(req) {
                         var unit = req.response;
                         that.fire('created', unit);
                         that.$.createUnitDialog.close();
                     });
                 }
             }
-            //TODO: on-enter-press in allen dialogen
 
         });
     })();
