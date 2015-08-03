@@ -52,8 +52,8 @@
                     </div>
                 </div>
             </div>
-            <channel-list list="{{channel.units}}" list-title="Unit" is-author="{{channel.author}}" on-create="createUnit" channel-id={{channel.id}} on-sorted="_updateOrder" parent-author="[[channel.parent_author]]" on-update="_updateUnit" on-delete="_deleteUnit" on-change-parent="_changeUnitParent"></channel-list>
-            <channel-list list="{{channel.channels}}" list-title="Channel" is-author="{{channel.author}}" on-create="createChannel" on-sorted="_updateOrder" parent-id="{{channel.parent}}" parent-author="[[channel.parent_author]]" on-update="_updateChannel" on-delete="_deleteChannel" on-change-parent="_changeChannelParent"></channel-list>
+            <channel-list list="{{channel.units}}" list-title="Unit" is-author="{{channel.author}}" on-create="createUnit" channel-id={{channel.id}} on-sorted="_updateOrder" parent-author="[[channel.parentAuthor]]" on-update="_updateUnit" on-delete="_deleteUnit" on-change-parent="_changeUnitParent"></channel-list>
+            <channel-list list="{{channel.channels}}" list-title="Channel" is-author="{{channel.author}}" on-create="createChannel" on-sorted="_updateOrder" parent-id="{{channel.parent}}" parent-author="[[channel.parentAuthor]]" on-update="_updateChannel" on-delete="_deleteChannel" on-change-parent="_changeChannelParent"></channel-list>
         </div>
     </template>
 </dom-module>
