@@ -1,42 +1,41 @@
 <dom-module id="channel-list">
-<style>
-:host {
-    display: block;
-    padding-top: 18px !important;
-}
-
-[list] {
-    @apply(--layout-vertical);
-}
-
-[list-header] {
-    @apply(--layout-horizontal);
-    @apply(--layout-center);
-    @apply(--material-container);
-    height: 64px;
-}
-
-[list-title] {
-    @apply(--paper-font-headline);
-}
-
-[isEmpty]{
-    @apply(--paper-font-caption);
-    @apply(--material-container);
-}
-
-.sortable-ghost {
-    opacity: 0;
-    position: relative;
-}
-
-</style>
-<template>
-    <rename-dialog id="rename" on-renamed="_onRenamed"></rename-dialog>
-    <confirm-delete-dialog id="confirmDelete" on-delete-confirmed="deleteItem"></confirm-delete-dialog>
-    <div list hidden$="{{computeIsHidden(list,isAuthor)}}">
-        <div list-header>
-            <span list-title>
+    <style>
+    :host {
+        display: block;
+        padding-top: 18px !important;
+    }
+    
+    [list] {
+        @apply(--layout-vertical);
+    }
+    
+    [list-header] {
+        @apply(--layout-horizontal);
+        @apply(--layout-center);
+        @apply(--material-container);
+        height: 64px;
+    }
+    
+    [list-title] {
+        @apply(--paper-font-headline);
+    }
+    
+    [isEmpty] {
+        @apply(--paper-font-caption);
+        @apply(--material-container);
+    }
+    
+    .sortable-ghost {
+        opacity: 0;
+        position: relative;
+    }
+    </style>
+    <template>
+        <rename-dialog id="rename" on-renamed="_onRenamed"></rename-dialog>
+        <confirm-delete-dialog id="confirmDelete" on-delete-confirmed="deleteItem"></confirm-delete-dialog>
+        <div list hidden$="{{computeIsHidden(list,isAuthor)}}">
+            <div list-header>
+                <span list-title>
                 <span>{{listTitle}}</span>s</span>
                 <div class="flex"></div>
                 <div>
@@ -48,143 +47,135 @@
                 Empty. There are no
                 <span>
                     <span>{{listTitle}}</span>s</span>
-                    in this channel yet. Press + to create one.
-                </div>
-
-                <sortable-droppable-list
-                id="sortable-list" animation="150"
-                disabled="[[!isAuthor]]" on-sort-change="_sortChanged"
-                on-sort-drop="_droppedIntochannel" type="[[listTitle]]"
-                drop-targets='["channel","Parent"]'>
+                in this channel yet. Press + to create one.
+            </div>
+            <sortable-droppable-list id="sortable-list" animation="150" disabled="[[!isAuthor]]" on-sort-change="_sortChanged" on-sort-drop="_droppedIntochannel" type="[[listTitle]]" drop-targets='["Channel","Parent"]'>
                 <template is="dom-if" if="[[_computeShowParentchannel(parentId,parentAuthor)]]">
                     <parent-channel type="Parent">
                     </parent-channel>
                 </template>
                 <template is="dom-repeat" items="[[list]]" id="listElement">
-                    <list-item item="[[item]]" type="[[listTitle]]"
-                    is-author="[[isAuthor]]" on-item-rename-requested="_onRenameRequested"
-                    on-item-delete-requested="_onDeleteRequested" on-click="toggleSelection"
-                    selected$="[[item.selected]]">
+                    <list-item item="[[item]]" type="[[listTitle]]" is-author="[[isAuthor]]" on-item-rename-requested="_onRenameRequested" on-item-delete-requested="_onDeleteRequested" on-click="toggleSelection" selected$="[[item.selected]]">
                     </list-item>
                 </template>
             </sortable-droppable-list>
             <array-selector id="selector" items="[[list]]" selected="{{selected}}" multi toggle></array-selector>
-        </template>
-    </dom-module>
-    <script>
-    'use strict';
-    (function() {
-        Polymer({
-            is: 'channel-list',
-            properties: {
-                list: {
-                    type: Array,
-                    value: [],
-                    notify: true
-                },
-                isAuthor: {
-                    value: false,
-                    notify: true
-                },
-                parentId: {
-                    type: Number
-                },
-                parentAuthor: {
-                    type: Boolean
-                }
+    </template>
+</dom-module>
+<script>
+'use strict';
+(function() {
+    Polymer({
+        is: 'channel-list',
+        properties: {
+            list: {
+                type: Array,
+                value: [],
+                notify: true
             },
-
-            computeIsHidden: function(list, isAuthor) {
-                return false; //list.length === 0 && !isAuthor;
+            isAuthor: {
+                value: false,
+                notify: true
             },
-
-            _computeShowParentchannel: function(parentId, parentAuthor) {
-                return parentId && parentAuthor;
+            parentId: {
+                type: Number
             },
-
-
-            _onDeleteRequested: function(event) {
-                this.$.confirmDelete.open(event.detail.item);
-            },
-
-            deleteItem: function(event) {
-                var item = event.detail;
-                item.deleted = true;
-                item.channelId = this.channelId; // the channel id is only for
-                // unit defined, at least it seems so
-                this.fire('delete',item);
-
-                this.deleteIndex = this.list.indexOf(item);
-                this.splice('list', this.deleteIndex, 1);
-            },
-
-            _onRenameRequested: function(event) {
-                this.$.rename.open(event.detail.item);
-            },
-
-            _onRenamed: function(e) {
-                var item = e.detail;
-                var i = this.list.indexOf(item);
-                this.set('list.' + i + '.title', item.title);
-
-                this._updateItem(item);
-            },
-
-            _sortChanged: function(event) {
-                // update the position in the dataset
-                // One might maybe expect that some special treatment would be needed
-                // as the dom element is switched first and then the databound list
-                // entries are also switched which would result in a double switching.
-                // Mind thereby that the binding of a data entry stays to the same
-                // dom element. However, there is only one items data entry and dom
-                // element affected. By changing its position using splices, polymer
-                // reorders the dom elements and puts the dom element in the right
-                // position, where it actually already happened to be. Thus, using
-                // splices, we are save. this.set() doesnt have this behaviour
-                // and results in the expected buggy behaviour.
-                // As channels and units can not be mixed, we simply assume here that
-                // event.oldList === event.newList === sortable-droppable-list here
-                var entry = this.splice('list', event.detail.oldIndex, 1)[0]; // delete
-                this.splice('list', event.detail.newIndex, 0, entry); // put at new position
-                this.fire('sorted'); // fire event to save to database
-                console.log('sort', event.detail);
-            },
-
-            _droppedIntochannel: function(event) {
-                console.log('drop', event.detail);
-                var oldIndex = event.detail.oldIndex;
-                var item = this.list[oldIndex];
-                var channelEl = event.detail.dropTarget;
-                if (channelEl.type==="Parent") {
-                    if (!this.parentAuthor) {
-                        return;
-                    }
-                    item.parent = channelEl.parentId;
-                } else {
-                    var channelList = event.detail.dropList;
-                    while (channelList.tagName.toLowerCase()!=='channel-list') {
-                        channelList = channelList.parentNode;
-                    }
-                    var channel = channelList.$.listElement.itemForElement(channelEl);
-                    item.parent = channel.id;
-                }
-                this.fire('change-parent',item); // save to database
-                this.splice('list', oldIndex, 1); // delete from UI
-            },
-
-            _createItem: function() {
-                this.fire('create');
-            },
-
-            toggleSelection: function(e) {
-                var item = this.$.listElement.itemForElement(e.target);
-                item.selected = !item.selected;
-                this.$.selector.select(item);
-            },
-
-            _updateItem: function(item){
-                this.fire('update',item);
+            parentAuthor: {
+                type: Boolean
             }
-        });
-    })();
-    </script>
+        },
+
+        computeIsHidden: function(list, isAuthor) {
+            return false; //list.length === 0 && !isAuthor;
+        },
+
+        _computeShowParentchannel: function(parentId, parentAuthor) {
+            return parentId && parentAuthor;
+        },
+
+
+        _onDeleteRequested: function(event) {
+            this.$.confirmDelete.open(event.detail.item);
+        },
+
+        deleteItem: function(event) {
+            var item = event.detail;
+            item.deleted = true;
+            item.channelId = this.channelId; // the channel id is only for
+            // unit defined, at least it seems so
+            this.fire('delete', item);
+
+            this.deleteIndex = this.list.indexOf(item);
+            this.splice('list', this.deleteIndex, 1);
+        },
+
+        _onRenameRequested: function(event) {
+            this.$.rename.open(event.detail.item);
+        },
+
+        _onRenamed: function(e) {
+            var item = e.detail;
+            var i = this.list.indexOf(item);
+            this.set('list.' + i + '.title', item.title);
+
+            this._updateItem(item);
+        },
+
+        _sortChanged: function(event) {
+            // update the position in the dataset
+            // One might maybe expect that some special treatment would be needed
+            // as the dom element is switched first and then the databound list
+            // entries are also switched which would result in a double switching.
+            // Mind thereby that the binding of a data entry stays to the same
+            // dom element. However, there is only one items data entry and dom
+            // element affected. By changing its position using splices, polymer
+            // reorders the dom elements and puts the dom element in the right
+            // position, where it actually already happened to be. Thus, using
+            // splices, we are save. this.set() doesnt have this behaviour
+            // and results in the expected buggy behaviour.
+            // As channels and units can not be mixed, we simply assume here that
+            // event.oldList === event.newList === sortable-droppable-list here
+            var entry = this.splice('list', event.detail.oldIndex, 1)[0]; // delete
+            this.splice('list', event.detail.newIndex, 0, entry); // put at new position
+            this.fire('sorted'); // fire event to save to database
+            console.log('sort', event.detail);
+        },
+
+        _droppedIntochannel: function(event) {
+            console.log('drop', event.detail);
+            var oldIndex = event.detail.oldIndex;
+            var item = this.list[oldIndex];
+            var channelEl = event.detail.dropTarget;
+            if (channelEl.type === "Parent") {
+                if (!this.parentAuthor) {
+                    return;
+                }
+                item.parent = this.parentId;
+            } else {
+                var channelList = event.detail.dropList;
+                while (channelList.tagName.toLowerCase() !== 'channel-list') {
+                    channelList = channelList.parentNode;
+                }
+                var channel = channelList.$.listElement.itemForElement(channelEl);
+                item.parent = channel.id;
+            }
+            this.fire('change-parent', item); // save to database
+            this.splice('list', oldIndex, 1); // delete from UI
+        },
+
+        _createItem: function() {
+            this.fire('create');
+        },
+
+        toggleSelection: function(e) {
+            var item = this.$.listElement.itemForElement(e.target);
+            item.selected = !item.selected;
+            this.$.selector.select(item);
+        },
+
+        _updateItem: function(item) {
+            this.fire('update', item);
+        }
+    });
+})();
+</script>

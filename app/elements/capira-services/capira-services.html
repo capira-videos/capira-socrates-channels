@@ -59,10 +59,10 @@
                 return this._generateRequest('PUT', '/channel', channel);
             },
 
-            updateChannelParent: function(channelId, parentId) {
-                return this._generateRequest('POST', '/channel/parent', {
-                    id: channelId,
-                    parent: parentId
+            updateChannelParent: function(channel) {
+                return this._generateRequest('PUT', '/channel/parent', {
+                    id: channel.id,
+                    parent: channel.parent
                 });
             },
 
@@ -93,7 +93,7 @@
             },
 
             updateUnitParent: function(unitId, parentId) {
-                return this._generateRequest('POST', '/unit/parent', {
+                return this._generateRequest('PUT', '/unit/parent', {
                     id: unitId,
                     parent: parentId
                 });
