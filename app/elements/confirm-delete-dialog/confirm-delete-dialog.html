@@ -8,8 +8,12 @@
   <template>
     <paper-dialog id="confirmDeleteDialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
       <h2>Are you sure?</h2>
-      <p>
+      <p hidden$="{{item.homeChannel}}">
         Do you really want to delete this <span>{{itemType}}</span> from this Channel?<br>
+        This can not be undone!
+      </p>
+      <p hidden$="{{!item.homeChannel}}">
+        Do you really want to delete this Unit entirely from all Channels?<br>
         This can not be undone!
       </p>
       <div class="buttons">
@@ -17,7 +21,6 @@
         <paper-button on-click="_confirm" autofocus>Delete</paper-button>
       </div>
     </paper-dialog>
-
   </template>
 </dom-module>
 <script>
@@ -31,8 +34,9 @@
       }
     },
     open:function(item){
-      this.$.confirmDeleteDialog.open();
       this.item=item;
+      this.$.confirmDeleteDialog.open();
+      console.log(item);
     },
     _confirm:function(){
       this.$.confirmDeleteDialog.close();

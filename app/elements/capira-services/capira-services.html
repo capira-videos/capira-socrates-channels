@@ -73,8 +73,10 @@
                 });
             },
 
-            deleteChannel: function(id){
-                return this._generateRequest('DELETE','/channel',{id:id});
+            deleteChannel: function(id) {
+                return this._generateRequest('DELETE', '/channel', {
+                    id: id
+                });
             },
 
             createUnit: function(unit) {
@@ -83,6 +85,14 @@
 
             updateUnit: function(unit) {
                 return this._generateRequest('PUT', '/unit', unit);
+            },
+
+            deleteUnitFromChannel: function(unitId, channelId) {
+                return this._generateRequest('DELETE', '/channel/' + channelId + '/unit/' + unitId);
+            },
+
+            deleteUnit: function(unitId) {
+                return this._generateRequest('DELETE', '/unit/' + unitId);
             },
 
             updateUnitParent: function(unitId, parentId) {

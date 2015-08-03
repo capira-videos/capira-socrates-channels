@@ -33,7 +33,7 @@
 </style>
 <template>
     <rename-dialog id="rename" on-renamed="_onRenamed"></rename-dialog>
-    <confirm-delete-dialog id="confirmDelete" on-delete-confirmed="removeItem"></confirm-delete-dialog>
+    <confirm-delete-dialog id="confirmDelete" on-delete-confirmed="deleteItem"></confirm-delete-dialog>
     <div list hidden$="{{computeIsHidden(list,isAuthor)}}">
         <div list-header>
             <span list-title>
@@ -106,12 +106,12 @@
                 this.$.confirmDelete.open(event.detail.item);
             },
 
-            removeItem: function(event) {
+            deleteItem: function(event) {
                 var item = event.detail;
                 item.deleted = true;
                 item.channelId = this.channelId; // the channel id is only for
                 // unit defined, at least it seems so
-                this.fire('remove',item);
+                this.fire('delete',item);
 
                 this.deleteIndex = this.list.indexOf(item);
                 this.splice('list', this.deleteIndex, 1);
@@ -143,7 +143,7 @@
                 // and results in the expected buggy behaviour.
                 // As channels and units can not be mixed, we simply assume here that
                 // event.oldList === event.newList === sortable-droppable-list here
-                var entry = this.splice('list', event.detail.oldIndex, 1)[0]; // remove
+                var entry = this.splice('list', event.detail.oldIndex, 1)[0]; // delete
                 this.splice('list', event.detail.newIndex, 0, entry); // put at new position
                 this.fire('sorted'); // fire event to save to database
                 console.log('sort', event.detail);
@@ -168,7 +168,7 @@
                     item.parent = channel.id;
                 }
               //  this._saveItem(item); // save to database
-                this.splice('list', oldIndex, 1); // remove from UI
+                this.splice('list', oldIndex, 1); // delete from UI
             },
 
             _createItem: function() {
