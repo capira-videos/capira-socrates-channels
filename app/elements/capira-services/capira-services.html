@@ -2,7 +2,7 @@
 <link rel="import" href="../../bower_components/iron-ajax/iron-ajax.html">
 <dom-module id="capira-services">
     <template>
-        <iron-ajax id="service" url="/services/accountServer.php" handle-as="json" verbose="true" loading="{{loading}}"></iron-ajax>
+        <iron-ajax id="service" handle-as="json" verbose="true" loading="{{loading}}"></iron-ajax>
     </template>
     <script>
     'use strict';
@@ -67,10 +67,7 @@
             },
 
             updateOrder: function(channel) {
-                return this._generateRequest('POST', '/channel/sorting', {
-                    id: channel.id,
-                    parent: channel.parent
-                });
+                return this._generateRequest('PUT', '/channel/sorting', channel);
             },
 
             deleteChannel: function(id) {

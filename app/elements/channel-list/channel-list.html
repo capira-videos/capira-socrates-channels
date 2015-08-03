@@ -72,6 +72,7 @@
         </template>
     </dom-module>
     <script>
+    'use strict';
     (function() {
         Polymer({
             is: 'channel-list',
@@ -167,7 +168,7 @@
                     var channel = channelList.$.listElement.itemForElement(channelEl);
                     item.parent = channel.id;
                 }
-              //  this._saveItem(item); // save to database
+                this.fire('change-parent',item); // save to database
                 this.splice('list', oldIndex, 1); // delete from UI
             },
 

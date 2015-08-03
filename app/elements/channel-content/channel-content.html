@@ -52,8 +52,8 @@
                     </div>
                 </div>
             </div>
-            <channel-list list="{{channel.units}}" list-title="Unit" is-author="{{channel.author}}" on-create="createUnit" channel-id={{channel.id}} on-sorted="_updateOrder" parent-author="[[channel.parent_author]]" on-update="_updateUnit" on-delete="_deleteUnit"></channel-list>
-            <channel-list list="{{channel.channels}}" list-title="Channel" is-author="{{channel.author}}" on-create="createChannel" on-sorted="_updateOrder" parent-id="{{channel.parent}}" parent-author="[[channel.parent_author]]" on-update="_updateChannel" on-delete="_deleteChannel"></channel-list>
+            <channel-list list="{{channel.units}}" list-title="Unit" is-author="{{channel.author}}" on-create="createUnit" channel-id={{channel.id}} on-sorted="_updateOrder" parent-author="[[channel.parent_author]]" on-update="_updateUnit" on-delete="_deleteUnit" on-change-parent="_changeUnitParent"></channel-list>
+            <channel-list list="{{channel.channels}}" list-title="Channel" is-author="{{channel.author}}" on-create="createChannel" on-sorted="_updateOrder" parent-id="{{channel.parent}}" parent-author="[[channel.parent_author]]" on-update="_updateChannel" on-delete="_deleteChannel" on-change-parent="_changeChannelParent"></channel-list>
         </div>
     </template>
 </dom-module>
@@ -157,6 +157,16 @@
                 app.services.deleteUnitFromChannel(e.detail.id, this.channel.id);
             }
         },
+
+        _changeChannelParent:function(e){
+            app.services.updateChannelParent(e.detail);
+        },
+
+        _changeUnitParent:function(e){
+          app.services.updateUnitParent(e.detail);
+        }
+
+
 
     });
 })();
