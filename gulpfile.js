@@ -249,9 +249,9 @@ gulp.task('serve', ['styles', 'elements', 'images'], function() {
             middleware: function(req, res, next) {
                 var url = req.url;
 
-                if (url.match(/^\/(services)\//)) {
+                if (url.match(/^\/(api)\//)) {
                     proxy.web(req, res, {
-                        target: 'http://capira.de/build'
+                        target: 'http://localhost:8888/'
                     });
                 } else {
                     next();
@@ -290,9 +290,9 @@ gulp.task('serve:dist', ['default'], function() {
             middleware: function(req, res, next) {
                 var url = req.url;
 
-                if (url.match(/^\/(server)\//)) {
+                if (url.match(/^\/(api)\//)) {
                     proxy.web(req, res, {
-                        target: 'http://127.0.0.1:8888'
+                        target: 'http://capira.de/build/socrates'
                     });
                 } else {
                     next();
