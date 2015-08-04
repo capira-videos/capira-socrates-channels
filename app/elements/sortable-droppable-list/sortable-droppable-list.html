@@ -36,6 +36,7 @@ or
 </dom-module>
 
 <script>
+'use strict';
 (function closure() {
     // static variables:
     var statics = {
@@ -305,7 +306,7 @@ or
 
         // ####### sort events triggered by Sortable.js ########
 
-        _onSortStart: function(event) {
+        _onSortStart: function() {
             statics.lists.forEach(function(list) {
                 list.addEventListener('drag', this._onDrag);
                 list.addEventListener('dragenter', this._onDragEnter);
@@ -318,8 +319,7 @@ or
             var allowSorting;
             var dragged = event.dragged;
             var related = event.related;
-            var relatedType = related.type || related.getAttribute('type')
-                || Polymer.dom(related).parentNode.type;
+            var relatedType = related.type || related.getAttribute('type') || Polymer.dom(related).parentNode.type;
             var insortTargets = this.sortTargets.indexOf(relatedType)!==-1;
             var indropTargets = this.dropTargets.indexOf(relatedType)!==-1;
 

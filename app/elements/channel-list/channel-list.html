@@ -86,7 +86,7 @@
         },
 
         computeIsHidden: function(list, isAuthor) {
-            return false; //list.length === 0 && !isAuthor;
+            return false && list.length === 0 && !isAuthor;
         },
 
         _computeShowParentchannel: function(parentId, parentAuthor) {
@@ -146,7 +146,7 @@
             var oldIndex = event.detail.oldIndex;
             var item = this.list[oldIndex];
             var channelEl = event.detail.dropTarget;
-            if (channelEl.type === "Parent") {
+            if (channelEl.type === 'Parent') {
                 if (!this.parentAuthor) {
                     return;
                 }

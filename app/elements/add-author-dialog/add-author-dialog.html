@@ -80,7 +80,7 @@
                 this.timer = setTimeout(function() {
                     app.services.queryForUsers(query).then(function(req) {
                         that.set('resultedUsers', req.response);
-                    })
+                    });
                 }, 300);
             } else {
                 this.set('resultedUsers', []);

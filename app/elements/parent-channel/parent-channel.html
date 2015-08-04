@@ -76,6 +76,7 @@ paper-item {
 </template>
 </dom-module>
 <script>
+'use strict';
 (function() {
     Polymer({
         is: 'parent-channel',
@@ -83,7 +84,7 @@ paper-item {
         properties: {
             type: {
                 type: String,
-                value: "Parent",
+                value: 'Parent',
                 readOnly: true
             }
         },
