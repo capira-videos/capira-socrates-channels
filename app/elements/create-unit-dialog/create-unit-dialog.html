@@ -10,7 +10,7 @@
             <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_confirm"></iron-a11y-keys>
             <h2>Create Unit</h2>
             <div>
-                <paper-input label="Enter a Youtube Video-Id" value="[[unit.videoId]]" id="videoId" autofocus></paper-input>
+                <paper-input label="Enter an URL of a Youtube Video." value="[[unit.videoId]]" id="videoId" autofocus></paper-input>
                 <paper-input label="Enter your title" value="{{unit.title}}" hidden$="{{!valid}}"></paper-input>
             </div>
             <div class="buttons">
