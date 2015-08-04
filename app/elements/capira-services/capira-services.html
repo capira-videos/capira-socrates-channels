@@ -110,6 +110,10 @@
 
             deleteChannelPermissions: function(channelId, userId) {
                 return this._generateRequest('DELETE', '/permissions/channel/' + channelId + '/author/' + userId);
+            },
+
+            queryForUsers: function (query){
+                return this._generateRequest('GET', '/users/' + query);
             }
 
         });

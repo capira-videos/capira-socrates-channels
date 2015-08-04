@@ -28,7 +28,7 @@
                         <span username>{{item.name}}</span>
                         <div class="flex"></div>
                         <div>
-                            <paper-icon-button remove icon="add" on-click="addUser" id="adduser">
+                            <paper-icon-button remove icon="channel-icons:add" on-click="addUser" id="adduser">
                             </paper-icon-button>
                             <paper-tooltip for="adduser">Add as Author</paper-tooltip>
                         </div>
@@ -39,10 +39,10 @@
                 <paper-button on-click="_closeDialog">Back</paper-button>
             </div>
         </paper-dialog>
-        <iron-ajax auto id="queryUserServer" handle-as="json" verbose="true" last-response="{{resultedUsers}}" loading="{{loading}}"></iron-ajax>
     </template>
 </dom-module>
 <script>
+'use strict';
 (function() {
     Polymer({
         is: 'add-author-dialog',
@@ -55,11 +55,7 @@
 
         addUser: function() {
             var user = event.model.item;
-            app.permissionsService.generateRequest({
-                channelId: this.channel.id,
-                isAdmin: false,
-                userId: user.id
-            });
+            app.services.setChannelPermissions(this.channel.id,user.id);
             this._closeDialog();
         },
 
@@ -80,9 +76,11 @@
                 this.timer.cancel();
             }
             if (query.length > 2) {
-                var service = this.$.queryUserServer;
+                var that=this;
                 this.timer = setTimeout(function() {
-                    service.url = '/services/queryUserServer.php?query=' + query;
+                    app.services.queryForUsers(query).then(function(req) {
+                        that.set('resultedUsers', req.response);
+                    })
                 }, 300);
             } else {
                 this.set('resultedUsers', []);
