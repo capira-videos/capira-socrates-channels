@@ -11,6 +11,7 @@
     position: relative;
     opacity: 0;
     height: 0px;
+    display: block;  /* this helps to fix a vulcanize bug that strips off the last css property in a class that uses fancy-css syntax */
 }
 
 :host-context(.sorting) {
@@ -65,7 +66,7 @@ paper-item {
 </style>
 <template>
     <paper-item>
-        <iron-icon icon="launch"></iron-icon>
+        <iron-icon icon="channel-icons:launch"></iron-icon>
         <div item-title>
             Move to the parent channel.
         </div>

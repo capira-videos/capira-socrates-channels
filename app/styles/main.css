@@ -8,33 +8,41 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 body {
-  background: #fafafa;
-  font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  color: #333;
+    background: #fafafa;
+    font-family: 'Roboto', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #333;
 }
 
-
 #mainToolbar iron-icon {
-  color: white;
+    color: white;
 }
 
 paper-dialog {
-  background-color: white !important;
-}
-paper-header-panel {
-  /* BUGFIX - otherwise dialogs are behind their backdrops */
-  z-index: auto;
+    background-color: white !important;
 }
 
-iron-pages{
-  /* BUGFIX - otherwise the content is not properly aligned at the top */
-  padding-top: 64px !important;
+paper-header-panel {
+    /* BUGFIX - otherwise dialogs are behind their backdrops */
+    z-index: auto;
+}
+
+iron-pages {
+    /* BUGFIX - otherwise the content is not properly aligned at the top */
+    padding-top: 64px !important;
 }
 
 #topBar {
-  z-index: 1;
+    z-index: 1;
 }
 
-#topBar a{
-  text-decoration: none;
+#topBar a {
+    text-decoration: none;
+}
+
+#loadingIndicator {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 12 !important;
 }
