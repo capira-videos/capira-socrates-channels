@@ -28,6 +28,7 @@
     <!-- build:css styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild-->
+    <script src="bower_components/Sortable/Sortable.min.js"></script>
     <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
     <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <!-- endbuild -->
@@ -43,7 +44,7 @@
 <body unresolved class="fullbleed layout vertical">
     <span id="browser-sync-binding"></span>
     <template is="dom-bind" id="app">
-        <paper-progress indeterminate id="loading" hidden$="{{!loading}}"></paper-progress>
+        <paper-progress indeterminate="true" id="loadingIndicator" hidden$="{{!loading}}"></paper-progress>
         <account-dialog id="account" on-change-user="changedUser"></account-dialog>
         <paper-header-panel main mode="cover">
             <!-- Main Toolbar -->
@@ -70,11 +71,6 @@
             </div>
         </paper-header-panel>
         <!-- The Capira-Channels Service -->
-        <iron-ajax id="channelService" auto url="{{serviceURL}}" handle-as="json" last-response="{{channel}}"
-        loading="{{loading}}"></iron-ajax>
-        <permissions-service id="permissionsService" loading="{{loading}}"></permissions-service>
-        <channel-editor-service id="channelEditorService" loading="{{loading}}"></channel-editor-service>
-        <account-service id="accountService" loading="{{loading}}"></account-service>
         <capira-services id="services" loading="{{loading}}"></capira-services>
     </template>
     <!-- build:js scripts/app.js -->
