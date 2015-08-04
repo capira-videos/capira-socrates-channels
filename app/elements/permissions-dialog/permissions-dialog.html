@@ -152,6 +152,7 @@
     </template>
 </dom-module>
 <script>
+'use strict';
 (function() {
     Polymer({
         is: 'permissions-dialog',
@@ -159,17 +160,9 @@
         open: function() {
             this.$.dialog.open();
             this.users = [];
-            /*this.service=document.querySelector('#permissions-service');
-
-            var service = this.$.service;
-            service.method = 'GET';
-            service.url = '/services/permissionServer.php?channelId=' + this.channel.id;
-            service.generateRequest();*/
             var that = this;
-            app.permissionsService.generateRequest({}, 'GET', {
-                channelId: this.channel.id
-            }).then(function(req) {
-                that._usersReceived(req.response.list);
+            app.services.fetchPermissions(this.channel.id).then(function(req) {
+                that._usersReceived(req.response);
             });
         },
 
@@ -180,11 +173,7 @@
 
         _changePermissions: function(event) {
             var user = event.model.item;
-            app.permissionsService.generateRequest({
-                channelId: this.channel.id,
-                isAdmin: user.admin,
-                userId: user.id
-            });
+            app.services.setChannelPermissions(this.channel.id,user.id,user.admin);
         },
 
         _removeUser: function(event) {
@@ -192,10 +181,7 @@
             var index = this.users.indexOf(user);
             this.splice('users', index, 1);
 
-            app.permissionsService.generateRequest({
-                channelId: this.channel.id,
-                userId: user.id
-            }, 'DELETE');
+            app.services.deleteChannelPermissions(this.channel.id,user.id);
         },
 
         _openAddAuthor: function() {
