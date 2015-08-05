@@ -63,6 +63,7 @@
 
 ##Project Management and Communication
 - Project Management System [Jira](https://www.atlassian.com/software/jira)
+    - [gulp-jira-todo](https://www.npmjs.com/package/gulp-jira-todo)  
 - Team Communication: [Slack](https://slack.com/) 
 
 
