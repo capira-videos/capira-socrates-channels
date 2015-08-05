@@ -22,6 +22,7 @@ var fs = require('fs');
 var glob = require('glob');
 var httpProxy = require('http-proxy');
 var htmlmin = require('gulp-html-minifier');
+var todo = require('gulp-todo');
 
 
 var AUTOPREFIXER_BROWSERS = [
@@ -145,7 +146,7 @@ gulp.task('html', function() {
         .pipe(assets)
         // Concatenate And Minify JavaScript
         .pipe($.if('*.js', $.uglify({
-            preserveComments: 'some'
+
         })))
         // Concatenate And Minify Styles
         // In case you are still using useref build blocks
@@ -196,7 +197,7 @@ gulp.task('minify', function() {
             },
             minifyCSS: true
         }))
-        .pipe(gulp.dest('dist/elements/'))
+        .pipe(gulp.dest('dist/elements/'));
 });
 
 
@@ -292,6 +293,7 @@ gulp.task('serve:dist', ['default'], function() {
 
                 if (url.match(/^\/(api)\//)) {
                     proxy.web(req, res, {
+                        //target: 'http://localhost:8888'
                         target: 'http://capira.de/build/socrates'
                     });
                 } else {
@@ -309,6 +311,14 @@ gulp.task('default', ['clean'], function(cb) {
         'elements', ['images', 'fonts', 'html', 'jshint'],
         'vulcanize', 'minify', 'precache',
         cb);
+});
+
+
+gulp.task('todo', function() {
+    gulp.src('app/**/*.js')
+        .pipe(todo())
+        .pipe(gulp.dest('./'));
+    // -> Will output a TODO.md with your todos 
 });
 
 // Load tasks for web-component-tester
