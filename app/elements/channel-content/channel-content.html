@@ -52,7 +52,7 @@
                     </div>
                 </div>
             </div>
-            <channel-list list="{{channel.units}}" list-title="Unit" is-author="{{channel.author}}" on-create="createUnit" channel-id={{channel.id}} on-sorted="_updateOrder" parent-id="{{channel.parent}}" parent-author="[[channel.parentAuthor]]" on-update="_updateUnit" on-delete="_deleteUnit" on-change-parent="_changeUnitParent"></channel-list>
+            <channel-list list="{{channel.units}}" list-title="Unit" is-author="{{channel.author}}" on-create="createUnit" channel-id="{{channel.id}}" on-sorted="_updateOrder"  parent-author="[[channel.parentAuthor]]" on-update="_updateUnit" on-delete="_deleteUnit" on-change-parent="_changeUnitParent"></channel-list>
             <channel-list list="{{channel.channels}}" list-title="Channel" is-author="{{channel.author}}" on-create="createChannel" on-sorted="_updateOrder" parent-id="{{channel.parent}}" parent-author="[[channel.parentAuthor]]" on-update="_updateChannel" on-delete="_deleteChannel" on-change-parent="_changeChannelParent"></channel-list>
         </div>
     </template>
@@ -133,14 +133,13 @@
         },
 
         _updateOrder: function() {
-            app.services.updateOrder(this.channel).then(function() {
-                console.log('Sorted');
-            });
+            app.services.updateOrder(this.channel);
         },
 
         _updateChannel: function(e) {
             app.services.updateChannel(e.detail);
         },
+        
         _deleteChannel: function(e) {
             app.services.deleteChannel(e.detail.id);
         },
@@ -151,7 +150,7 @@
 
         _deleteUnit: function(e) {
             var unit = e.detail;
-            if (unit.homeChannel) {
+            if (unit.isHomeChannel) {
                 app.services.deleteUnit(e.detail.id);
             } else {
                 app.services.deleteUnitFromChannel(e.detail.id, this.channel.id);

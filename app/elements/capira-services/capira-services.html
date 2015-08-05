@@ -20,6 +20,7 @@
                 service.body = data;
                 service.method = method;
                 service.url = '/api' + url;
+                //service.url = '/build/socrates/api' + url;
                 service.contentType = 'application/json';
                 return service.generateRequest().completes;
             },
@@ -112,7 +113,7 @@
                 return this._generateRequest('DELETE', '/permissions/channel/' + channelId + '/author/' + userId);
             },
 
-            queryForUsers: function (query){
+            queryForUsers: function(query) {
                 return this._generateRequest('GET', '/users/' + query);
             }
 

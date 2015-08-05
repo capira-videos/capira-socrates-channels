@@ -1,47 +1,50 @@
-
 <dom-module id="confirm-delete-dialog">
-  <style>
+    <style>
     :host {
-      display: block;
+        display: block;
     }
-  </style>
-  <template>
-    <paper-dialog id="confirmDeleteDialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
-      <h2>Are you sure?</h2>
-      <p hidden$="{{item.homeChannel}}">
-        Do you really want to delete this <span>{{itemType}}</span> from this Channel?<br>
-        This can not be undone!
-      </p>
-      <p hidden$="{{!item.homeChannel}}">
-        Do you really want to delete this Unit entirely from all Channels?<br>
-        This can not be undone!
-      </p>
-      <div class="buttons">
-        <paper-button dialog-dismiss>Cancel</paper-button>
-        <paper-button on-click="_confirm" autofocus>Delete</paper-button>
-      </div>
-    </paper-dialog>
-  </template>
+    
+    paper-dialog {
+        width: 400px;
+    }
+    </style>
+    <template>
+        <paper-dialog id="confirmDeleteDialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
+            <h2>Are you sure?</h2>
+            <p hidden$="{{item.isHomeChannel}}">
+                Do you really want to delete this <span>{{itemType}}</span> from this Channel?
+                <br> This can not be undone!
+            </p>
+            <p hidden$="{{!item.isHomeChannel}}">
+                Do you really want to delete this Unit entirely from all Channels?
+                <br> This can not be undone!
+            </p>
+            <div class="buttons">
+                <paper-button dialog-dismiss>Cancel</paper-button>
+                <paper-button on-click="_confirm" autofocus>Delete</paper-button>
+            </div>
+        </paper-dialog>
+    </template>
 </dom-module>
 <script>
 (function() {
-  Polymer({
-    is: 'confirm-delete-dialog',
-    properties:{
-      itemType:{
-        type:String,
-        value:'Item'
-      }
-    },
-    open:function(item){
-      this.item=item;
-      this.$.confirmDeleteDialog.open();
-      console.log(item);
-    },
-    _confirm:function(){
-      this.$.confirmDeleteDialog.close();
-      this.fire('delete-confirmed',this.item);
-    }
-  });
+    Polymer({
+        is: 'confirm-delete-dialog',
+        properties: {
+            itemType: {
+                type: String,
+                value: 'Item'
+            }
+        },
+        open: function(item) {
+            this.set('item', item);
+            this.$.confirmDeleteDialog.open();
+            console.log(item);
+        },
+        _confirm: function() {
+            this.$.confirmDeleteDialog.close();
+            this.fire('delete-confirmed', this.item);
+        }
+    });
 })();
 </script>
