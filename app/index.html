@@ -5,7 +5,6 @@
     <meta charset="utf-8">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="generator" content="Polymer Starter Kit" />
     <title>Capira Channel Editor</title>
     <!-- Place favicon.ico and apple-touch-icon.png in the root directory -->
     <!-- Chrome for Android theme color -->
@@ -28,7 +27,6 @@
     <!-- build:css styles/main.css -->
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild-->
-    <script src="bower_components/Sortable/Sortable.min.js"></script>
     <!-- build:js bower_components/webcomponentsjs/webcomponents-lite.min.js -->
     <script src="bower_components/webcomponentsjs/webcomponents-lite.js"></script>
     <!-- endbuild -->
@@ -58,8 +56,7 @@
                 </div>
                 <span class="flex"></span>
                 <!-- Toolbar icons -->
-          <paper-icon-button icon="channel-icons:person" on-click="openAccount"></paper-icon-button>
-
+                <paper-icon-button icon="channel-icons:person" on-click="openAccount"></paper-icon-button>
             </paper-toolbar>
             <!-- Main Content -->
             <div class="content">
@@ -75,6 +72,7 @@
     </template>
     <!-- build:js scripts/app.js -->
     <script src="scripts/app.js"></script>
+    <script src="bower_components/Sortable/Sortable.min.js"></script>
     <!-- endbuild-->
 </body>
 
