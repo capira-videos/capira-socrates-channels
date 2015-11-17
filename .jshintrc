@@ -21,6 +21,7 @@
     "Platform": true,
     "page": true,
     "app": true,
-    "Sortable":true
+    "Sortable":true,
+    "Hashids":true
   }
 }

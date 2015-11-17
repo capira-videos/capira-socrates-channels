@@ -111,6 +111,8 @@
     </template>
 </dom-module>
 <script>
+'use strict';
+window.hashids = new Hashids('Capira is aawesome', 8);
 (function() {
     Polymer({
         is: 'list-item',
@@ -153,7 +155,7 @@
         },
 
         _unitRef: function(unit) {
-            return 'https://capira.de/' + (this.isAuthor ? 'editor' : 'player') + '/#/' + unit.id;
+            return '/' + (this.isAuthor ? 'editor' : 'player') + '/#/' + window.hashids.encode(unit.id);
         },
 
         _channelRef: function(item) {

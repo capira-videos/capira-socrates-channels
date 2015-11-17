@@ -1,16 +1,16 @@
 <dom-module id="create-unit-dialog">
     <style>
-        #createUnitDialog {
-            width: 400px !important;
-            max-height: 1000px !important;
-        }
+    #createUnitDialog {
+        width: 400px !important;
+        max-height: 1000px !important;
+    }
     </style>
     <template>
         <paper-dialog id="createUnitDialog" with-backdrop entry-animation="scale-up-animation" exit-animation="fade-out-animation" with-backdrop>
             <iron-a11y-keys target="{{}}" keys="enter" on-keys-pressed="_confirm"></iron-a11y-keys>
             <h2>Create Unit</h2>
             <div>
-                <paper-input label="Enter an URL of a Youtube Video." value="[[unit.videoId]]" id="videoId" autofocus></paper-input>
+                <paper-input label="Enter an URL of a Youtube Video." value="[[unit.video.source]]" id="videoId" autofocus></paper-input>
                 <paper-input label="Enter your title" value="{{unit.title}}" hidden$="{{!valid}}"></paper-input>
             </div>
             <div class="buttons">
@@ -21,92 +21,95 @@
         <iron-ajax id="youtubeApi" handle-as="json" verbose="true" on-response="_handleYoutubeTitle" loading="{{loading}}"></iron-ajax>
     </template>
 </dom-module>
-
 <script>
-    (function() {
-        Polymer({
-            is: 'create-unit-dialog',
+(function() {
+    Polymer({
+        is: 'create-unit-dialog',
 
-            open: function() {
-                this.set('valid', false);
+        open: function() {
+            this.set('valid', false);
 
-                this.unit = {
-                    title: '',
-                    videoId: '',
-                    parent: this.parentId
-                };
+            this.unit = {
+                title: '',
+                video: {
+                    type: 'youtube',
+                    source: ''
+                },
+                parent: this.parentId,
+                overlays: []
+            };
 
-                this.loading = false;
-                this.$.createUnitDialog.open();
-            },
+            this.loading = false;
+            this.$.createUnitDialog.open();
+        },
 
-            ready: function() {
-                var that = this;
-                this.$.videoId.onkeyup = function() {
-                    that._handleYoutubeUrls(this.value || '');
-                };
-            },
+        ready: function() {
+            var that = this;
+            this.$.videoId.onkeyup = function() {
+                that._handleYoutubeUrls(this.value || '');
+            };
+        },
 
-            _parseYoutubeUrl: function(url) {
-                var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
-                var match = url.match(regExp);
-                if (match && match[7].length === 11) {
-                    return match[7];
-                } else {
-                    return false;
-                }
-            },
+        _parseYoutubeUrl: function(url) {
+            var regExp = /^.*((youtu.be\/)|(v\/)|(\/u\/\w\/)|(embed\/)|(watch\?))\??v?=?([^#\&\?]*).*/;
+            var match = url.match(regExp);
+            if (match && match[7] && match[7].length) {
+                return match[7];
+            } else {
+                return false;
+            }
+        },
 
-            _handleYoutubeUrls: function(youtubeUrl) {
-                var split = this._parseYoutubeUrl(youtubeUrl);
+        _handleYoutubeUrls: function(youtubeUrl) {
+            var split = this._parseYoutubeUrl(youtubeUrl);
 
-                if (split) {
-                    this.set('unit.videoId', split);
-                } else {
-                    this.set('unit.videoId', youtubeUrl);
-                }
-
-                this.set('valid', false);
-                this._fetchYoutubeTitle(this.unit.videoId);
-            },
-
-            _fetchYoutubeTitle: function(id) {
-                //timeout for to frequent changes in the video-id input
-                if (this.timer && this.timer.cancel) {
-                    this.timer.cancel();
-                }
-
-                var service = this.$.youtubeApi;
-                service.url = 'https://www.googleapis.com/youtube/v3/videos?id=' + id + '&key=AIzaSyBtulzLnwRn3FfkfL-Lg-AhuO8eR8jfXSQ&fields=items(snippet(title))&part=snippet';
-                this.timer = setTimeout(function() {
-                    service.generateRequest();
-                }, 100);
-
-            },
-
-            _handleYoutubeTitle: function() {
-                var resp = this.$.youtubeApi.lastResponse;
-
-                if (resp.items && resp.items.length) {
-                    this.set('unit.title', resp.items[0].snippet.title);
-                    this.set('valid', true);
-                } else {
-                    this.set('valid', false);
-                }
-            },
-
-            _confirm: function() {
-                if (this.valid) {
-
-                    var that = this;
-                    app.services.createUnit(this.unit).then(function(req) {
-                        var unit = req.response;
-                        that.fire('created', unit);
-                        that.$.createUnitDialog.close();
-                    });
-                }
+            if (split) {
+                this.set('unit.video.source', split);
+            } else {
+                this.set('unit.video.source', youtubeUrl);
             }
 
-        });
-    })();
+            this.set('valid', false);
+            this._fetchYoutubeTitle(this.unit.video.source);
+        },
+
+        _fetchYoutubeTitle: function(id) {
+            //timeout for to frequent changes in the video-id input
+            if (this.timer && this.timer.cancel) {
+                this.timer.cancel();
+            }
+
+            var service = this.$.youtubeApi;
+            service.url = 'https://www.googleapis.com/youtube/v3/videos?id=' + id + '&key=AIzaSyBtulzLnwRn3FfkfL-Lg-AhuO8eR8jfXSQ&fields=items(snippet(title))&part=snippet';
+            this.timer = setTimeout(function() {
+                service.generateRequest();
+            }, 100);
+
+        },
+
+        _handleYoutubeTitle: function() {
+            var resp = this.$.youtubeApi.lastResponse;
+
+            if (resp.items && resp.items.length) {
+                this.set('unit.title', resp.items[0].snippet.title);
+                this.set('valid', true);
+            } else {
+                this.set('valid', false);
+            }
+        },
+
+        _confirm: function() {
+            if (this.valid) {
+
+                var that = this;
+                app.services.createUnit(this.unit).then(function(req) {
+                    var unit = req.response;
+                    that.fire('created', unit);
+                    that.$.createUnitDialog.close();
+                });
+            }
+        }
+
+    });
+})();
 </script>
