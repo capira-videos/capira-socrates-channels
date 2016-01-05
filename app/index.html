@@ -70,6 +70,8 @@
         </paper-header-panel>
         <!-- The Capira-Channels Service -->
         <capira-services id="services" loading="{{loading}}"></capira-services>
+        <!-- write channelId to be read by lesson-editor app -->
+        <iron-localstorage name="channelUrl" value="{{channelUrl}}"></iron-localstorage>
     </template>
     <!-- build:js scripts/app.js -->
     <script src="scripts/app.js"></script>
